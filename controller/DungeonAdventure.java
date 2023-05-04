@@ -1,8 +1,8 @@
-package Controller;
+package controller;
 
-import Model.Dungeon;
-import Model.Hero;
-import View.AdventureView;
+import model.Dungeon;
+import model.Hero;
+import view.AdventureView;
 
 public class DungeonAdventure {
     private Dungeon myDungeon;

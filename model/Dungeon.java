@@ -1,4 +1,4 @@
-package Model;
+package model;
 public class Dungeon {
     private Room myHeroLocation;
     public Room getCurrentRoom() {

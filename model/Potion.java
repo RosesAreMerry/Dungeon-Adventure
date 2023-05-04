@@ -1,6 +1,6 @@
-package Model;
+package model;
 
-abstract class PillarofOO {
+abstract class Potion {
     public void use(DungeonCharacter theCharacter) {
     }
 }
