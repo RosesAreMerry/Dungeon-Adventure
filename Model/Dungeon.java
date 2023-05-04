@@ -4,6 +4,6 @@ public class Dungeon {
     public Room getCurrentRoom() {
         throw new UnsupportedOperationException("Method not yet implemented");
     }
-    public void move(String s) {
+    public void move(String theString) {
     }
 }

@@ -28,7 +28,7 @@ public class Room {
     public boolean hasPit() {
         throw new UnsupportedOperationException("Method not yet implemented");
     }
-    public Room getRoom(String room) {
+    public Room getRoom(String theRoom) {
         throw new UnsupportedOperationException("Method not yet implemented");
     }
     @Override
