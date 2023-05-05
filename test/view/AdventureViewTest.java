@@ -32,7 +32,7 @@ class AdventureViewTest {
     @Test
     void sendMessage() {
         av.sendMessage("Hello World!");
-        assertEquals("Hello World!\n", myMockedOutput.toString());
+        assertEquals("\033[3mHello World!\033[0m\n", myMockedOutput.toString());
     }
 
     @Test

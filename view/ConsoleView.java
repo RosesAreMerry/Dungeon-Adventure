@@ -46,8 +46,46 @@ abstract class ConsoleView {
         }
     }
 
-    public void sendMessage(String theMessage) {
+    protected void writeLine(String theMessage) {
         write(theMessage + "\n");
+    }
+
+    // Eventually this will be different from writeLine because it will
+    // have different formatting.
+    public void sendMessage(String theMessage) {
+        write("\033[3m" + theMessage + "\033[0m\n");
+    }
+
+    protected int askForOption(String[] theOptions) {
+        return askForOption(theOptions, "Enter your choice: ");
+    }
+
+    protected int askForOption(String[] theOptions, String prompt) {
+        while (true) {
+            write("Enter your choice: ");
+            String stringChoice = readLine();
+
+            for (int i = 0; i < theOptions.length; i++) {
+                if (theOptions[i].equalsIgnoreCase(stringChoice)) {
+                    return i;
+                }
+            }
+
+            try {
+                int choice = Integer.parseInt(stringChoice);
+
+                if (choice > 0 && choice <= theOptions.length) {
+                    return choice;
+                }
+
+                write("\nNumber out of range. Please enter a number or the name of an option.\n");
+
+            } catch (NumberFormatException e) {
+
+                write("\nInvalid choice. Please enter a number or the name of an option.\n");
+
+            }
+        }
     }
 
     public String promptUserChoice(String[] theOptions) throws IOException {
@@ -66,32 +104,7 @@ abstract class ConsoleView {
             write(theOptions[i] + "\n");
         }
 
-        while (true) {
-            write("Enter your choice: ");
-            String stringChoice = readLine();
-
-            for (String theOption : theOptions) {
-                if (stringChoice.equalsIgnoreCase(theOption)) {
-                    return theOption;
-                }
-            }
-
-            try {
-                int choice = Integer.parseInt(stringChoice);
-
-                if (choice > 0 && choice < theOptions.length) {
-                    return theOptions[choice - 1];
-                }
-
-                write("\nNumber out of range. Please enter a number or the name of an option.\n");
-
-            } catch (NumberFormatException e) {
-
-                write("\nInvalid choice. Please enter a number or the name of an option.\n");
-
-            }
-        }
-
+        return theOptions[askForOption(theOptions) - 1];
     }
 
     public void close() {
