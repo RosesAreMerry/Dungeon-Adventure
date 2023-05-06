@@ -4,6 +4,8 @@ import java.io.*;
 import java.util.Locale;
 import java.util.Scanner;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 abstract class ConsoleView {
@@ -60,31 +62,46 @@ abstract class ConsoleView {
         return askForOption(theOptions, "Enter your choice: ");
     }
 
-    protected int askForOption(String[] theOptions, String prompt) {
-        while (true) {
-            write("Enter your choice: ");
-            String stringChoice = readLine();
+    protected int askForOption(String[] theOptions, String thePrompt) {
+        return askForOption(theOptions, thePrompt, "Invalid choice. Please enter a number or the name of an option: ");
+    }
 
+    protected int askForOption(String[] theOptions, String thePrompt, String theReprompt) {
+        Function<String, Integer> isOption = (String s) -> {
             for (int i = 0; i < theOptions.length; i++) {
-                if (theOptions[i].equalsIgnoreCase(stringChoice)) {
+                if (theOptions[i].equalsIgnoreCase(s)) {
                     return i;
                 }
             }
+            return null;
+        };
 
+        Function<String, Integer> isNumber = (String s) -> {
             try {
-                int choice = Integer.parseInt(stringChoice);
-
+                int choice = Integer.parseInt(s);
                 if (choice > 0 && choice <= theOptions.length) {
+                    return choice - 1;
+                }
+            } catch (NumberFormatException ignored) { }
+            return null;
+        };
+
+        return askForOption(thePrompt, theReprompt, isOption, isNumber);
+    }
+
+    protected int askForOption(String prompt, String theReprompt, Function<String, Integer>... theValidators) {
+        write(prompt);
+        while (true) {
+            String stringChoice = readLine();
+
+            for (Function<String, Integer> validator : theValidators) {
+                Integer choice = validator.apply(stringChoice);
+                if (choice != null) {
                     return choice;
                 }
-
-                write("\nNumber out of range. Please enter a number or the name of an option.\n");
-
-            } catch (NumberFormatException e) {
-
-                write("\nInvalid choice. Please enter a number or the name of an option.\n");
-
             }
+
+            write("\n" + theReprompt);
         }
     }
 
