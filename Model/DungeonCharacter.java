@@ -9,7 +9,7 @@ public class DungeonCharacter {
     private int myAttackSpeed;
     private Double myHitChance;
 
-    protected DungeonCharacter(String theName, int theHitPoints, int theAttackSpeed){
+    protected DungeonCharacter(){
 
     }
 
