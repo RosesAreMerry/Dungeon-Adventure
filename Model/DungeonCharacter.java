@@ -7,10 +7,10 @@ public class DungeonCharacter {
     private int myDamageMax;
 
     private int myAttackSpeed;
-    Double myHitChance;
+    private Double myHitChance;
 
-    protected DungeonCharacter(){
-        throw new UnsupportedOperationException("Method not yet implemented");
+    protected DungeonCharacter(String theName, int theHitPoints, int theAttackSpeed){
+
     }
 
     private boolean isFainted() {
