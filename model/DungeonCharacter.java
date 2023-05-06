@@ -35,7 +35,6 @@ public class DungeonCharacter {
     public int  attack (String DungeonCharacter) {
         throw new UnsupportedOperationException("Method not yet implemented");
     }
-
 }
 
 
