@@ -47,6 +47,10 @@ public abstract class DungeonCharacter {
         return myDamageMax;
     }
 
+    public double getMyHitChance() {
+        return myHitChance;
+    }
+
     public int getDamageMin() {
         return myDamageMin;
     }
