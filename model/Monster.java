@@ -2,7 +2,7 @@ package model;
 
 import java.util.Random;
 
-public abstract class Monster extends DungeonCharacter {
+public class Monster extends DungeonCharacter {
     protected int myMaxHitPoints;
     protected double myChanceToHeal;
     protected int myMinHeal;
@@ -39,5 +39,29 @@ public abstract class Monster extends DungeonCharacter {
                 }
             }
         }
+    }
+
+    public double getMyChanceToHeal() {
+        return myChanceToHeal;
+    }
+
+    public int getMyMinHeal() {
+        return myMinHeal;
+    }
+
+    public int getMyMaxHeal() {
+        return myMaxHeal;
+    }
+    @Override
+    public String toString() {
+        return "Monster: " + getName() +
+                "\nHit Points: " + getHitPoints() +
+                "\nChance to Hit: " + getMyHitChance() +
+                "\nMinimum Damage: " + getDamageMin() +
+                "\nMaximum Damage: " + getDamageMax() +
+                "\nAttack Speed: " + getAttackSpeed() +
+                "\nChance to Heal: " + getMyChanceToHeal() +
+                "\nMinimum Heal Points: " + getMyMinHeal() +
+                "\nMaximum Heal Points: " + getMyMaxHeal();
     }
 }
