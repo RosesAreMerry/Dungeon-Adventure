@@ -1,40 +1,61 @@
 package model;
 
-public class DungeonCharacter {
+public abstract class DungeonCharacter {
     private String myName;
     private int myHitPoints;
     private int myDamageMin;
     private int myDamageMax;
-
     private int myAttackSpeed;
-    Double myHitChance;
+    double myHitChance;
 
-    protected DungeonCharacter(){
-        throw new UnsupportedOperationException("Method not yet implemented");
+    protected DungeonCharacter(String theName, int theHitPoints, double theHitChance,
+                               int theDamageMin, int theDamageMax, int theAttackSpeed){
+        this.myName = theName;
+        this.myHitPoints = theHitPoints;
+        this.myHitChance = theHitChance;
+        this.myDamageMin = theDamageMin;
+        this.myDamageMax = theDamageMax;
+        this.myAttackSpeed = theAttackSpeed;
     }
-
-    private boolean isFainted() {
-        throw new UnsupportedOperationException("Method not yet implemented");
+    /**
+     * returns true or false if the hitpoint is less than or equal to 0
+     * @return
+     */
+    public boolean isFainted() {
+        if (myHitPoints <= 0){
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 
     public String getName() {
-        throw new UnsupportedOperationException("Method not yet implemented");
+        return myName;
     }
-
     public int getHitPoints() {
-        throw new UnsupportedOperationException("Method not yet implemented");
+        return myHitPoints;
     }
-
-    public int setHitPoints() {
-        throw new UnsupportedOperationException("Method not yet implemented");
+    public void setHitPoints(int theHitPoints) {
+        myHitPoints = theHitPoints;
     }
-
     public int getAttackSpeed() {
-        throw new UnsupportedOperationException("Method not yet implemented");
+        return myAttackSpeed;
     }
-    public int  attack (String DungeonCharacter) {
-        throw new UnsupportedOperationException("Method not yet implemented");
+
+    public int getDamageMax() {
+        return myDamageMax;
     }
+
+    public int getDamageMin() {
+        return myDamageMin;
+    }
+
+    public boolean canAttack() {
+        double random = Math.random();
+        return random <= myHitChance;
+    }
+    public abstract void attack(DungeonCharacter theOpponent);
 }
 
 
