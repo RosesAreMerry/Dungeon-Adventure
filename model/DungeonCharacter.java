@@ -1,6 +1,6 @@
 package model;
 
-public class DungeonCharacter {
+public abstract class DungeonCharacter {
     private String myName;
     private int myHitPoints;
     private int myDamageMin;
@@ -10,10 +10,15 @@ public class DungeonCharacter {
     private Double myHitChance;
 
     /**
-     * initialize
+     *initialize the fields
      */
-    protected DungeonCharacter(){
-
+    protected DungeonCharacter(String theName, int theHitPoints, Double theHitChance, int theDamageMin, int theDamageMax, int theAttackSpeed){
+    this.myName=theName;
+    this.myHitPoints=theHitPoints;
+    this.myHitChance=theHitChance;
+    this.myDamageMin=theDamageMin;
+    this.myDamageMax=theDamageMax;
+    this.myAttackSpeed=theAttackSpeed;
     }
 
     /**
@@ -21,36 +26,38 @@ public class DungeonCharacter {
      * @return
      */
     private boolean isFainted() {
-        throw new UnsupportedOperationException("Method not yet implemented");
+       if(myHitPoints<=0){
+           return true;
+       }
+       else{
+           return false;
+       }
     }
 
     public String getName() {
-        throw new UnsupportedOperationException("Method not yet implemented");
+       return myName;
     }
-    public String setName() {
-        throw new UnsupportedOperationException("Method not yet implemented");
+    public void setName(String theName) {
+        this.myName = theName;
     }
 
     public int getHitPoints() {
-        throw new UnsupportedOperationException("Method not yet implemented");
+      return myHitPoints;
     }
 
-    public int setHitPoints() {
-        throw new UnsupportedOperationException("Method not yet implemented");
+    public void setHitPoints(int theHitPoints) {
+        this.myHitPoints=theHitPoints;
     }
 
     public int getAttackSpeed() {
-        throw new UnsupportedOperationException("Method not yet implemented");
+       return myAttackSpeed;
     }
 
     /**
-     *
-     * @param DungeonCharacter
+     * @param opponent
      * @return
      */
-    public int  attack (String DungeonCharacter) {
-        throw new UnsupportedOperationException("Method not yet implemented");
-    }
+    public abstract int  attack(DungeonCharacter opponent);
 
 }
 

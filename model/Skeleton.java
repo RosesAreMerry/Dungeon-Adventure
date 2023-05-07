@@ -1,4 +1,4 @@
-package model;
-
-public class Skeleton extends Monster{
-}
+//package model;
+//
+//public class Skeleton extends Monster{
+//}
