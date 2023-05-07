@@ -9,10 +9,11 @@ public class DungeonAdventure {
     private Hero myHero;
     private AdventureView myAdventureView;
 
-    public void winGame() {
+    private void winGame() {
 
     }
-    public void loseGame() {
+
+    private void loseGame() {
 
     }
 }

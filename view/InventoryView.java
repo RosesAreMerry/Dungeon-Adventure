@@ -15,6 +15,13 @@ public class InventoryView extends ConsoleView {
         myUseItem = theUseItem;
     }
 
+    /**
+     * A constructor that allows for custom input and output.
+     * This is useful for testing.
+     *
+     * @param theCustomWriter A custom output method.
+     * @param theCustomReader A custom input method.
+     * */
     public InventoryView(Consumer<String> theCustomWriter, Supplier<String> theCustomReader, Consumer<Item> theUseItem) {
         super(theCustomWriter, theCustomReader);
 

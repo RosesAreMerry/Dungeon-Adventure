@@ -23,6 +23,13 @@ abstract class ConsoleView {
         myCustomWriter = System.out::print;
     }
 
+    /**
+     * A constructor that allows for custom input and output.
+     * This is useful for testing.
+     *
+     * @param theCustomWriter A custom output method.
+     * @param theCustomReader A custom input method.
+     * */
     protected ConsoleView(Consumer<String> theCustomWriter, Supplier<String> theCustomReader) {
         myCustomWriter = theCustomWriter;
         myCustomReader = theCustomReader;
