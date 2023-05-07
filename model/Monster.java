@@ -24,6 +24,7 @@ public abstract class Monster extends DungeonCharacter {
             myCurrentHitPoints = Math.min(myCurrentHitPoints, myMaxHitPoints);
         }
     }
+
     @Override
     public void attack(DungeonCharacter theOpponent) {
         int previousHitPoints = theOpponent.getHitPoints();
