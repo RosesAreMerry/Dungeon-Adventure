@@ -16,14 +16,13 @@ class ConsoleViewTest extends ConsoleViewTestAbstract {
 
     @BeforeEach
     void setUp() {
-        super.setUp();
         av = new AdventureView(myCustomWriter, myCustomReader);
     }
 
     @Test
     void sendMessage() {
         av.sendMessage("Hello World!");
-        assertEquals("\033[3mHello World!\033[0m\n", myMockedOutput.toString());
+        assertEquals("\033[1mHello World!\033[0m\n", myMockedOutput.toString());
     }
 
     @Test

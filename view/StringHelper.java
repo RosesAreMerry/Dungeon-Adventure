@@ -2,6 +2,12 @@ package view;
 
 import java.util.Locale;
 
+/**
+ * A helper class for the view package that deals with various string formatting.
+ *
+ * @author Rosemary
+ * @version May 7th 2023\
+ * */
 final class StringHelper {
     private StringHelper() { }
 

@@ -5,6 +5,13 @@ import java.util.function.Supplier;
 
 import static view.StringHelper.getIA;
 
+/**
+ * A view that shows the combat screen.
+ *
+ * @author Rosemary
+ * @version May 7th 2023
+ * @see view.ConsoleView
+ * */
 public class CombatView extends ConsoleView {
 
     public CombatView() {
@@ -22,6 +29,15 @@ public class CombatView extends ConsoleView {
         super(theCustomWriter, theCustomReader);
     }
 
+    /**
+     * Shows the combat screen.
+     *
+     * @param thePlayerName The name of the player.
+     * @param theMonsterName The name of the monster.
+     * @param theMonsterHealth The health of the monster.
+     * @param thePlayerHealth The health of the player.
+     * @param theActionLog The action log.
+     * */
     public void showCombat(String thePlayerName, String theMonsterName, int theMonsterHealth, int thePlayerHealth, String[] theActionLog) {
         StringBuilder sb = new StringBuilder();
 

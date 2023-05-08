@@ -1,7 +1,6 @@
 package test.view;
 
 import org.junit.jupiter.api.BeforeEach;
-
 import java.util.LinkedList;
 import java.util.function.Consumer;
 import java.util.function.Supplier;

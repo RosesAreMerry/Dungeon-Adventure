@@ -6,6 +6,13 @@ import java.util.function.Supplier;
 import static view.StringHelper.getIA;
 import static view.StringHelper.getList;
 
+/**
+ * Main view for the program that describes each room and will handle most choices for setup and navigating the dungeon.
+ *
+ * @author Rosemary
+ * @version May 7th 2023
+ * @see view.ConsoleView
+ * */
 public class AdventureView extends ConsoleView {
 
     private static final String[] RANDOM_ITEM_LOCATIONS = {

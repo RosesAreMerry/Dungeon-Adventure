@@ -1,5 +1,6 @@
 package test.view;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import view.CombatView;
@@ -12,7 +13,6 @@ class CombatViewTest extends ConsoleViewTestAbstract {
 
     @BeforeEach
     void setUp() {
-        super.setUp();
         cv = new CombatView(myCustomWriter, myCustomReader);
     }
 

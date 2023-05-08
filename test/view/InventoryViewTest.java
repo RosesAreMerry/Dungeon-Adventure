@@ -1,6 +1,7 @@
 package test.view;
 
 import model.Item;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import view.InventoryView;
@@ -22,7 +23,6 @@ class InventoryViewTest extends ConsoleViewTestAbstract {
 
     @BeforeEach
     void setUp() {
-        super.setUp();
         myItemsOutput.setLength(0);
         iv = new InventoryView(myCustomWriter, myCustomReader, myMockedUseItem);
     }

@@ -1,5 +1,7 @@
 package test.view;
 
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import view.AdventureView;
@@ -10,9 +12,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class AdventureViewTest extends ConsoleViewTestAbstract {
 
-    private static String MOCK_ROOM_DESCRIPTION = "Mock Room Description";
-    private static String[] MOCK_ROOM_DOORS = {"North", "South", "East", "West"};
-    private static String[] MOCK_ROOM_ITEMS = {"Item 1", "Item 2", "Item 3"};
+    private static final String MOCK_ROOM_DESCRIPTION = "Mock Room Description";
+    private static final String[] MOCK_ROOM_DOORS = {"North", "South", "East", "West"};
+    private static final String[] MOCK_ROOM_ITEMS = {"Item 1", "Item 2", "Item 3"};
 
     private static final String regexForRandomItemLocation = "(in a corner|on the floor|on a table|on a shelf|on a pedestal|in a chest|in a bag carried by a skeleton|laying in a pool of blood|in a pile of bones|hidden in a secret compartment)";
 
@@ -20,7 +22,6 @@ class AdventureViewTest extends ConsoleViewTestAbstract {
 
     @BeforeEach
     void setUp() {
-        super.setUp();
         av = new AdventureView(myCustomWriter, myCustomReader);
     }
 

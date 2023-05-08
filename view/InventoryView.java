@@ -5,13 +5,19 @@ import model.Item;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+/**
+ * A view that shows the inventory.
+ *
+ * @author Rosemary
+ * @version May 7th 2023
+ * @see view.ConsoleView
+ * */
 public class InventoryView extends ConsoleView {
 
-    Consumer<Item> myUseItem;
+    private final Consumer<Item> myUseItem;
 
     public InventoryView(Consumer<Item> theUseItem) {
         super();
-
         myUseItem = theUseItem;
     }
 
@@ -28,6 +34,11 @@ public class InventoryView extends ConsoleView {
         myUseItem = theUseItem;
     }
 
+    /**
+     * Shows the inventory screen.
+     *
+     * @param theInventory The inventory to show.
+     * */
     public void showInventory(Item[] theInventory) {
         String[] options = new String[theInventory.length];
 
