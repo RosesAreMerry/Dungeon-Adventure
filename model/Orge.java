@@ -1,5 +1,5 @@
-package model;
-
-public class Orge extends Monster{
-
-}
+//package model;
+//
+//public class Orge extends Monster{
+//
+//}

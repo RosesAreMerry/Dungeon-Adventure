@@ -18,9 +18,22 @@ public class Hero extends DungeonCharacter{
         myMaxHealth = new Random().nextInt(maxHealth + minHealth + 1) + minHealth;
         myInventory = new ArrayList<>();
     }
-    private int regularAttack(DungeonCharacter d){
-        throw new UnsupportedOperationException("Method not yet implemented");
+
+    public Double getMyBlockChance(){
+        return myBlockChance;
     }
+
+    public void setMyBlockChance(Double theBlockchance){
+        myBlockChance=theBlockchance;
+
+    }
+
+
+
+    private int Attack(DungeonCharacter d) {
+        return 0;
+    }
+
     private int specialSkill(DungeonCharacter d){
         throw new UnsupportedOperationException("Method not yet implemented");
     }

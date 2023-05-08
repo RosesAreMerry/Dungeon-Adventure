@@ -1,5 +1,6 @@
 package model;
 
+
 import java.util.Random;
 
 public class Monster extends DungeonCharacter {
@@ -39,12 +40,13 @@ public class Monster extends DungeonCharacter {
                 }
             }
         }
+
     }
 
     public double getMyChanceToHeal() {
         return myChanceToHeal;
     }
-
+   
     public int getMyMinHeal() {
         return myMinHeal;
     }
@@ -63,5 +65,6 @@ public class Monster extends DungeonCharacter {
                 "\nChance to Heal: " + getMyChanceToHeal() +
                 "\nMinimum Heal Points: " + getMyMinHeal() +
                 "\nMaximum Heal Points: " + getMyMaxHeal();
+
     }
 }
