@@ -5,7 +5,7 @@ import java.util.Random;
 
 public class Hero extends DungeonCharacter{
     private final int myMaxHealth;
-    private final double myBlockChance;
+    private double myBlockChance;
     private final ArrayList<Item> myInventory;
     private int myHealth;
     public Hero(String theName, int theHitPoints, double theHitChance, int theDamageMin,
@@ -14,20 +14,33 @@ public class Hero extends DungeonCharacter{
         this.myBlockChance = theBlockChance;
         int minHealth = 75;
         int maxHealth = 100;
+        myHealth = getHitPoints();
         myMaxHealth = new Random().nextInt(maxHealth + minHealth + 1) + minHealth;
         myInventory = new ArrayList<>();
     }
-    private int regularAttack(DungeonCharacter d){
-        throw new UnsupportedOperationException("Method not yet implemented");
+
+    public double getMyBlockChance(){
+        return myBlockChance;
     }
+
+    public void setMyBlockChance(Double theBlockchance){
+        myBlockChance=theBlockchance;
+    }
+    private int Attack(DungeonCharacter d) {
+        return 0;
+    }
+
     private int specialSkill(DungeonCharacter d){
         throw new UnsupportedOperationException("Method not yet implemented");
     }
+
+    /**
+     * Add item to inventory.
+     *
+     * @param theItem the item to add to the inventory
+     */
     public void addToInventory(Item theItem) {
         myInventory.add(theItem);
-    }
-    public ArrayList<Item> getInventory() {
-        return myInventory;
     }
 
     public void useHealingPotion(int theHealthRestore) {

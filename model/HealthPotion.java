@@ -11,6 +11,6 @@ public class HealthPotion extends Potion {
     @Override
     public void use(Hero theHero) {
         int healthRestore = new Random().nextInt(MAX_HEALING - MIN_HEALING + 1) + MIN_HEALING;
-        theHero.heal(healthRestore);
+        theHero.useHealingPotion(healthRestore);
     }
 }

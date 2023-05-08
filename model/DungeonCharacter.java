@@ -8,8 +8,11 @@ public abstract class DungeonCharacter {
     private int myAttackSpeed;
     double myHitChance;
 
-    protected DungeonCharacter(String theName, int theHitPoints, double theHitChance,
-                               int theDamageMin, int theDamageMax, int theAttackSpeed){
+    /**
+     *initialize the fields
+     */
+    public DungeonCharacter(String theName, int theHitPoints, Double theHitChance, int theDamageMin,
+                            int theDamageMax, int theAttackSpeed) {
         this.myName = theName;
         this.myHitPoints = theHitPoints;
         this.myHitChance = theHitChance;
@@ -29,6 +32,16 @@ public abstract class DungeonCharacter {
             return false;
         }
     }
+    public int getNumAttacks(DungeonCharacter opponent) {
+        int numberofattack=0;
+        if(this.getAttackSpeed()>= opponent.getAttackSpeed()){
+            numberofattack=this.getAttackSpeed()/ opponent.getAttackSpeed();
+        }
+        else{
+            numberofattack= opponent.getAttackSpeed()/this.getAttackSpeed();
+        }
+        return numberofattack;
+    }
 
     public String getName() {
         return myName;
@@ -47,10 +60,19 @@ public abstract class DungeonCharacter {
         return myDamageMax;
     }
 
+    public double getMyHitChance() {
+        return myHitChance;
+    }
+
     public int getDamageMin() {
         return myDamageMin;
     }
 
+    /**
+     * Decides if character can attack based on chance to hit.
+     *
+     * @return true if character can attack opponent; otherwise, false
+     */
     public boolean canAttack() {
         double random = Math.random();
         return random <= myHitChance;
