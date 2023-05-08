@@ -5,7 +5,6 @@ public abstract class DungeonCharacter {
     private int myHitPoints;
     private int myDamageMin;
     private int myDamageMax;
-
     private int myAttackSpeed;
     private Double myHitChance;
 
@@ -19,12 +18,13 @@ public abstract class DungeonCharacter {
     this.myDamageMin=theDamageMin;
     this.myDamageMax=theDamageMax;
     this.myAttackSpeed=theAttackSpeed;
-    }
 
+    
     /**
      * returns true or false if the hitpoint is less than or equal to 0
      * @return
      */
+
     private boolean isFainted() {
        if(myHitPoints<=0){
            return true;
@@ -58,15 +58,30 @@ public abstract class DungeonCharacter {
     public void setHitPoints(int theHitPoints) {
         this.myHitPoints=theHitPoints;
     }
-
-    public int getMyDamageMin(){
-        return myDamageMax;
+    public boolean isFainted() {
+        if (myHitPoints <= 0){
+            return true;
+        }
+        else{
+            return false;
+        }
     }
-    public int getMyDamageMax(){
-
-        return myDamageMax;
+    public String getName() {
+        return myName;
+    }
+    public int getHitPoints() {
+        return myHitPoints;
+    }
+    public void setHitPoints(int theHitPoints) {
+        myHitPoints = theHitPoints;
+    }
+    public int getAttackSpeed() {
+        return myAttackSpeed;
     }
 
+    public int getDamageMax() {
+        return myDamageMax;
+    }  
     public int getAttackSpeed() {
        return myAttackSpeed;
     }
@@ -85,6 +100,20 @@ public abstract class DungeonCharacter {
      * @return
      */
     public abstract int  attack(DungeonCharacter opponent);
+
+    public double getMyHitChance() {
+        return myHitChance;
+    }
+
+    public int getDamageMin() {
+        return myDamageMin;
+    }
+
+    public boolean canAttack() {
+        double random = Math.random();
+        return random <= myHitChance;
+    }
+    public abstract void attack(DungeonCharacter theOpponent);
 
 }
 
