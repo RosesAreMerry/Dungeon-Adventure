@@ -17,8 +17,8 @@ final class StringHelper {
      * @param theWord The word to get the indefinite article for.
      * @return The indefinite article for the given word.
      * */
-    static String getIA(String theWord) {
-        String theWordLower = theWord.toLowerCase(Locale.ROOT);
+    static String getIA(final String theWord) {
+        final String theWordLower = theWord.toLowerCase(Locale.ROOT);
         if (theWordLower.startsWith("a") || theWordLower.startsWith("e") || theWordLower.startsWith("i") || theWordLower.startsWith("o") || theWordLower.startsWith("u")) {
             return "an";
         } else {
@@ -33,8 +33,8 @@ final class StringHelper {
      *
      * @return A properly formatted list of items.
      * */
-    static String getList(String[] theItems, boolean theUseIA) {
-        StringBuilder sb = new StringBuilder();
+    static String getList(final String[] theItems, final boolean theUseIA) {
+        final StringBuilder sb = new StringBuilder();
 
         if (theItems.length == 0) {
             return "";

@@ -25,7 +25,7 @@ public class CombatView extends ConsoleView {
      * @param theCustomWriter A custom output method.
      * @param theCustomReader A custom input method.
      * */
-    public CombatView(Consumer<String> theCustomWriter, Supplier<String> theCustomReader) {
+    public CombatView(final Consumer<String> theCustomWriter, final Supplier<String> theCustomReader) {
         super(theCustomWriter, theCustomReader);
     }
 
@@ -38,8 +38,8 @@ public class CombatView extends ConsoleView {
      * @param thePlayerHealth The health of the player.
      * @param theActionLog The action log.
      * */
-    public void showCombat(String thePlayerName, String theMonsterName, int theMonsterHealth, int thePlayerHealth, String[] theActionLog) {
-        StringBuilder sb = new StringBuilder();
+    public void showCombat(final String thePlayerName, final String theMonsterName, final int theMonsterHealth, final int thePlayerHealth, final String[] theActionLog) {
+        final StringBuilder sb = new StringBuilder();
 
         sb.append("----------------------------------------\n");
 
@@ -50,7 +50,7 @@ public class CombatView extends ConsoleView {
 
         if (theActionLog != null && theActionLog.length > 0) {
             sb.append("\n\n").append("Action Log:\n");
-            int actionLogLength = Math.min(theActionLog.length, 5);
+            final int actionLogLength = Math.min(theActionLog.length, 5);
             for (int i = 0; i < actionLogLength; i++) {
                 sb.append(theActionLog[i]).append("\n\n");
             }

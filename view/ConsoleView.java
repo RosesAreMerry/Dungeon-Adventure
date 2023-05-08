@@ -19,11 +19,11 @@ import java.util.function.Supplier;
  */
 abstract class ConsoleView {
 
-    private static Scanner myDefaultReader;
+    private Scanner myDefaultReader;
 
-    private static Consumer<String> myWriter;
+    private final Consumer<String> myWriter;
 
-    private static Supplier<String> myReader;
+    private Supplier<String> myReader;
 
     protected ConsoleView() {
         myDefaultReader = new Scanner(System.in);
@@ -39,7 +39,7 @@ abstract class ConsoleView {
      * @param theCustomWriter A custom output method.
      * @param theCustomReader A custom input method.
      * */
-    protected ConsoleView(Consumer<String> theCustomWriter, Supplier<String> theCustomReader) {
+    protected ConsoleView(final Consumer<String> theCustomWriter, final Supplier<String> theCustomReader) {
         myWriter = theCustomWriter;
         myReader = theCustomReader;
     }
@@ -47,7 +47,7 @@ abstract class ConsoleView {
     /**
      * Writes a bold message to the output, followed by a newline.
      * */
-    public void sendMessage(String theMessage) {
+    public void sendMessage(final String theMessage) {
         write("\033[1m" + theMessage + "\033[0m\n");
     }
 
@@ -59,7 +59,7 @@ abstract class ConsoleView {
      *
      * @return The name of the option chosen by the user.
      * */
-    public String promptUserChoice(String[] theOptions) {
+    public String promptUserChoice(final String[] theOptions) {
         return promptUserChoice(theOptions, true);
     }
 
@@ -72,7 +72,7 @@ abstract class ConsoleView {
      *
      * @return The name of the option chosen by the user.
      * */
-    public String promptUserChoice(String[] theOptions, boolean theShowNumbers) {
+    public String promptUserChoice(final String[] theOptions, final boolean theShowNumbers) {
         if (theOptions.length == 0) {
             throw new IllegalArgumentException("Must have at least one option.");
         }
@@ -100,12 +100,12 @@ abstract class ConsoleView {
      * @return The user's input.
      * */
     @SafeVarargs
-    public final String promptUserInput(String thePrompt, String theReprompt, Predicate<String>... theValidators) {
+    public final String promptUserInput(final String thePrompt, final String theReprompt, final Predicate<String>... theValidators) {
         write(thePrompt);
         while (true) {
-            String choice = readLine();
+            final String choice = readLine();
 
-            for (Predicate<String> validator : theValidators) {
+            for (final Predicate<String> validator : theValidators) {
                 if (validator.test(choice)) {
                     return choice;
                 }
@@ -145,7 +145,7 @@ abstract class ConsoleView {
     /**
      * Writes a message to the output.
      * */
-    protected static void write(String theMessage) {
+    protected void write(final String theMessage) {
         if (myWriter != null) {
             myWriter.accept(theMessage);
         }
@@ -154,7 +154,7 @@ abstract class ConsoleView {
     /**
      * Writes a message to the output, followed by a newline.
      * */
-    protected static void writeLine(String theMessage) {
+    protected void writeLine(final String theMessage) {
         write(theMessage + "\n");
     }
 
@@ -167,7 +167,7 @@ abstract class ConsoleView {
     }
 
     protected int askForOption(final String[] theOptions, final String thePrompt, final String theReprompt) {
-        Function<String, Integer> isOption = (String s) -> {
+        final Function<String, Integer> isOption = (String s) -> {
             for (int i = 0; i < theOptions.length; i++) {
                 if (theOptions[i].equalsIgnoreCase(s)) {
                     return i;
@@ -176,13 +176,13 @@ abstract class ConsoleView {
             return null;
         };
 
-        Function<String, Integer> isNumber = (String s) -> {
+        final Function<String, Integer> isNumber = (String s) -> {
             try {
-                int choice = Integer.parseInt(s);
+                final int choice = Integer.parseInt(s);
                 if (choice > 0 && choice <= theOptions.length) {
                     return choice - 1;
                 }
-            } catch (NumberFormatException ignored) { }
+            } catch (final NumberFormatException ignored) { }
             return null;
         };
 
@@ -190,13 +190,13 @@ abstract class ConsoleView {
     }
 
     @SafeVarargs
-    protected final int askForOption(final String prompt, final String theReprompt, final Function<String, Integer>... theValidators) {
-        write(prompt);
+    protected final int askForOption(final String thePrompt, final String theReprompt, final Function<String, Integer>... theValidators) {
+        write(thePrompt);
         while (true) {
-            String stringChoice = readLine();
+            final String stringChoice = readLine();
 
-            for (Function<String, Integer> validator : theValidators) {
-                Integer choice = validator.apply(stringChoice);
+            for (final Function<String, Integer> validator : theValidators) {
+                final Integer choice = validator.apply(stringChoice);
                 if (choice != null) {
                     return choice;
                 }
