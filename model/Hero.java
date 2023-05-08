@@ -23,10 +23,7 @@ public class Hero extends DungeonCharacter{
         return myBlockChance;
     }
 
-    public void setMyBlockChance(Double theBlockchance){
-        myBlockChance=theBlockchance;
 
-    }
 
 
 

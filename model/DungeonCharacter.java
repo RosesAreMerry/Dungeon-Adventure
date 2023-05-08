@@ -11,21 +11,21 @@ public abstract class DungeonCharacter {
     /**
      *initialize the fields
      */
-    protected DungeonCharacter(String theName, int theHitPoints, Double theHitChance, int theDamageMin, int theDamageMax, int theAttackSpeed){
-    this.myName=theName;
-    this.myHitPoints=theHitPoints;
-    this.myHitChance=theHitChance;
-    this.myDamageMin=theDamageMin;
-    this.myDamageMax=theDamageMax;
-    this.myAttackSpeed=theAttackSpeed;
-
+    protected DungeonCharacter(String theName, int theHitPoints, Double theHitChance, int theDamageMin, int theDamageMax, int theAttackSpeed) {
+        this.myName = theName;
+        this.myHitPoints = theHitPoints;
+        this.myHitChance = theHitChance;
+        this.myDamageMin = theDamageMin;
+        this.myDamageMax = theDamageMax;
+        this.myAttackSpeed = theAttackSpeed;
+    }
     
     /**
      * returns true or false if the hitpoint is less than or equal to 0
      * @return
      */
 
-    private boolean isFainted() {
+   public boolean isFainted() {
        if(myHitPoints<=0){
            return true;
        }
@@ -58,23 +58,7 @@ public abstract class DungeonCharacter {
     public void setHitPoints(int theHitPoints) {
         this.myHitPoints=theHitPoints;
     }
-    public boolean isFainted() {
-        if (myHitPoints <= 0){
-            return true;
-        }
-        else{
-            return false;
-        }
-    }
-    public String getName() {
-        return myName;
-    }
-    public int getHitPoints() {
-        return myHitPoints;
-    }
-    public void setHitPoints(int theHitPoints) {
-        myHitPoints = theHitPoints;
-    }
+
     public int getAttackSpeed() {
         return myAttackSpeed;
     }
@@ -82,40 +66,30 @@ public abstract class DungeonCharacter {
     public int getDamageMax() {
         return myDamageMax;
     }  
-    public int getAttackSpeed() {
-       return myAttackSpeed;
-    }
+
 
     public Double getMyHitChance(){
         return myHitChance;
     }
-
-    public boolean canAttack() {
-        double random = Math.random();
-        return random <= myHitChance;
-    }
-
-    /**
-     * @param opponent
-     * @return
-     */
-    public abstract int  attack(DungeonCharacter opponent);
-
-    public double getMyHitChance() {
-        return myHitChance;
-    }
-
     public int getDamageMin() {
         return myDamageMin;
     }
-
     public boolean canAttack() {
         double random = Math.random();
         return random <= myHitChance;
     }
+
+
+    /**
+     * @param theOpponent
+     * @return
+     */
+
     public abstract void attack(DungeonCharacter theOpponent);
 
 }
+
+
 
 
 
