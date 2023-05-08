@@ -19,8 +19,8 @@ public class Warrior extends Hero{
                         + getMyDamageMin();
                 setHitPoints(getHitPoints() - damage);
             }
-            return 0;
         }
+        return 0;
     }
     public int SpecialSkill(DungeonCharacter opponent) {
         //int extradamage;

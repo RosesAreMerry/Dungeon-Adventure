@@ -75,6 +75,11 @@ public abstract class DungeonCharacter {
         return myHitChance;
     }
 
+    public boolean canAttack() {
+        double random = Math.random();
+        return random <= myHitChance;
+    }
+
     /**
      * @param opponent
      * @return
