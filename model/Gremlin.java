@@ -1,4 +1,4 @@
 package model;
 
-public class Gremlin extends Monster{
-}
+//public class Gremlin extends Monster{
+//}

@@ -6,7 +6,7 @@ public class Theif extends Hero{
     }
 
     @Override
-    public int attack(DungeonCharacter opponent) {
-        return 0;
+    public  void attack(DungeonCharacter theOpponent){
+
     }
 }

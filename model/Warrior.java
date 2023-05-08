@@ -11,16 +11,15 @@ public class Warrior extends Hero{
 
 
     @Override
-    public int attack(DungeonCharacter opponent) {
-        int attaccknumber = getNumAttacks(opponent);
+    public void attack(DungeonCharacter theOpponent) {
+        int attaccknumber = getNumAttacks(theOpponent);
         if (canAttack()) {
             for (int i = 0; i < attaccknumber; i++) {
-                int damage = new Random().nextInt(getMyDamageMax() - getMyDamageMin() + 1)
-                        + getMyDamageMin();
+                int damage = new Random().nextInt(getDamageMax() - getDamageMin() + 1)
+                        + getDamageMin();
                 setHitPoints(getHitPoints() - damage);
             }
         }
-        return 0;
     }
     public int SpecialSkill(DungeonCharacter opponent) {
         //int extradamage;

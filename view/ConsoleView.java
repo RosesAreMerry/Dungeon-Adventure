@@ -205,4 +205,5 @@ abstract class ConsoleView {
             write("\n" + theReprompt);
         }
     }
+
 }
