@@ -1,8 +1,103 @@
 package view;
 
-public class AdventureView {
-    public void printRoom(String theRoom) {
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
+import static view.StringHelper.getList;
+
+/**
+ * Main view for the program that describes each room and will handle most choices for setup and navigating the dungeon.
+ *
+ * @author Rosemary
+ * @version May 7th 2023
+ * @see view.ConsoleView
+ * */
+public class AdventureView extends ConsoleView {
+
+    private static final String[] RANDOM_ITEM_LOCATIONS = {
+            "in a corner",
+            "on the floor",
+            "on a table",
+            "on a shelf",
+            "on a pedestal",
+            "in a chest",
+            "in a bag carried by a skeleton",
+            "laying in a pool of blood",
+            "in a pile of bones",
+            "hidden in a secret compartment"
+    };
+
+    public AdventureView() {
+        super();
     }
-    public void printDungeon(String theDungeon) {
+
+    /**
+     * A constructor that allows for custom input and output.
+     * This is useful for testing.
+     *
+     * @param theCustomWriter A custom output method.
+     * @param theCustomReader A custom input method.
+     * */
+    public AdventureView(final Consumer<String> theCustomWriter, final Supplier<String> theCustomReader) {
+        super(theCustomWriter, theCustomReader);
     }
+
+    /**
+     * This view will show what is in the room, including doors, items, monsters, traps, etc.
+     *
+     * @param theRoomFlavor The flavor text for the room. This is the description of the room that does not communicate game information.
+     *                      It is meant to be atmospheric.
+     *                      Example: "You enter a dark room. The smell of rotting flesh fills your nostrils."
+     *
+     * @param theDoors      An array of Strings that represent the doors in the room.
+     *                      The doors are in the order: North, East, South, West.
+     *
+     * @param theItems      An array of Strings that represent the items in the room.
+     * */
+    public void printRoom(final String theRoomFlavor, final String[] theDoors, final String[] theItems) {
+        final StringBuilder sb = new StringBuilder();
+
+
+        if (theRoomFlavor == null || theRoomFlavor.isEmpty()) {
+            sb.append("You are in a room.\n");
+        } else {
+            sb.append(theRoomFlavor).append("\n");
+        }
+
+        addDoors(sb, theDoors);
+        addItems(sb, theItems);
+
+        writeLine(sb.toString());
+    }
+
+    private void addDoors(final StringBuilder theSB, final String[] theDoors) {
+        if (theDoors == null || theDoors.length == 0) {
+            return;
+        }
+
+        if (theDoors.length == 1) {
+            theSB.append("There is a door to the ");
+        } else {
+            theSB.append("There are doors to the ");
+        }
+
+        theSB.append(getList(theDoors, false));
+
+        theSB.append(".\n");
+    }
+
+    private void addItems(final StringBuilder theSB, final String[] theItems) {
+        if (theItems == null || theItems.length == 0) {
+            return;
+        }
+
+        final String randomItemLocation = RANDOM_ITEM_LOCATIONS[(int) (Math.random() * RANDOM_ITEM_LOCATIONS.length)];
+
+        theSB.append("There is ");
+
+        theSB.append(getList(theItems, true));
+
+        theSB.append(' ').append(randomItemLocation).append(".\n");
+    }
+
 }
