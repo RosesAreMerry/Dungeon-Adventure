@@ -26,10 +26,9 @@ public class Hero extends DungeonCharacter{
     public void setMyBlockChance(Double theBlockchance){
         myBlockChance=theBlockchance;
 
+    public void setMyBlockChance(Double theBlockchance){
+        myBlockChance=theBlockchance;
     }
-
-
-
     private int Attack(DungeonCharacter d) {
         return 0;
     }
@@ -37,12 +36,16 @@ public class Hero extends DungeonCharacter{
     private int specialSkill(DungeonCharacter d){
         throw new UnsupportedOperationException("Method not yet implemented");
     }
+
+    /**
+     * Add item to inventory.
+     *
+     * @param theItem the item to add to the inventory
+     */
     public void addToInventory(Item theItem) {
         myInventory.add(theItem);
     }
-    public ArrayList<Item> getInventory() {
-        return myInventory;
-    }
+
     public void useHealingPotion(int theHealthRestore) {
         myHealth += theHealthRestore;
         if (myHealth > myMaxHealth) {

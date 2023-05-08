@@ -6,20 +6,21 @@ public abstract class DungeonCharacter {
     private int myDamageMin;
     private int myDamageMax;
     private int myAttackSpeed;
-    private Double myHitChance;
+    private double myHitChance;
 
     /**
      *initialize the fields
      */
-    protected DungeonCharacter(String theName, int theHitPoints, Double theHitChance, int theDamageMin, int theDamageMax, int theAttackSpeed){
-    this.myName=theName;
-    this.myHitPoints=theHitPoints;
-    this.myHitChance=theHitChance;
-    this.myDamageMin=theDamageMin;
-    this.myDamageMax=theDamageMax;
-    this.myAttackSpeed=theAttackSpeed;
+    protected DungeonCharacter(String theName, int theHitPoints, Double theHitChance, int theDamageMin, int theDamageMax, int theAttackSpeed) {
+        this.myName = theName;
+        this.myHitPoints = theHitPoints;
+        this.myHitChance = theHitChance;
+        this.myDamageMin = theDamageMin;
+        this.myDamageMax = theDamageMax;
+        this.myAttackSpeed = theAttackSpeed;
+        double myHitChance;
+    }
 
-    
     /**
      * returns true or false if the hitpoint is less than or equal to 0
      * @return
@@ -81,7 +82,7 @@ public abstract class DungeonCharacter {
 
     public int getDamageMax() {
         return myDamageMax;
-    }  
+    }
     public int getAttackSpeed() {
        return myAttackSpeed;
     }
@@ -89,32 +90,20 @@ public abstract class DungeonCharacter {
     public Double getMyHitChance(){
         return myHitChance;
     }
-
+    /**
+     * Decides if character can attack based on chance to hit.
+     *
+     * @return true if character can attack opponent; otherwise, false
+     */
     public boolean canAttack() {
         double random = Math.random();
         return random <= myHitChance;
     }
-
     /**
      * @param opponent
      * @return
      */
     public abstract int  attack(DungeonCharacter opponent);
-
-    public double getMyHitChance() {
-        return myHitChance;
-    }
-
-    public int getDamageMin() {
-        return myDamageMin;
-    }
-
-    public boolean canAttack() {
-        double random = Math.random();
-        return random <= myHitChance;
-    }
-    public abstract void attack(DungeonCharacter theOpponent);
-
 }
 
 

@@ -5,10 +5,12 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class MonsterFactoryTest {
+    /**
+     * Test method for {@link model.MonsterFactory#createMonster(String)}
+     */
     @Test
     void testCreateMonster() {
         MonsterFactory mf = new MonsterFactory();
-
         Monster ogre = mf.createMonster("Ogre");
         assertEquals("Monster: Ogre" +
                 "\nHit Points: 200" +
@@ -19,5 +21,16 @@ class MonsterFactoryTest {
                 "\nChance to Heal: 0.1" +
                 "\nMinimum Heal Points: 30" +
                 "\nMaximum Heal Points: 60", ogre.toString());
+    }
+
+    /**
+     * Test method for {@link model.MonsterFactory#createMonster(String)}
+     * Test scenario: Create Monster that does not exist
+     */
+    @Test
+    void testCreateMonsterNull() {
+        MonsterFactory mf = new MonsterFactory();
+        Monster yeti = mf.createMonster("Yeti");
+        assertNull(yeti);
     }
 }

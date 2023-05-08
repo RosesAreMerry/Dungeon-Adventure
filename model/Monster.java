@@ -1,6 +1,5 @@
 package model;
 
-
 import java.util.Random;
 
 public class Monster extends DungeonCharacter {
@@ -16,37 +15,45 @@ public class Monster extends DungeonCharacter {
         this.myChanceToHeal = theHealChance;
         this.myMinHeal = theMinHeal;
         this.myMaxHeal = theMaxHeal;
+        this.myMaxHitPoints = theHitPoints;
+        myCurrentHitPoints = getHitPoints();
     }
+
+    /**
+     * Heal a Monster based on chance to heal and healing range.
+     */
     public void heal() {
-        double random = Math.random();
-        if (random < myChanceToHeal) {
+        double random = new Random().nextDouble();
+        if (random < myChanceToHeal) { //
             int healAmount = new Random().nextInt(myMaxHeal - myMinHeal + 1) + myMinHeal;
             myCurrentHitPoints += healAmount;
+            // Ensure the monster's hit points do not exceed maximum hit points
             myCurrentHitPoints = Math.min(myCurrentHitPoints, myMaxHitPoints);
         }
     }
+
     @Override
     public void attack(DungeonCharacter theOpponent) {
         int previousHitPoints = theOpponent.getHitPoints();
-        int numOfAttacks = getAttackSpeed() / theOpponent.getAttackSpeed();
+        int numOfAttacks = getNumAttacks(theOpponent);
+        // check if monster can attack based on chance to hit
         if (canAttack()) {
             for (int i = 0; i < numOfAttacks; i++) {
                 int damage = new Random().nextInt(getDamageMax() - getDamageMin() + 1)
                         + getDamageMin();
                 setHitPoints(getHitPoints() - damage);
-                myAttacked = previousHitPoints > getHitPoints();
+                myAttacked = previousHitPoints > getHitPoints(); // check if monster has been attacked
+                // give monster chance to heal if attacked and is not fainted
                 if (myAttacked && !isFainted()) {
                     heal();
                 }
             }
         }
-
     }
-
     public double getMyChanceToHeal() {
         return myChanceToHeal;
     }
-   
+
     public int getMyMinHeal() {
         return myMinHeal;
     }
