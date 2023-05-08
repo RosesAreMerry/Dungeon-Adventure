@@ -33,6 +33,16 @@ public abstract class DungeonCharacter {
            return false;
        }
     }
+    public int getNumAttacks(DungeonCharacter opponent) {
+        int numberofattack=0;
+        if(this.getAttackSpeed()>= opponent.getAttackSpeed()){
+            numberofattack=this.getAttackSpeed()/ opponent.getAttackSpeed();
+        }
+        else{
+            numberofattack= opponent.getAttackSpeed()/this.getAttackSpeed();
+        }
+        return numberofattack;
+    }
 
     public String getName() {
        return myName;
@@ -49,8 +59,20 @@ public abstract class DungeonCharacter {
         this.myHitPoints=theHitPoints;
     }
 
+    public int getMyDamageMin(){
+        return myDamageMax;
+    }
+    public int getMyDamageMax(){
+
+        return myDamageMax;
+    }
+
     public int getAttackSpeed() {
        return myAttackSpeed;
+    }
+
+    public Double getMyHitChance(){
+        return myHitChance;
     }
 
     /**
