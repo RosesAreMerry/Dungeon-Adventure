@@ -27,8 +27,8 @@ public class Hero extends DungeonCharacter{
 
 
 
-    private int Attack(DungeonCharacter d) {
-        return 0;
+    public void  Attack(DungeonCharacter d) {
+
     }
 
     private int specialSkill(DungeonCharacter d){

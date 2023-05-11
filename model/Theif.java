@@ -5,6 +5,7 @@ public class Theif extends Hero{
         super(theName, theHitPoints, theHitChance, theDamageMin, theDamageMax, theAttackSpeed, theBlockChance);
     }
 
+
     @Override
     public  void attack(DungeonCharacter theOpponent){
 
