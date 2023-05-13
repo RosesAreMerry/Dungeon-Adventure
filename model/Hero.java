@@ -23,18 +23,6 @@ public class Hero extends DungeonCharacter{
         return myBlockChance;
     }
 
-
-
-
-
-    public void  Attack(DungeonCharacter d) {
-
-    }
-
-    private int specialSkill(DungeonCharacter d){
-        throw new UnsupportedOperationException("Method not yet implemented");
-    }
-
     /**
      * Add item to inventory.
      *
@@ -50,6 +38,12 @@ public class Hero extends DungeonCharacter{
             myHealth = myMaxHealth;
         }
     }
+
+    @Override
+    public boolean wasAttacked() {
+        return false;
+    }
+
     @Override
     public void attack(DungeonCharacter theOpponent) {
 

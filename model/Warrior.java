@@ -1,7 +1,6 @@
 package model;
 
 import java.util.Random;
-
 public class Warrior extends Hero{
     boolean usedSpecialSkill;
     boolean success;
@@ -16,33 +15,33 @@ public class Warrior extends Hero{
      * @param theOpponent
      */
     @Override
-    public void attack(DungeonCharacter theOpponent) {  // how to assign the attacknumber to the correct person
-        int attacknumber = getNumAttacks(theOpponent);
+    public void attack(DungeonCharacter theOpponent) { // how to assign the attacknumber to the correct person
+        final int numofAttack = Math.max(1, this.getAttackSpeed()/ theOpponent.getAttackSpeed());
         if (canAttack()) {
-            for (int i = 0; i < attacknumber; i++) {
+            for (int i = 0; i < numofAttack; i++) {
                 int damage = new Random().nextInt(getDamageMax() - getDamageMin() + 1)
                         + getDamageMin();
-                theOpponent.setHitPoints(getHitPoints() - damage);
+                theOpponent.setHitPoints(theOpponent.getHitPoints() - damage);
             }
             if(usedSpecialSkill){
                 int myExtradamage=SpecialSkill(theOpponent);
-                theOpponent.setHitPoints(getHitPoints()-  myExtradamage);
+                theOpponent.setHitPoints(getHitPoints()-myExtradamage);
             }
-        }
+     }
         success= true;
         if(success){
             System.out.println("the attack was successful ");
         }
         else{
             System.out.println("the attack was not successful ");
-        }
-    }
+     }
+}
 
-    /**
-     * this method reduces the opponents  if  the used sucessfully
-     * @param theOpponent
-     * @return the damage caused
-     */
+/**
+* this method reduces the opponents  if  the used sucessfully
+* @param theOpponent
+* @return the damage caused
+*/
     public int SpecialSkill(DungeonCharacter theOpponent) {
         //int extradamage;
         Random rand = new Random();

@@ -32,6 +32,15 @@ public class Monster extends DungeonCharacter {
         }
     }
 
+    /**
+     * need to work on it
+     * @return
+     */
+    @Override
+    public boolean wasAttacked() {
+        return false;
+    }
+
     @Override
     public void attack(DungeonCharacter theOpponent) {
         int previousHitPoints = theOpponent.getHitPoints();
