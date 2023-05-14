@@ -5,13 +5,14 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class MonsterFactoryTest {
+
     /**
      * Test method for {@link model.MonsterFactory#createMonster(String)}
      */
     @Test
     void testCreateMonster() {
-        MonsterFactory mf = new MonsterFactory();
-        Monster ogre = mf.createMonster("Ogre");
+        final MonsterFactory mf = new MonsterFactory();
+        final Monster ogre = mf.createMonster("Ogre");
         assertEquals("Monster: Ogre" +
                 "\nHit Points: 200" +
                 "\nChance to Hit: 0.6" +
@@ -29,8 +30,8 @@ class MonsterFactoryTest {
      */
     @Test
     void testCreateMonsterNull() {
-        MonsterFactory mf = new MonsterFactory();
-        Monster yeti = mf.createMonster("Yeti");
+        final MonsterFactory mf = new MonsterFactory();
+        final Monster yeti = mf.createMonster("Yeti");
         assertNull(yeti);
     }
 }

@@ -1,5 +1,7 @@
 package model;
 
+import java.util.Random;
+
 public abstract class DungeonCharacter {
     private String myName;
     private int myHitPoints;
@@ -11,7 +13,7 @@ public abstract class DungeonCharacter {
     /**
      *initialize the fields
      */
-    protected DungeonCharacter(String theName, int theHitPoints, Double theHitChance, int theDamageMin, int theDamageMax, int theAttackSpeed) {
+    protected DungeonCharacter(final String theName, int theHitPoints, Double theHitChance, int theDamageMin, int theDamageMax, int theAttackSpeed) {
         this.myName = theName;
         this.myHitPoints = theHitPoints;
         this.myHitChance = theHitChance;
@@ -65,14 +67,15 @@ public abstract class DungeonCharacter {
     public int getDamageMin() {
         return myDamageMin;
     }
+
     /**
      * Decides if character can attack based on chance to hit.
      *
      * @return true if character can attack opponent; otherwise, false
      */
     public boolean canAttack() {
-        double random = Math.random();
-        return random <= myHitChance;
+        final double randomValue = new Random().nextDouble();
+        return randomValue < myHitChance;
     }
 
     public abstract boolean wasAttacked();

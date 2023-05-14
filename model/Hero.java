@@ -1,25 +1,27 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 public class Hero extends DungeonCharacter{
     private final int myMaxHealth;
-    private final double myBlockChance;
-    private final ArrayList<Item> myInventory;
+    private double myBlockChance;
+    private ArrayList<Item> myInventory;
     private int myHealth;
-    public Hero(String theName, int theHitPoints, double theHitChance, int theDamageMin,
-                int theDamageMax, int theAttackSpeed, double theBlockChance) {
+
+    public Hero(final String theName, final int theHitPoints, final double theHitChance, final int theDamageMin,
+                final int theDamageMax, final int theAttackSpeed, final double theBlockChance) {
         super(theName, theHitPoints, theHitChance, theDamageMin, theDamageMax, theAttackSpeed);
         this.myBlockChance = theBlockChance;
-        int minHealth = 75;
-        int maxHealth = 100;
+        final int minHealth = 75;
+        final int maxHealth = 100;
         myHealth = getHitPoints();
-        myMaxHealth = new Random().nextInt(maxHealth + minHealth + 1) + minHealth;
+        myMaxHealth = getHitPoints();
         myInventory = new ArrayList<>();
     }
 
-    public Double getMyBlockChance(){
+    public double getMyBlockChance() {
         return myBlockChance;
     }
 
@@ -28,15 +30,19 @@ public class Hero extends DungeonCharacter{
      *
      * @param theItem the item to add to the inventory
      */
-    public void addToInventory(Item theItem) {
+    public void addToInventory(final Item theItem) {
         myInventory.add(theItem);
     }
-
-    public void useHealingPotion(int theHealthRestore) {
-        myHealth += theHealthRestore;
-        if (myHealth > myMaxHealth) {
-            myHealth = myMaxHealth;
-        }
+    public void removeFromInventory(final Item theItem) {
+        myInventory.remove(theItem);
+    }
+    public ArrayList<Item> getMyInventory() {
+        return myInventory;
+    }
+    public void useHealingPotion(final int theHealthRestore) {
+        // ensure hit points do not exceed maximum hit points
+        myHealth = Math.min(myHealth + theHealthRestore, myMaxHealth);
+        setHitPoints(myHealth);
     }
 
     @Override
@@ -45,7 +51,7 @@ public class Hero extends DungeonCharacter{
     }
 
     @Override
-    public void attack(DungeonCharacter theOpponent) {
+    public void attack(final DungeonCharacter theOpponent) {
 
     }
 }
