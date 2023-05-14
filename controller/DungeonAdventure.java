@@ -23,7 +23,11 @@ public class DungeonAdventure {
             }
         };
         myInventoryView = new InventoryView(myItemHandler);
-        playGame();
+        boolean playAgain = true;
+        while (playAgain) {
+            playGame();
+            playAgain = promptPlayAgain();
+        }
     }
 
     private void playGame() {
@@ -104,6 +108,11 @@ public class DungeonAdventure {
     }
 
     private void loseGame() {
+    }
+
+    private boolean promptPlayAgain() {
+        final String choice = myAdventureView.promptUserChoice(new String[] {"Play Again", "Exit"}, false);
+        return choice.equals("Play Again");
     }
 
     public static void main(final String[] theArgs) {
