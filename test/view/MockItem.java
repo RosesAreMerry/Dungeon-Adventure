@@ -1,4 +1,4 @@
-package test.view;
+package view;
 
 /**
  * MockItem is a mock implementation of the Item interface.
@@ -10,10 +10,10 @@ package test.view;
  */
 class MockItem implements model.Item {
 
-    private String myName;
+    private final String myName;
 
-    MockItem(String name) {
-        myName = name;
+    MockItem(final String theName) {
+        myName = theName;
     }
 
     @Override
