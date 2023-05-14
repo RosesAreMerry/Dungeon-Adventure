@@ -1,24 +1,22 @@
-package test.view;
+package view;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import view.CombatView;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class CombatViewTest extends ConsoleViewTestAbstract {
 
-    CombatView cv;
+    CombatView myCombatView;
 
     @BeforeEach
     void setUp() {
-        cv = new CombatView(myCustomWriter, myCustomReader);
+        myCombatView = new CombatView(myCustomWriter, myCustomReader);
     }
 
     @Test
     void showCombatTest() {
-        cv.showCombat("Adventurer",
+        myCombatView.showCombat("Adventurer",
                 "Monster",
                 10,
                 10,
@@ -49,7 +47,7 @@ class CombatViewTest extends ConsoleViewTestAbstract {
 
     @Test
     void showCombatTestNoActionLog() {
-        cv.showCombat("Adventurer",
+        myCombatView.showCombat("Adventurer",
                 "Monster",
                 10,
                 10,
@@ -66,7 +64,7 @@ class CombatViewTest extends ConsoleViewTestAbstract {
 
     @Test
     void showCombatTestNoActionLog2() {
-        cv.showCombat("Adventurer",
+        myCombatView.showCombat("Adventurer",
                 "Monster",
                 10,
                 10,
@@ -83,7 +81,7 @@ class CombatViewTest extends ConsoleViewTestAbstract {
 
     @Test
     void showCombatTestActionLogCutoff() {
-        cv.showCombat("Adventurer",
+        myCombatView.showCombat("Adventurer",
                 "Monster",
                 10,
                 10,
