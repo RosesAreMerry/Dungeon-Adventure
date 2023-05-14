@@ -35,16 +35,7 @@ public abstract class DungeonCharacter {
            return false;
        }
     }
-    public int getNumAttacks(DungeonCharacter opponent) {
-        int numberofattack=0;
-        if(this.getAttackSpeed()>= opponent.getAttackSpeed()){
-            numberofattack=this.getAttackSpeed()/ opponent.getAttackSpeed();
-        }
-        else{
-            numberofattack= opponent.getAttackSpeed()/this.getAttackSpeed();
-        }
-        return numberofattack;
-    }
+
 
     public String getName() {
        return myName;
@@ -86,6 +77,8 @@ public abstract class DungeonCharacter {
         final double randomValue = new Random().nextDouble();
         return randomValue < myHitChance;
     }
+
+    public abstract boolean wasAttacked();
 
     /**
      * @param theOpponent
