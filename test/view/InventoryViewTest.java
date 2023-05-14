@@ -1,23 +1,25 @@
-package test.view;
+package view;
 
 import model.Item;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import view.ConsoleViewTestAbstract;
 import view.InventoryView;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.function.Consumer;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class InventoryViewTest extends ConsoleViewTestAbstract {
 
     StringBuffer myItemsOutput = new StringBuffer();
     Consumer<Item> myMockedUseItem = (Item i) -> myItemsOutput.append(i.getName());
 
-    Item[] myTestItems = {  new MockItem("A"), new MockItem("B"), new MockItem("C"), new MockItem("D"),
-                            new MockItem("E"), new MockItem("F"), new MockItem("G"), new MockItem("H"),
-                            new MockItem("I"), new MockItem("J"), new MockItem("K"), new MockItem("L")};
+    ArrayList<Item> myTestItems = new ArrayList<>(Arrays.asList(new MockItem("A"), new MockItem("B"), new MockItem("C"), new MockItem("D"),
+            new MockItem("E"), new MockItem("F"), new MockItem("G"), new MockItem("H"),
+            new MockItem("I"), new MockItem("J"), new MockItem("K"), new MockItem("L")));
 
     InventoryView iv;
 
@@ -29,7 +31,7 @@ class InventoryViewTest extends ConsoleViewTestAbstract {
 
     @Test
     void showInventoryTestNumber() {
-        Item[] items = {new MockItem("A"), new MockItem("B"), new MockItem("C")};
+        final ArrayList<Item> items = new ArrayList<>(Arrays.asList(new MockItem("A"), new MockItem("B"), new MockItem("C")));
         myMockedInput.add("2");
         iv.showInventory(items);
 
@@ -39,7 +41,7 @@ class InventoryViewTest extends ConsoleViewTestAbstract {
 
     @Test
     void showInventoryTestOption() {
-        Item[] items = {new MockItem("A"), new MockItem("B"), new MockItem("C")};
+        final ArrayList<Item> items = new ArrayList<>(Arrays.asList(new MockItem("A"), new MockItem("B"), new MockItem("C")));
         myMockedInput.add("B");
         iv.showInventory(items);
 
