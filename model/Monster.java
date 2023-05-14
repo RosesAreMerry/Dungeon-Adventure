@@ -83,4 +83,8 @@ public class Monster extends DungeonCharacter {
                 "\nMaximum Heal Points: " + getMyMaxHeal();
 
     }
+
+    public void setRandom(final Random theRandom) {
+        //TODO: Implement this
+    }
 }
