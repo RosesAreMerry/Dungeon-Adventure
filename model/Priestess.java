@@ -6,10 +6,9 @@ public class Priestess extends Hero implements Healable {
     boolean success;
     int originalHitpoints;
 
-    protected Priestess(String theName, int theHitPoints, Double theHitChance,
-                        int theDamageMin, int theDamageMax, int theAttackSpeed, Double theBlockChance) {
+    public Priestess(final String theName) {
         super(theName, 75, .7, 25, 45, 5, .3);
-         originalHitpoints = theHitPoints;
+         originalHitpoints = getHitPoints();
          success = false;
     }
 
