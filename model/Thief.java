@@ -2,13 +2,13 @@ package model;
 
 import java.util.Random;
 
-public class Theif extends Hero{
+public class Thief extends Hero{
     private boolean surpriseAttack;
     private int originalHitPoints;
-    protected Theif(String theName, int theHitPoints, Double theHitChance, int theDamageMin, int theDamageMax, int theAttackSpeed, Double theBlockChance) {
-        super(theName, theHitPoints, theHitChance, theDamageMin, theDamageMax, theAttackSpeed, theBlockChance);
-         surpriseAttack=false;
-         originalHitPoints=theHitPoints;
+    public Thief(final String theName) {
+        super(theName, 75, 0.8, 20, 40, 6, 0.4);
+         surpriseAttack = false;
+         originalHitPoints = getHitPoints();
     }
     private void specialSkill(){
         Random rand= new Random();
