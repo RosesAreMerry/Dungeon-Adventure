@@ -1,5 +1,6 @@
 package view;
-
+import java.util.Locale;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -45,59 +46,101 @@ public class AdventureView extends ConsoleView {
     /**
      * This view will show what is in the room, including doors, items, monsters, traps, etc.
      *
-     * @param theRoomFlavor The flavor text for the room. This is the description of the room that does not communicate game information.
-     *                      It is meant to be atmospheric.
-     *                      Example: "You enter a dark room. The smell of rotting flesh fills your nostrils."
+     * @param theRoom All the data required to print a room.
      *
-     * @param theDoors      An array of Strings that represent the doors in the room.
-     *                      The doors are in the order: North, East, South, West.
-     *
-     * @param theItems      An array of Strings that represent the items in the room.
+     * @param theAdjacentRooms Provided if the player has used a vision potion. Provides data for adjacent rooms.
      * */
-    public void printRoom(final String theRoomFlavor, final String[] theDoors, final String[] theItems) {
+    public void printRoom(final RoomData theRoom, final Map<String, RoomData> theAdjacentRooms) {
         final StringBuilder sb = new StringBuilder();
 
+        sb.append(theRoom.getFlavor()).append("\n\n");
 
-        if (theRoomFlavor == null || theRoomFlavor.isEmpty()) {
-            sb.append("You are in a room.\n");
-        } else {
-            sb.append(theRoomFlavor).append("\n");
+        buildList(sb,
+                theRoom.getDoors(),
+                "There is a door to the ",
+                "There are doors to the ",
+                ".",
+                false);
+
+        final String randomItemLocation = ' ' + RANDOM_ITEM_LOCATIONS[(int) (Math.random() * RANDOM_ITEM_LOCATIONS.length)] + '.';
+
+        buildList(sb,
+                theRoom.getItems(),
+                "There is ",
+                null,
+                randomItemLocation,
+                true
+                );
+
+        buildList(sb,
+                theRoom.getMonsters(),
+                "You see a creature in the room. It is ",
+                "You see creatures in this room. There is ",
+                "!",
+                true);
+
+        if (theRoom.isExit()) {
+            sb.append("Your eyes focus on something strange, natural light! It's an exit to the dungeon!\n");
         }
 
-        addDoors(sb, theDoors);
-        addItems(sb, theItems);
+        if (theRoom.isPit()) {
+            sb.append("Something bothers you about the floor of this room...\n");
+        }
+
+        if (theAdjacentRooms != null && theAdjacentRooms.size() > 0) {
+
+            sb.append("Your vision potion gives you the ability to see through the walls.\n");
+
+            theAdjacentRooms.forEach((final String s, final RoomData rd) -> {
+                sb.append("To the ").append(s.toUpperCase(Locale.ROOT)).append(", you see a room that contains the following:\n");
+                conciseRoom(sb, rd);
+            });
+        }
 
         writeLine(sb.toString());
     }
 
-    private void addDoors(final StringBuilder theSB, final String[] theDoors) {
-        if (theDoors == null || theDoors.length == 0) {
-            return;
-        }
+    void conciseRoom(final StringBuilder theSB, final RoomData theRoom) {
+        theSB.append("Doors: ");
+        theSB.append(getList(theRoom.getDoors(), false));
+        theSB.append('\n');
 
-        if (theDoors.length == 1) {
-            theSB.append("There is a door to the ");
-        } else {
-            theSB.append("There are doors to the ");
-        }
+        theSB.append("Items: ");
+        theSB.append(getList(theRoom.getItems(), false));
+        theSB.append('\n');
 
-        theSB.append(getList(theDoors, false));
+        theSB.append("Monsters: ");
+        theSB.append(getList(theRoom.getMonsters(), false));
+        theSB.append('\n');
 
-        theSB.append(".\n");
+        theSB.append("Exit: ");
+        theSB.append(theRoom.isExit());
+        theSB.append('\n');
+
+        theSB.append("Pit: ");
+        theSB.append(theRoom.isPit());
+        theSB.append('\n');
     }
 
-    private void addItems(final StringBuilder theSB, final String[] theItems) {
+    void buildList(final StringBuilder theSB,
+                   final String[] theItems,
+                   final String thePrefix,
+                   final String thePrefixPlural,
+                   final String thePostfix,
+                   final boolean theUseIA) {
         if (theItems == null || theItems.length == 0) {
             return;
         }
 
-        final String randomItemLocation = RANDOM_ITEM_LOCATIONS[(int) (Math.random() * RANDOM_ITEM_LOCATIONS.length)];
+        if (thePrefixPlural != null && !thePrefixPlural.equals("") && theItems.length > 1) {
+            theSB.append(thePrefixPlural);
+        } else {
+            theSB.append(thePrefix);
+        }
 
-        theSB.append("There is ");
+        theSB.append(getList(theItems, theUseIA));
 
-        theSB.append(getList(theItems, true));
-
-        theSB.append(' ').append(randomItemLocation).append(".\n");
+        theSB.append(thePostfix).append("\n");
     }
 
 }

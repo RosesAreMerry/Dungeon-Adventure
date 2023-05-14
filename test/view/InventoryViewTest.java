@@ -1,4 +1,4 @@
-package test.view;
+package view;
 
 import model.Item;
 import org.junit.jupiter.api.AfterEach;

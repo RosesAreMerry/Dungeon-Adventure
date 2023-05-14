@@ -1,11 +1,13 @@
-package test.view;
+package view;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import java.util.LinkedList;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-abstract class ConsoleViewTestAbstract {
+class ConsoleViewTestAbstract {
     protected StringBuffer myMockedOutput = new StringBuffer();
     protected LinkedList<String> myMockedInput = new LinkedList<>();
     protected Consumer<String> myCustomWriter = (String s) -> myMockedOutput.append(s);
@@ -16,4 +18,7 @@ abstract class ConsoleViewTestAbstract {
         myMockedOutput.setLength(0);
         myMockedInput.clear();
     }
+
+    @Test
+    void test() {}
 }

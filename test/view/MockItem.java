@@ -1,4 +1,4 @@
-package test.view;
+package view;
 
 /**
  * MockItem is a mock implementation of the Item interface.

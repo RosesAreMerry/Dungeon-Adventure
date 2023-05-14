@@ -18,8 +18,6 @@ public class DungeonAdventure {
 
         view.sendMessage("You walk into a dungeon.");
 
-        view.printRoom("The door slams shut behind you.", new String[]{"North", "South"}, new String[]{"health potion"});
-
         view.sendMessage("What do you want to do?");
 
         String choice = view.promptUserChoice(new String[]{"Go North", "Go South", "See Inventory", "Look Around"}, false);
