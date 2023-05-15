@@ -8,12 +8,13 @@ import java.sql.*;
  * @author Chelsea Dacones
  */
 public class MonsterFactory {
-    private final Connection connection;
+    private final Connection myConnection;
+
     public MonsterFactory() {
         try {
-            connection = DriverManager.getConnection("jdbc:sqlite:identifier.sqlite");
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+            myConnection = DriverManager.getConnection("jdbc:sqlite:identifier.sqlite");
+        } catch (final SQLException theException) {
+            throw new RuntimeException(theException);
         }
     }
 
@@ -26,7 +27,7 @@ public class MonsterFactory {
     public Monster createMonster(final String theMonsterName) {
         try {
             // prepare a SQL statement to select the Monster's stats from the database
-            final PreparedStatement statement = connection.prepareStatement("SELECT * FROM Monster WHERE Name = ?");
+            final PreparedStatement statement = myConnection.prepareStatement("SELECT * FROM Monster WHERE Name = ?");
             // set parameter in SQL statement to the Monster's name
             statement.setString(1, theMonsterName);
             // execute SQL statement and obtain result set
@@ -50,8 +51,8 @@ public class MonsterFactory {
             else { // if no Monster with the provided name was found in the database
                 System.out.println("Monster not found: " + theMonsterName);
             }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        } catch (final SQLException theException) {
+            throw new RuntimeException(theException);
         }
         return null;
     }
