@@ -4,7 +4,6 @@ import java.util.Random;
 
 /**
  * The parent class for the character hierarchy.
- *
  * @author Maliha Hossain
  * @author Chelsea Dacones
  * @version May 14th 2023
@@ -36,13 +35,11 @@ public abstract class DungeonCharacter {
     
     /**
      * Checks if character is fainted.
-     *
      * @return true if hit points is less than or equal to 0; otherwise false.
      */
     public boolean isFainted() {
         return myHitPoints <= 0;
     }
-
     public String getName() {
        return myName;
     }
@@ -74,7 +71,6 @@ public abstract class DungeonCharacter {
 
     /**
      * Decides if character can attack based on chance to hit.
-     *
      * @return true if character can attack opponent; otherwise false
      */
     protected boolean canAttack() {
@@ -84,7 +80,6 @@ public abstract class DungeonCharacter {
 
     /**
      * Performs an attack on the opponent of the character.
-     *
      * @param theOpponent the character to attack.
      */
     public void attack(final DungeonCharacter theOpponent) {
@@ -135,7 +130,6 @@ public abstract class DungeonCharacter {
 
     /**
      * Sets the Random object for testing purposes.
-     *
      * @param theRandom the Random object to set.
      */
     public void setRandom(final Random theRandom) {

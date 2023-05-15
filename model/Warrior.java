@@ -9,13 +9,16 @@ import java.util.Random;
  * @author Chelsea Dacones
  */
 public class Warrior extends Hero {
+    /**
+     * constructor to initialize the states
+     * @param theName
+     */
     public Warrior(final String theName) {
         super(theName, 125, 0.8, 35, 60, 4, 0.2);
     }
 
     /**
      * Attacks the opponent and reduces hit points.
-     *
      * @param theOpponent the opponent to attack.
      */
     @Override
@@ -38,7 +41,6 @@ public class Warrior extends Hero {
     /**
      * Checks whether Warrior can use Crushing Blow skill.
      * Has 40% chance of succeeding.
-     *
      * @return true if Warrior can use special skill; otherwise false
      */
     private boolean useSpecialSkill() {

@@ -4,13 +4,16 @@ import java.util.Random;
 
 /**
  * Represents a Priestess in the game.
- *
  * @author Maliha Hossain
  * @author Chelsea Dacones
  */
 public class Priestess extends Hero implements Healable {
     boolean success;
 
+    /**
+     * initializes the states
+     * @param theName
+     */
     public Priestess(final String theName) {
         super(theName, 75, .7, 25, 45, 5, .3);
         success = false;

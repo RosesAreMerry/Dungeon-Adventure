@@ -57,6 +57,9 @@ public abstract class Hero extends DungeonCharacter {
         setHitPoints(myHealth);
     }
 
+    /**
+     * @return boolean value determining if it can block or not
+     */
     protected boolean canBlock() {
         final double randomValue = Math.random();
         return randomValue < myBlockChance;

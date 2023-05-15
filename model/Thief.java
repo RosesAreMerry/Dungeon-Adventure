@@ -2,6 +2,9 @@ package model;
 
 import java.util.Random;
 
+/**
+ * Theif Class represents a character in the game
+ */
 public class Thief extends Hero{
     private boolean surpriseAttack;
     private int originalHitPoints;
@@ -10,12 +13,21 @@ public class Thief extends Hero{
          surpriseAttack = false;
          originalHitPoints = getHitPoints();
     }
+
+    /**
+     * determines if the specialskill was used or not
+     */
     private void specialSkill(){
         Random rand= new Random();
         if(rand.nextDouble()<=.4){
             surpriseAttack=true;
         }
     }
+
+    /**
+     *
+     * @return boolean value ti check if the theif was caught
+     */
     private boolean caught(){
         boolean caught;
         Random rand= new Random();
@@ -29,7 +41,7 @@ public class Thief extends Hero{
     }
 
     /**
-     *
+     * attack method
      * @param theOpponent
      */
     @Override
