@@ -2,108 +2,144 @@ package view;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class AdventureViewTest extends ConsoleViewTestAbstract {
 
-    private static final String MOCK_ROOM_DESCRIPTION = "Mock Room Description";
-    private static final String[] MOCK_ROOM_DOORS = {"North", "South", "East", "West"};
-    private static final String[] MOCK_ROOM_ITEMS = {"Item 1", "Item 2", "Item 3"};
-    private static final String REGEX_FOR_RANDOM_ITEM_LOCATION = "(in a corner|on the floor|on a table|on a shelf|on a pedestal|in a chest|in a bag carried by a skeleton|laying in a pool of blood|in a pile of bones|hidden in a secret compartment)";
-    AdventureView myAdventureView;
+    private static final RoomData MOCK_ROOM_MULTIPLE = new RoomData(
+            "This is a test Room, how did you get here?",
+            new String[]{"North", "South", "East"},
+            new String[]{"Potion", "Sword", "Apple", "Shield"},
+            new String[]{"Ogre", "Goblin"},
+            true,
+            true
+    );
+
+    private static final RoomData MOCK_ROOM_SINGLE = new RoomData(
+            "This is a test Room, how did you get here?",
+            new String[]{"East"},
+            new String[]{"Shield"},
+            new String[]{"Ogre"},
+            true,
+            true
+    );
+
+    AdventureView av;
 
     @BeforeEach
     void setUp() {
-        myAdventureView = new AdventureView(myCustomWriter, myCustomReader);
+        av = new AdventureView(myCustomWriter, myCustomReader);
     }
 
     @Test
-    void printRoomTestNull() {
-        myAdventureView.printRoom(null, null, null);
+    void testPrintRoomMultiple() {
+        av.printRoom(MOCK_ROOM_MULTIPLE, null);
 
-        assertEquals("You are in a room.\n\n", myMockedOutput.toString());
+        assertTrue(Pattern.matches("""
+            This is a test Room, how did you get here\\?
+
+            There are doors to the North, South, and East\\.
+            There is a Potion, a Sword, an Apple, and a Shield (in a corner|on the floor|on a table|on a shelf|on a pedestal|in a chest|in a bag carried by a skeleton|laying in a pool of blood|in a pile of bones|hidden in a secret compartment)\\.
+            You see creatures in this room\\. There is an Ogre and a Goblin!
+            Your eyes focus on something strange, natural light! It's an exit to the dungeon!
+            Something bothers you about the floor of this room\\.\\.\\.
+
+            """, myMockedOutput.toString()));
     }
 
     @Test
-    void printRoomTestDoorsNull() {
-        final String[] theDoors = null;
-        myAdventureView.printRoom(MOCK_ROOM_DESCRIPTION, theDoors, MOCK_ROOM_ITEMS);
+    void testPrintRoomSingle() {
+        av.printRoom(MOCK_ROOM_SINGLE, null);
 
-        assertFalse(myMockedOutput.toString().lines().anyMatch(s -> s.contains("There is a door") | s.contains("There are doors")));
+        assertTrue(Pattern.matches("""
+            This is a test Room, how did you get here\\?
+
+            There is a door to the East\\.
+            There is a Shield (in a corner|on the floor|on a table|on a shelf|on a pedestal|in a chest|in a bag carried by a skeleton|laying in a pool of blood|in a pile of bones|hidden in a secret compartment)\\.
+            You see a creature in the room\\. It is an Ogre!
+            Your eyes focus on something strange, natural light! It's an exit to the dungeon!
+            Something bothers you about the floor of this room\\.\\.\\.
+
+            """, myMockedOutput.toString()));
     }
 
     @Test
-    void printRoomTestDoorsEmpty() {
-        final String[] theDoors = {};
-        myAdventureView.printRoom(MOCK_ROOM_DESCRIPTION, theDoors, MOCK_ROOM_ITEMS);
+    void testPrintRoomPit() {
+        av.printRoom(new RoomData(null, null, null, true, false), null);
 
-        assertFalse(myMockedOutput.toString().lines().anyMatch(s -> s.contains("There is a door") | s.contains("There are doors")));
+        assertEquals("""
+                You are in a room.
+
+                Something bothers you about the floor of this room...
+
+                """, myMockedOutput.toString());
     }
 
     @Test
-    void printRoomTestDoors1() {
-        final String[] theDoors = {"North"};
-        myAdventureView.printRoom(MOCK_ROOM_DESCRIPTION, theDoors, MOCK_ROOM_ITEMS);
+    void testPrintRoomExit() {
+        av.printRoom(new RoomData(null, null, null, false, true), null);
 
-        assertTrue(myMockedOutput.toString().lines().anyMatch(s -> s.contains("There is a door to the North.")));
+        assertEquals("""
+                You are in a room.
+
+                Your eyes focus on something strange, natural light! It's an exit to the dungeon!
+
+                """, myMockedOutput.toString());
     }
 
     @Test
-    void printRoomTestDoors2() {
-        final String[] theDoors = {"North", "South"};
-        myAdventureView.printRoom(MOCK_ROOM_DESCRIPTION, theDoors, MOCK_ROOM_ITEMS);
+    void testListMulti() {
+        final StringBuilder sb = new StringBuilder();
+        av.buildList(sb, new String[]{"A", "B", "C"}, "Prefix: ", "Prefix Plural: ", " Postfix!", true);
 
-        assertTrue(myMockedOutput.toString().lines().anyMatch(s -> s.contains("There are doors to the North and South.")));
+        assertEquals("Prefix Plural: an A, a B, and a C Postfix!\n", sb.toString());
     }
 
     @Test
-    void printRoomTestDoors4() {
-        final String[] theDoors = {"North", "South", "East", "West"};
-        myAdventureView.printRoom(MOCK_ROOM_DESCRIPTION, theDoors, MOCK_ROOM_ITEMS);
+    void testListSingle() {
+        final StringBuilder sb = new StringBuilder();
+        av.buildList(sb, new String[]{"A"}, "Prefix: ", "Prefix Plural: ", " Postfix!", true);
 
-        assertTrue(myMockedOutput.toString().lines().anyMatch(s -> s.contains("There are doors to the North, South, East, and West.")));
+        assertEquals("Prefix: an A Postfix!\n", sb.toString());
     }
 
     @Test
-    void printRoomTestItemsNull() {
-        final String[] theItems = null;
-        myAdventureView.printRoom(MOCK_ROOM_DESCRIPTION, MOCK_ROOM_DOORS, theItems);
+    void testListNoIA() {
+        final StringBuilder sb = new StringBuilder();
+        av.buildList(sb, new String[]{"A", "B", "C"}, "Prefix: ", "Prefix Plural: ", " Postfix!", false);
 
-        assertFalse(myMockedOutput.toString().lines().anyMatch(s -> s.contains("There is an Item")));
+        assertEquals("Prefix Plural: A, B, and C Postfix!\n", sb.toString());
     }
 
     @Test
+    void testConciseRoomMulti() {
+        final StringBuilder sb = new StringBuilder();
+        av.conciseRoom(sb, MOCK_ROOM_MULTIPLE);
 
-    void printRoomTestItemsEmpty() {
-        final String[] theItems = {};
-        myAdventureView.printRoom(MOCK_ROOM_DESCRIPTION, MOCK_ROOM_DOORS, theItems);
-
-        assertFalse(myMockedOutput.toString().lines().anyMatch(s -> s.contains("There is an Item")));
+        assertEquals("""
+                Doors: North, South, and East
+                Items: Potion, Sword, Apple, and Shield
+                Monsters: Ogre and Goblin
+                Exit: true
+                Pit: true
+                """, sb.toString());
     }
 
     @Test
-    void printRoomTestItems1() {
-        final String[] theItems = {"Item 1"};
-        myAdventureView.printRoom(MOCK_ROOM_DESCRIPTION, MOCK_ROOM_DOORS, theItems);
+    void testConciseRoomSingle() {
+        final StringBuilder sb = new StringBuilder();
+        av.conciseRoom(sb, MOCK_ROOM_SINGLE);
 
-        assertTrue(myMockedOutput.toString().lines().anyMatch(s -> s.contains("There is an Item 1")));
+        assertEquals("""
+                Doors: East
+                Items: Shield
+                Monsters: Ogre
+                Exit: true
+                Pit: true
+                """, sb.toString());
     }
 
-    @Test
-    void printRoomTestItems2() {
-        final String[] theItems = {"Item 1", "Item 2"};
-        myAdventureView.printRoom(MOCK_ROOM_DESCRIPTION, MOCK_ROOM_DOORS, theItems);
-
-        assertTrue(myMockedOutput.toString().lines().anyMatch(s -> Pattern.matches("There is an Item 1 and an Item 2 " + REGEX_FOR_RANDOM_ITEM_LOCATION + "\\.", s)));
-    }
-
-    @Test
-    void printRoomTestItems3() {
-        final String[] theItems = {"Item 1", "Item 2", "Item 3"};
-        myAdventureView.printRoom(MOCK_ROOM_DESCRIPTION, MOCK_ROOM_DOORS, theItems);
-
-        assertTrue(myMockedOutput.toString().lines().anyMatch(s -> Pattern.matches("There is an Item 1, an Item 2, and an Item 3 " + REGEX_FOR_RANDOM_ITEM_LOCATION + "\\.", s)));
-    }
 }

@@ -44,7 +44,7 @@ public class Monster extends DungeonCharacter {
     @Override
     public void attack(DungeonCharacter theOpponent) {
         int previousHitPoints = theOpponent.getHitPoints();
-        int numOfAttacks = getNumAttacks(theOpponent);
+        int numOfAttacks = 5;//Rose: this is giving an error so I commented out for now. Don't commit code that doesn't run in the future :) getNumAttacks(theOpponent);
         // check if monster can attack based on chance to hit
         if (canAttack()) {
             for (int i = 0; i < numOfAttacks; i++) {
@@ -82,5 +82,9 @@ public class Monster extends DungeonCharacter {
                 "\nMinimum Heal Points: " + getMyMinHeal() +
                 "\nMaximum Heal Points: " + getMyMaxHeal();
 
+    }
+
+    public void setRandom(final Random theRandom) {
+        //TODO: Implement this
     }
 }

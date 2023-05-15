@@ -3,6 +3,7 @@ package controller;
 import model.*;
 import view.AdventureView;
 import view.InventoryView;
+import view.RoomData;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,7 +38,12 @@ public class DungeonAdventure {
         createDungeon();
         myHero.addToInventory(new HealingPotion());
         myAdventureView.sendMessage("\nYou walk into a dungeon.");
-        myAdventureView.printRoom("The door slams shut behind you.", new String[]{"North", "South"}, new String[]{"Health Potion"});
+        myAdventureView.printRoom(new RoomData(
+                "You walk into a room",
+                new String[]{"North", "South"},
+                new String[]{"Health Potion"},
+                new String[]{"Ogre"},
+                false, false), null);
 
         // Main game loop
         do {
@@ -87,7 +93,7 @@ public class DungeonAdventure {
         actions.put("Go South", () -> myDungeon.move("South"));
         actions.put("Go East", () -> myDungeon.move("East"));
         actions.put("Go West", () -> myDungeon.move("West"));
-        actions.put("See Inventory", () -> myInventoryView.showInventory(myHero.getMyInventory()));
+        actions.put("See Inventory", () -> myInventoryView.showInventory(myHero.getMyInventory().toArray(new Item[0])));
         actions.put("Look Around", () -> { /* handle Look Around action */ });
         final Runnable action = actions.get(theChoice);
         action.run();
