@@ -1,6 +1,8 @@
 package model;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 import static model.Direction.*;
 
@@ -28,7 +30,8 @@ public class Room {
         myDoors = new HashMap<>();
     }
 
-    int addRooms(final Room theEntryRoom,
+    int addRooms(
+            final Room theEntryRoom,
             final Direction theEntryDirection,
             final int theNumberRemaining,
             final List<Coordinate> theOccupiedSpaces,
@@ -42,12 +45,13 @@ public class Room {
 
         availableDirections.removeAll(searchAdjacent(theOccupiedSpaces, thePosition));
 
-        final int numberToGen = Math.min(3, theNumberRemaining);
+        final int numberToGen = Math.min(availableDirections.size(), theNumberRemaining);
 
         for (int i = numberToGen; i > 0; i--) {
             final Direction nextDirection = availableDirections.get(myRandom.nextInt(availableDirections.size()));
             myDoors.put(nextDirection, new Room());
             theOccupiedSpaces.add(nextDirection.applyToCoordinate(thePosition));
+            availableDirections.remove(nextDirection);
         }
 
         int numberGenerated = numberToGen;
@@ -116,5 +120,44 @@ public class Room {
     @Override
     public String toString() {
         throw new UnsupportedOperationException("Method not yet implemented");
+    }
+
+    public String printDungeon() {
+        final char[][] theArray = new char[50][50];
+
+        for (final char[] array : theArray) {
+            Arrays.fill(array, ' ');
+        }
+
+        return printDungeon(theArray, new Coordinate(25, 25));
+    }
+
+    public String printDungeon(final char[][] theArray, final Coordinate theCoordinate) {
+        addToArrayAtCoord(theArray, theCoordinate, '*');
+        myDoors.forEach((final Direction direction, final Room room) -> {
+            if (direction != null) {
+                addConnection(theArray, direction, theCoordinate);
+                Coordinate newPos = direction.applyToCoordinate(direction.applyToCoordinate(theCoordinate));
+                printDungeon(theArray, newPos);
+            }
+        });
+
+        final StringBuilder sb = new StringBuilder();
+        for (final char[] chars : theArray) {
+            sb.append(chars);
+        }
+        return sb.toString();
+    }
+
+    private void addConnection(final char[][] theArray, final Direction theDirection, final Coordinate theCoordinate) {
+        Coordinate connectionPos = theDirection.applyToCoordinate(theCoordinate);
+        Coordinate roomPos = theDirection.applyToCoordinate(connectionPos);
+        char connectionChar = theDirection == NORTH || theDirection == SOUTH ? '|' : '-';
+
+        addToArrayAtCoord(theArray, connectionPos, connectionChar);
+        addToArrayAtCoord(theArray, roomPos, '*');
+    }
+    private void addToArrayAtCoord(final char[][] theArray, final Coordinate theCoordinate, final char theChar) {
+        theArray[theCoordinate.getX()][theCoordinate.getY()] = theChar;
     }
 }
