@@ -1,6 +1,7 @@
 package view;
 
 import model.Item;
+
 import java.util.ArrayList;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -40,8 +41,6 @@ public class InventoryView extends ConsoleView {
      * @param theInventory The inventory to show.
      * */
     public void showInventory(final ArrayList<Item> theInventory) {
-//        writeLine("Your Inventory:");
-
         final String[] options = new String[theInventory.size()];
 
         for (int i = 0; i < theInventory.size(); i++) {
@@ -55,6 +54,6 @@ public class InventoryView extends ConsoleView {
         final int selectedItem = askForOption(options, "Enter the name of the item you want to use: ");
         final Item item = theInventory.get(selectedItem);
         myUseItem.accept(item);
-//        sendMessage("You've used a " + item.getName());
     }
+
 }

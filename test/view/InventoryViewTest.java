@@ -3,8 +3,6 @@ package view;
 import model.Item;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import view.ConsoleViewTestAbstract;
-import view.InventoryView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
