@@ -2,7 +2,7 @@ package model;
 
 public abstract class Potion implements Item {
     private final String myName;
-    public Potion(String theName) {
+    public Potion(final String theName) {
         myName = theName;
     }
     public String getName() {

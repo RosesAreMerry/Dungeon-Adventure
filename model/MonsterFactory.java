@@ -2,6 +2,11 @@ package model;
 
 import java.sql.*;
 
+/**
+ * Creates instances of different Monster's based on statistics stored in a SQLite database.
+ *
+ * @author Chelsea Dacones
+ */
 public class MonsterFactory {
     private final Connection connection;
     public MonsterFactory() {
@@ -18,25 +23,25 @@ public class MonsterFactory {
      * @param theMonsterName the name of the Monster to create
      * @return a Monster
      */
-    public Monster createMonster(String theMonsterName) {
+    public Monster createMonster(final String theMonsterName) {
         try {
             // prepare a SQL statement to select the Monster's stats from the database
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM Monster WHERE Name = ?");
+            final PreparedStatement statement = connection.prepareStatement("SELECT * FROM Monster WHERE Name = ?");
             // set parameter in SQL statement to the Monster's name
             statement.setString(1, theMonsterName);
             // execute SQL statement and obtain result set
-            ResultSet resultSet = statement.executeQuery();
+            final ResultSet resultSet = statement.executeQuery();
 
             if (resultSet.next()) {
                 // retrieve the Monster's stats from the database
-                int hitPoints = resultSet.getInt("Hit Points");
-                double hitChance = resultSet.getDouble("Chance to Hit");
-                int minDamage = resultSet.getInt("Minimum Damage");
-                int maxDamage = resultSet.getInt("Maximum Damage");
-                int attackSpeed = resultSet.getInt("Attack Speed");
-                double healChance = resultSet.getDouble("Chance to Heal");
-                int minHeal = resultSet.getInt("Minimum Heal Points");
-                int maxHeal = resultSet.getInt("Maximum Heal Points");
+                final int hitPoints = resultSet.getInt("Hit Points");
+                final double hitChance = resultSet.getDouble("Chance to Hit");
+                final int minDamage = resultSet.getInt("Minimum Damage");
+                final int maxDamage = resultSet.getInt("Maximum Damage");
+                final int attackSpeed = resultSet.getInt("Attack Speed");
+                final double healChance = resultSet.getDouble("Chance to Heal");
+                final int minHeal = resultSet.getInt("Minimum Heal Points");
+                final int maxHeal = resultSet.getInt("Maximum Heal Points");
 
                 // create Monster object based on statistics stored in database
                 return new Monster(theMonsterName, hitPoints, hitChance, minDamage, maxDamage, attackSpeed,

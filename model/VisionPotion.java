@@ -5,6 +5,6 @@ public class VisionPotion extends Potion {
         super("Vision Potion");
     }
     @Override
-    public void use(Hero theHero) {
+    public void use(final Hero theHero) {
     }
 }
