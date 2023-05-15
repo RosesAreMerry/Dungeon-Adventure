@@ -14,7 +14,7 @@ public abstract class Hero extends DungeonCharacter {
     private int myHealth;
     private final int myMaxHitPoints;
 
-    public Hero(final String theName, final int theHitPoints, final double theHitChance, final int theDamageMin,
+    protected Hero(final String theName, final int theHitPoints, final double theHitChance, final int theDamageMin,
                 final int theDamageMax, final int theAttackSpeed, final double theBlockChance) {
         super(theName, theHitPoints, theHitChance, theDamageMin, theDamageMax, theAttackSpeed);
         this.myBlockChance = theBlockChance;
@@ -65,6 +65,10 @@ public abstract class Hero extends DungeonCharacter {
         return randomValue < myBlockChance;
     }
 
+    /**
+     * method to access the myMaxHitPoint
+     * @return
+     */
     protected int getMaxHitPoints() {
         return myMaxHitPoints;
     }

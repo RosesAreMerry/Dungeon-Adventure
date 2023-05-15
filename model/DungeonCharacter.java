@@ -21,7 +21,7 @@ public abstract class DungeonCharacter {
     /**
      * Initialize the instance fields.
      */
-    public DungeonCharacter(final String theName, final int theHitPoints, final double theHitChance,
+    protected DungeonCharacter(final String theName, final int theHitPoints, final double theHitChance,
                                final int theDamageMin, final int theDamageMax, final int theAttackSpeed) {
         this.myName = theName;
         this.myHitPoints = theHitPoints;
@@ -29,8 +29,8 @@ public abstract class DungeonCharacter {
         this.myDamageMin = theDamageMin;
         this.myDamageMax = theDamageMax;
         this.myAttackSpeed = theAttackSpeed;
-        myRandom = new Random();
-        myIsAttacked = false;
+        this.myRandom = new Random();
+        this.myIsAttacked = false;
     }
     
     /**
@@ -43,6 +43,7 @@ public abstract class DungeonCharacter {
     public String getName() {
        return myName;
     }
+
     public void setName(final String theName) {
         this.myName = theName;
     }
@@ -73,6 +74,7 @@ public abstract class DungeonCharacter {
      * Decides if character can attack based on chance to hit.
      * @return true if character can attack opponent; otherwise false
      */
+    //refactor
     protected boolean canAttack() {
         final double randomValue = new Random().nextDouble();
         return randomValue < myHitChance;
