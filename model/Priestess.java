@@ -2,55 +2,53 @@ package model;
 
 import java.util.Random;
 
+/**
+ * Represents a Priestess in the game.
+ *
+ * @author Maliha Hossain
+ * @author Chelsea Dacones
+ */
 public class Priestess extends Hero implements Healable {
     boolean success;
-    int originalHitpoints;
 
     public Priestess(final String theName) {
         super(theName, 75, .7, 25, 45, 5, .3);
-         originalHitpoints = getHitPoints();
-         success = false;
+        success = false;
     }
 
     @Override
-    public boolean wasAttacked() {
-
-        if (this.getHitPoints() < originalHitpoints) {
-            return true;
-        } else {
-            return false;
+    public void heal() {
+        int myCurrentHitPoints = getHitPoints();
+        final int healAmount = new Random().nextInt(20 - 10 + 1) + 10;
+        myCurrentHitPoints += healAmount;
+        // Ensure the Priestess' hit points do not exceed maximum hit points
+        myCurrentHitPoints = Math.min(myCurrentHitPoints, getMaxHitPoints());
+        setHitPoints(myCurrentHitPoints);
         }
     }
 
-    private void heal() {
-        Healable healable = (Healable) this;
-        healable.heal(originalHitpoints, this.getHitPoints());
-    }
-
-    /**
-     * attack method
-     *
-     * @param theOpponent
-     */
-    public void attack(DungeonCharacter theOpponent) {
-        final int numofAttack = Math.max(1, this.getAttackSpeed() / theOpponent.getAttackSpeed());
-        if (canAttack()) {
-            for (int i = 0; i < getAttackSpeed(); i++) {
-                int damage = new Random().nextInt(getDamageMax() - getDamageMin() + 1)
-                        + getDamageMin();
-                theOpponent.setHitPoints(theOpponent.getHitPoints() - damage);
-                success = true;
-            }
-            if (wasAttacked() && !isFainted()) {
-                heal();
-            }
-            if (success) {
-                System.out.println("successful");
-            }
-        }
-
-    }
-}
+//    /**
+//     * attack method
+//     *
+//     * @param theOpponent
+//     */
+//    public void attack(DungeonCharacter theOpponent) {
+//        final int numofAttack = Math.max(1, this.getAttackSpeed() / theOpponent.getAttackSpeed());
+//        if (canAttack()) {
+//            for (int i = 0; i < getAttackSpeed(); i++) {
+//                int damage = new Random().nextInt(getDamageMax() - getDamageMin() + 1)
+//                        + getDamageMin();
+//                theOpponent.setHitPoints(theOpponent.getHitPoints() - damage);
+//                success = true;
+//            }
+//            if (wasAttacked() && !isFainted()) {
+//                heal();
+//            }
+//            if (success) {
+//                System.out.println("successful");
+//            }
+//        }
+//    }
 
 
 

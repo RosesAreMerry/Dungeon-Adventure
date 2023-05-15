@@ -1,28 +1,27 @@
 package model;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Random;
 
-public class Hero extends DungeonCharacter{
+/**
+ * Represents a Hero/Adventurer in the game.
+ *
+ * @author Chelsea Dacones
+ */
+public abstract class Hero extends DungeonCharacter {
     private final int myMaxHealth;
-    private double myBlockChance;
-    private ArrayList<Item> myInventory;
+    private final double myBlockChance;
+    private final ArrayList<Item> myInventory;
     private int myHealth;
+    private final int myMaxHitPoints;
 
     public Hero(final String theName, final int theHitPoints, final double theHitChance, final int theDamageMin,
                 final int theDamageMax, final int theAttackSpeed, final double theBlockChance) {
         super(theName, theHitPoints, theHitChance, theDamageMin, theDamageMax, theAttackSpeed);
         this.myBlockChance = theBlockChance;
-        final int minHealth = 75;
-        final int maxHealth = 100;
+        this.myMaxHitPoints = theHitPoints;
         myHealth = getHitPoints();
         myMaxHealth = getHitPoints();
         myInventory = new ArrayList<>();
-    }
-
-    public double getMyBlockChance() {
-        return myBlockChance;
     }
 
     /**
@@ -33,25 +32,37 @@ public class Hero extends DungeonCharacter{
     public void addToInventory(final Item theItem) {
         myInventory.add(theItem);
     }
+
+    /**
+     * Remove item from inventory.
+     *
+     * @param theItem the item to remove from the inventory
+     */
     public void removeFromInventory(final Item theItem) {
         myInventory.remove(theItem);
     }
+
+    /**
+     * Retrieve the character's inventory.
+     *
+     * @return the inventory.
+     */
     public ArrayList<Item> getMyInventory() {
         return myInventory;
     }
-    public void useHealingPotion(final int theHealthRestore) {
+
+    protected void useHealingPotion(final int theHealthRestore) {
         // ensure hit points do not exceed maximum hit points
         myHealth = Math.min(myHealth + theHealthRestore, myMaxHealth);
         setHitPoints(myHealth);
     }
 
-    @Override
-    public boolean wasAttacked() {
-        return false;
+    protected boolean canBlock() {
+        final double randomValue = Math.random();
+        return randomValue < myBlockChance;
     }
 
-    @Override
-    public void attack(final DungeonCharacter theOpponent) {
-
+    protected int getMaxHitPoints() {
+        return myMaxHitPoints;
     }
 }

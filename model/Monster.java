@@ -2,67 +2,72 @@ package model;
 
 import java.util.Random;
 
-public class Monster extends DungeonCharacter {
-    protected int myMaxHitPoints;
-    protected double myChanceToHeal;
-    protected int myMinHeal;
-    protected int myMaxHeal;
-    protected int myCurrentHitPoints;
-    boolean myAttacked;
-    protected Monster(String theName, int theHitPoints, double theHitChance, int theMinDamage, int theMaxDamage,
-                      int theAttackSpeed, double theHealChance, int theMinHeal, int theMaxHeal) {
-        super(theName, theHitPoints, theHitChance, theMinDamage, theMaxDamage, theAttackSpeed);
+/**
+ * Represents a Monster in the game.
+ *
+ * @author Chelsea Dacones
+ * @version May 14th 2023
+ */
+public class Monster extends DungeonCharacter implements Healable {
+    private final int myMaxHitPoints;
+    private final double myChanceToHeal;
+    private final int myMinHeal;
+    private final int myMaxHeal;
+    private Random myRandom;
+
+    public Monster(final String theName, final int theHitPoints, final double theHitChance, final int theDamageMin,
+                      final int theDamageMax, final int theAttackSpeed, final double theHealChance, final int theMinHeal, final int theMaxHeal) {
+        super(theName, theHitPoints, theHitChance, theDamageMin, theDamageMax, theAttackSpeed);
         this.myChanceToHeal = theHealChance;
         this.myMinHeal = theMinHeal;
         this.myMaxHeal = theMaxHeal;
         this.myMaxHitPoints = theHitPoints;
-        myCurrentHitPoints = getHitPoints();
+        myRandom = new Random();
     }
 
     /**
-     * Heal a Monster based on chance to heal and healing range.
+     * Heals the Monster based on chance to heal and range of heal points.
+     * Monster's can heal themselves if they've been attacked and have not fainted.
      */
+    @Override
     public void heal() {
-        double random = new Random().nextDouble();
-        if (random < myChanceToHeal) { //
-            int healAmount = new Random().nextInt(myMaxHeal - myMinHeal + 1) + myMinHeal;
-            myCurrentHitPoints += healAmount;
-            // Ensure the monster's hit points do not exceed maximum hit points
-            myCurrentHitPoints = Math.min(myCurrentHitPoints, myMaxHitPoints);
-        }
-    }
-
-    /**
-     * need to work on it
-     * @return
-     */
-    @Override
-    public boolean wasAttacked() {
-        return false;
-    }
-
-    @Override
-    public void attack(DungeonCharacter theOpponent) {
-        int previousHitPoints = theOpponent.getHitPoints();
-        int numOfAttacks = 5;//Rose: this is giving an error so I commented out for now. Don't commit code that doesn't run in the future :) getNumAttacks(theOpponent);
-        // check if monster can attack based on chance to hit
-        if (canAttack()) {
-            for (int i = 0; i < numOfAttacks; i++) {
-                int damage = new Random().nextInt(getDamageMax() - getDamageMin() + 1)
-                        + getDamageMin();
-                setHitPoints(getHitPoints() - damage);
-                myAttacked = previousHitPoints > getHitPoints(); // check if monster has been attacked
-                // give monster chance to heal if attacked and is not fainted
-                if (myAttacked && !isFainted()) {
-                    heal();
-                }
+        if (isAttacked() && !isFainted()) {
+            final double randomValue = myRandom.nextDouble();
+            int myCurrentHitPoints = getHitPoints();
+            if (randomValue < myChanceToHeal) { //
+                final int healAmount = myRandom.nextInt(myMaxHeal - myMinHeal + 1) + myMinHeal;
+                myCurrentHitPoints += healAmount;
+                // Ensure the monster's hit points do not exceed maximum hit points
+                myCurrentHitPoints = Math.min(myCurrentHitPoints, myMaxHitPoints);
+                setHitPoints(myCurrentHitPoints);
             }
         }
     }
+
+    /**
+     * Attacks opponent based on chance to hit.
+     * If the opponent has the ability to block the attack, the attack may be blocked.
+     * Otherwise, the damage is inflicted on the opponent.
+     *
+     * @param theOpponent the character to attack.
+     */
+    @Override
+    public void attack(final DungeonCharacter theOpponent) {
+        if (theOpponent instanceof final Hero theHero) {
+            if (theHero.canBlock()) {
+                theOpponent.setAttacked(false);
+                return; // exit method (do not attack)
+            }
+        }
+        if (canAttack()) {
+            calculateDamage(theOpponent);
+            theOpponent.setAttacked(true);
+        }
+    }
+
     public double getMyChanceToHeal() {
         return myChanceToHeal;
     }
-
     public int getMyMinHeal() {
         return myMinHeal;
     }
@@ -70,6 +75,22 @@ public class Monster extends DungeonCharacter {
     public int getMyMaxHeal() {
         return myMaxHeal;
     }
+
+    /**
+     * Sets the Random object for testing purposes.
+     *
+     * @param theRandom the Random object to set.
+     */
+    public void setMyRandom(final Random theRandom) {
+        this.myRandom = theRandom;
+    }
+
+    /**
+     * THe Monster's statistics.
+     * Made for testing purposes.
+     *
+     * @return the Monster's statistics.
+     */
     @Override
     public String toString() {
         return "Monster: " + getName() +
@@ -82,9 +103,5 @@ public class Monster extends DungeonCharacter {
                 "\nMinimum Heal Points: " + getMyMinHeal() +
                 "\nMaximum Heal Points: " + getMyMaxHeal();
 
-    }
-
-    public void setRandom(final Random theRandom) {
-        //TODO: Implement this
     }
 }
