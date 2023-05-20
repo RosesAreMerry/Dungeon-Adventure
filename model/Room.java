@@ -16,8 +16,10 @@ public class Room {
     private Map<Direction, Room> myDoors;
     private Random myRandom;
 
+    private Coordinate myPosition;
+
     public Room(final int theNumberOfRooms) {
-        this();
+        this(new Coordinate(0, 0));
         this.addRooms(null,
                 null,
                 theNumberOfRooms,
@@ -25,9 +27,10 @@ public class Room {
                 new Coordinate(0, 0));
     }
 
-    private Room() {
+    private Room(Coordinate thePosition) {
         myRandom = new Random();
         myDoors = new HashMap<>();
+        myPosition = thePosition;
     }
 
     int addRooms(
@@ -49,7 +52,7 @@ public class Room {
 
         for (int i = numberToGen; i > 0; i--) {
             final Direction nextDirection = availableDirections.get(myRandom.nextInt(availableDirections.size()));
-            myDoors.put(nextDirection, new Room());
+            myDoors.put(nextDirection, new Room(nextDirection.applyToCoordinate(thePosition)));
             theOccupiedSpaces.add(nextDirection.applyToCoordinate(thePosition));
             availableDirections.remove(nextDirection);
         }
@@ -122,42 +125,4 @@ public class Room {
         throw new UnsupportedOperationException("Method not yet implemented");
     }
 
-    public String printDungeon() {
-        final char[][] theArray = new char[50][50];
-
-        for (final char[] array : theArray) {
-            Arrays.fill(array, ' ');
-        }
-
-        return printDungeon(theArray, new Coordinate(25, 25));
-    }
-
-    public String printDungeon(final char[][] theArray, final Coordinate theCoordinate) {
-        addToArrayAtCoord(theArray, theCoordinate, '*');
-        myDoors.forEach((final Direction direction, final Room room) -> {
-            if (direction != null) {
-                addConnection(theArray, direction, theCoordinate);
-                Coordinate newPos = direction.applyToCoordinate(direction.applyToCoordinate(theCoordinate));
-                printDungeon(theArray, newPos);
-            }
-        });
-
-        final StringBuilder sb = new StringBuilder();
-        for (final char[] chars : theArray) {
-            sb.append(chars);
-        }
-        return sb.toString();
-    }
-
-    private void addConnection(final char[][] theArray, final Direction theDirection, final Coordinate theCoordinate) {
-        Coordinate connectionPos = theDirection.applyToCoordinate(theCoordinate);
-        Coordinate roomPos = theDirection.applyToCoordinate(connectionPos);
-        char connectionChar = theDirection == NORTH || theDirection == SOUTH ? '|' : '-';
-
-        addToArrayAtCoord(theArray, connectionPos, connectionChar);
-        addToArrayAtCoord(theArray, roomPos, '*');
-    }
-    private void addToArrayAtCoord(final char[][] theArray, final Coordinate theCoordinate, final char theChar) {
-        theArray[theCoordinate.getX()][theCoordinate.getY()] = theChar;
-    }
 }
