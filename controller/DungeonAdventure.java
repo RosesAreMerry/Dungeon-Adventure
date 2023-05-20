@@ -122,8 +122,7 @@ public class DungeonAdventure {
     }
 
     public static void main(final String[] theArgs) {
-        Room room = new Room(3);
-        room.printDungeon();
+        Room room = new Room(6);
         new DungeonAdventure();
     }
 }
