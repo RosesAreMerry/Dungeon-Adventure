@@ -116,6 +116,7 @@ public abstract class DungeonCharacter {
             theOpponent.setAttacked(true);
         } else {
             theOpponent.setAttacked(false);
+            // report attack failure
         }
     }
 

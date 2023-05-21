@@ -8,7 +8,6 @@ import java.util.regex.Pattern;
 import static org.junit.jupiter.api.Assertions.*;
 
 class AdventureViewTest extends ConsoleViewTestAbstract {
-
     private static final RoomData MOCK_ROOM_MULTIPLE = new RoomData(
             "This is a test Room, how did you get here?",
             new String[]{"North", "South", "East"},

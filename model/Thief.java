@@ -2,11 +2,14 @@ package model;
 
 import java.util.Random;
 
-public class Thief extends Hero {
+/**
+ * Theif Class represents a character in the game
+ */
+public class Thief extends Hero{
     private boolean mySurpriseAttack;
-
+    
     private boolean myCaught;
-
+    
     private Random myRandom;
 
     public Thief(final String theName) {
@@ -15,14 +18,18 @@ public class Thief extends Hero {
         myCaught = false;
         myRandom = new Random();
     }
-
+    /**
+     * determines if the specialskill was used or not
+     */
     private boolean useSpecialSkill() {
         if (myRandom.nextDouble() <= .4) {
             mySurpriseAttack = true;
         }
         return mySurpriseAttack;
     }
-
+    /**
+     * determines if the specialskill was used or not
+     */
     private boolean caught() {
         if (myRandom.nextDouble() <= .2) {
             myCaught = true;
@@ -31,6 +38,8 @@ public class Thief extends Hero {
     }
 
     /**
+     * attack method
+     * if surpriseAttack is used then the character gets one extra turn
      * @param theOpponent
      */
     @Override

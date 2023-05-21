@@ -10,22 +10,39 @@ import java.util.Random;
  */
 public class Priestess extends Hero implements Healable {
     boolean success;
-
+    int myCurrentHitPoints;
+    private Random myRandom;
+    /**
+     * initializes the states
+     *
+     * @param theName
+     */
     public Priestess(final String theName) {
         super(theName, 75, .7, 25, 45, 5, .3);
         success = false;
+        myCurrentHitPoints = this.getHitPoints();
+        myRandom= new Random();
     }
 
     @Override
     public void heal() {
-        int myCurrentHitPoints = getHitPoints();
-        final int healAmount = new Random().nextInt(20 - 10 + 1) + 10;
-        myCurrentHitPoints += healAmount;
-        // Ensure the Priestess' hit points do not exceed maximum hit points
-        myCurrentHitPoints = Math.min(myCurrentHitPoints, getMaxHitPoints());
-        setHitPoints(myCurrentHitPoints);
+        final int minBound = 1; // Minimum bound for the healAmount
+        final int maxBound = Math.max(1, myCurrentHitPoints - this.getHitPoints()); // Positive bound
+        final int healAmount = myRandom.nextInt(maxBound) + minBound;
+        final int healedHitPoints = this.getHitPoints() + healAmount;
+        this.setHitPoints(healedHitPoints);
+        }
+    /**
+     * Sets the Random object for testing purposes.
+     *
+     * @param theRandom the Random object to set.
+     */
+    public void setMyRandom(final Random theRandom) {
+        this.myRandom = theRandom;
     }
 }
+
+
 
 
 
