@@ -14,37 +14,18 @@ public class Warrior extends Hero {
      * @param theName
      */
     private boolean myUsedSpecialCase;
+    private Random myRandom;
     public Warrior(final String theName) {
         super(theName, 125, 0.8, 35, 60, 4, 0.2);
         myUsedSpecialCase= useSpecialSkill();
+         myRandom= new Random();
     }
 
-    /**
-     * Attacks the opponent and reduces hit points.
-     * @param theOpponent the opponent to attack.
-     */
-//    @Override
-//    public void attack(final DungeonCharacter theOpponent) {
-//        int points= theOpponent.getHitPoints();
-//        if (canAttack()) {
-//            if (myUsedSpecialCase) {
-//                final int damage = 79; // 75 to 175 points of damage
-//                theOpponent.setHitPoints(theOpponent.getHitPoints() - damage);
-//                theOpponent.setAttacked(true);
-//                return; // exit method after performing special skill
-//            }
-//            calculateDamage(theOpponent); // if special skill is unsuccessful, perform normal attack
-//            theOpponent.setAttacked(true);
-//        } else {
-//            theOpponent.setAttacked(false);
-//            // report attack failure
-//        }
-//
-//    }
+
     public void attack(final DungeonCharacter theOpponent) {
         if (canAttack()) {
-            if ( myUsedSpecialCase==true) {
-                final int damage = new Random().nextInt(101) + 75; // 75 to 175 points of damage
+            if (myUsedSpecialCase) {
+                int damage =myRandom.nextInt(101) + 75; // 75 to 175 points of damage
                 theOpponent.setHitPoints(theOpponent.getHitPoints() - damage);
                 theOpponent.setAttacked(true);
 
@@ -56,7 +37,6 @@ public class Warrior extends Hero {
             theOpponent.setAttacked(false);
             // report attack failure
         }
-
     }
 
     /**
@@ -75,5 +55,9 @@ public class Warrior extends Hero {
      */
     public void setspecialcase(boolean value){
         myUsedSpecialCase=value;
+    }
+
+    public void setMyRandom(Random random) {
+        myRandom = random;
     }
 }
