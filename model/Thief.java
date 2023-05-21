@@ -2,58 +2,66 @@ package model;
 
 import java.util.Random;
 
-public class Thief extends Hero{
-    private boolean surpriseAttack;
-    private int originalHitPoints;
+public class Thief extends Hero {
+    private boolean mySurpriseAttack;
+
+    private boolean myCaught;
+
+    private Random myRandom;
+
     public Thief(final String theName) {
         super(theName, 75, 0.8, 20, 40, 6, 0.4);
-         surpriseAttack = false;
-         originalHitPoints = getHitPoints();
+        mySurpriseAttack = false;
+        myCaught = false;
+        myRandom = new Random();
     }
-    private void specialSkill(){
-        Random rand= new Random();
-        if(rand.nextDouble()<=.4){
-            surpriseAttack=true;
+
+    private boolean useSpecialSkill() {
+        if (myRandom.nextDouble() <= .4) {
+            mySurpriseAttack = true;
         }
+        return mySurpriseAttack;
     }
-    private boolean caught(){
-        boolean caught;
-        Random rand= new Random();
-        if(rand.nextDouble()<=.2){
-          caught=true;
+
+    private boolean caught() {
+        if (myRandom.nextDouble() <= .2) {
+            myCaught = true;
         }
-        else {
-            caught = false;
-        }
-        return caught;
+        return myCaught;
     }
 
     /**
-     *
      * @param theOpponent
      */
     @Override
-    public  void attack(DungeonCharacter theOpponent){
-        int numofAttack = Math.max(1, this.getAttackSpeed()/ theOpponent.getAttackSpeed());
-        boolean isCaught = caught();
-        if(isCaught){
-            System.out.println(getName() +" " + "is caught");
+    public void attack(final DungeonCharacter theOpponent) {
+        final int numOfAttack = Math.max(1, this.getAttackSpeed() / theOpponent.getAttackSpeed());
+        if (caught()) { // don't perform attack if caught
+            System.out.println(getName() + " was caught");
             return;
         }
-        if(surpriseAttack) {
-            for(int i=0;i<numofAttack+1;i++){
-                int damage = new Random().nextInt(getDamageMax() -getDamageMin() + 1) // refactor this lines
+        if (useSpecialSkill()) {
+            for (int i = 0; i < numOfAttack + 1; i++) {
+                final int damage = myRandom.nextInt(getDamageMax() - getDamageMin() + 1)
                         + getDamageMin();
                 theOpponent.setHitPoints(theOpponent.getHitPoints() - damage);
             }
-        }
-        else{
-            for(int i=0;i<numofAttack;i++){
-                int damage = new Random().nextInt(getDamageMax() - getDamageMin() + 1) // refactor this lines
+        } else { // normal attack
+            for (int i = 0; i < numOfAttack; i++) {
+                final int damage = myRandom.nextInt(getDamageMax() - getDamageMin() + 1)
                         + getDamageMin();
                 theOpponent.setHitPoints(theOpponent.getHitPoints() - damage);
             }
         }
     }
- }
+
+    /**
+     * Sets the Random object for testing purposes.
+     *
+     * @param theRandom the Random object to set.
+     */
+    public void setRandom(final Random theRandom) {
+        this.myRandom = theRandom;
+    }
+}
 

@@ -9,20 +9,18 @@ import java.util.Random;
  * @version May 14th 2023
  */
 public class Monster extends DungeonCharacter implements Healable {
-    private final int myMaxHitPoints;
     private final double myChanceToHeal;
     private final int myMinHeal;
     private final int myMaxHeal;
     private Random myRandom;
 
-    public Monster(final String theName, final int theHitPoints, final double theHitChance, final int theDamageMin,
+    Monster(final String theName, final int theHitPoints, final double theHitChance, final int theDamageMin,
                       final int theDamageMax, final int theAttackSpeed, final double theHealChance, final int theMinHeal, final int theMaxHeal) {
         super(theName, theHitPoints, theHitChance, theDamageMin, theDamageMax, theAttackSpeed);
         this.myChanceToHeal = theHealChance;
         this.myMinHeal = theMinHeal;
         this.myMaxHeal = theMaxHeal;
-        this.myMaxHitPoints = theHitPoints;
-        myRandom = new Random();
+        this.myRandom = new Random();
     }
 
     /**
@@ -38,7 +36,7 @@ public class Monster extends DungeonCharacter implements Healable {
                 final int healAmount = myRandom.nextInt(myMaxHeal - myMinHeal + 1) + myMinHeal;
                 myCurrentHitPoints += healAmount;
                 // Ensure the monster's hit points do not exceed maximum hit points
-                myCurrentHitPoints = Math.min(myCurrentHitPoints, myMaxHitPoints);
+                myCurrentHitPoints = Math.min(myCurrentHitPoints, getMaxHitPoints());
                 setHitPoints(myCurrentHitPoints);
             }
         }
@@ -53,11 +51,9 @@ public class Monster extends DungeonCharacter implements Healable {
      */
     @Override
     public void attack(final DungeonCharacter theOpponent) {
-        if (theOpponent instanceof final Hero theHero) {
-            if (theHero.canBlock()) {
-                theOpponent.setAttacked(false);
-                return; // exit method (do not attack)
-            }
+        if (theOpponent.canBlockAttack()) {
+            theOpponent.setAttacked(false);
+            return;
         }
         if (canAttack()) {
             calculateDamage(theOpponent);
@@ -95,7 +91,7 @@ public class Monster extends DungeonCharacter implements Healable {
     public String toString() {
         return "Monster: " + getName() +
                 "\nHit Points: " + getHitPoints() +
-                "\nChance to Hit: " + getMyHitChance() +
+                "\nChance to Hit: " + getHitChance() +
                 "\nMinimum Damage: " + getDamageMin() +
                 "\nMaximum Damage: " + getDamageMax() +
                 "\nAttack Speed: " + getAttackSpeed() +
