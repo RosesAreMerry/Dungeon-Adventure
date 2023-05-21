@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
 public class WarriorTest extends RandomMock{
     private Warrior mywarrior;
     private DungeonCharacter opponent;
@@ -31,7 +30,7 @@ public class WarriorTest extends RandomMock{
     @Test
     public void testAttackSpecialSkilltrue() {
         rm.setMockIntValue(60);
-        mywarrior.setspecialcase(true);
+        mywarrior.setSpecialCase(true);
         mywarrior.attack(opponent);
         int expectedHitPoints =65; //200-135=95
         int actualHitPoints = opponent.getHitPoints();

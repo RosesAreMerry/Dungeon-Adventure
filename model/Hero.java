@@ -49,7 +49,7 @@ public abstract class Hero extends DungeonCharacter {
 
     protected void useHealingPotion(final int theHealthRestore) {
         // ensure hit points do not exceed maximum hit points
-        myHealth = Math.min(myHealth + theHealthRestore, getMaxHitPoints());
+        myHealth = Math.min(getHitPoints() + theHealthRestore, getMaxHitPoints());
         setHitPoints(myHealth);
     }
 
