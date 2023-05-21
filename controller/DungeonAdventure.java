@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import static model.Direction.*;
+
 public class DungeonAdventure {
     private Dungeon myDungeon;
     private Hero myHero;
@@ -89,10 +91,10 @@ public class DungeonAdventure {
     }
     private void handleAction(final String theChoice) {
         final Map<String, Runnable> actions = new HashMap<>();
-        actions.put("Go North", () -> myDungeon.move("North"));
-        actions.put("Go South", () -> myDungeon.move("South"));
-        actions.put("Go East", () -> myDungeon.move("East"));
-        actions.put("Go West", () -> myDungeon.move("West"));
+        actions.put("Go North", () -> myDungeon.move(NORTH));
+        actions.put("Go South", () -> myDungeon.move(SOUTH));
+        actions.put("Go East", () -> myDungeon.move(EAST));
+        actions.put("Go West", () -> myDungeon.move(WEST));
         actions.put("See Inventory", () -> myInventoryView.showInventory(myHero.getMyInventory().toArray(new Item[0])));
         actions.put("Look Around", () -> { /* handle Look Around action */ });
         final Runnable action = actions.get(theChoice);

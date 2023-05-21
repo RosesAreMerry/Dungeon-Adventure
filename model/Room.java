@@ -117,8 +117,8 @@ public class Room {
     public boolean hasPit() {
         throw new UnsupportedOperationException("Method not yet implemented");
     }
-    public Room getRoom(String theRoom) {
-        throw new UnsupportedOperationException("Method not yet implemented");
+    public Room getDoor(final Direction theDirection) {
+        return myDoors.get(theDirection);
     }
     @Override
     public String toString() {
