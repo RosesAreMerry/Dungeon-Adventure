@@ -23,4 +23,13 @@ public enum Direction {
             case WEST -> new Coordinate(theCoordinate.getX(), theCoordinate.getY() - 1);
         };
     }
+
+    public char getDirChar() {
+        return switch (this) {
+            case NORTH -> 'N';
+            case SOUTH -> 'S';
+            case EAST -> 'E';
+            case WEST -> 'W';
+        };
+    }
 }
