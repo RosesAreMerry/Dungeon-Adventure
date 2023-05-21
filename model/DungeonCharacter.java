@@ -16,6 +16,7 @@ public abstract class DungeonCharacter {
     private final int myAttackSpeed;
     private final double myHitChance;
     private Random myRandom;
+
     private boolean myIsAttacked;
 
     /**
@@ -134,7 +135,7 @@ public abstract class DungeonCharacter {
      * Sets the Random object for testing purposes.
      * @param theRandom the Random object to set.
      */
-    public void setRandom(final Random theRandom) {
+    public void setMyRandom(final Random theRandom) {
         this.myRandom = theRandom;
     }
 

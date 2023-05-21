@@ -7,7 +7,7 @@ import java.util.Random;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class MonsterTest {
+class MonsterTest extends RandomMock{
 
     private final Monster myGremlin = new Monster("Gremlin", 70, 0.8, 15,
             30, 5, 0.4, 20, 40) {
@@ -104,7 +104,7 @@ class MonsterTest {
             }
         };
         rm.setMockIntValue(5); // damage = 5 + 15 = 20
-        gremlin.setRandom(rm);
+        gremlin.setMyRandom(rm);
         gremlin.attack(ogre); // gremlin gets two attacks; ogre hit points = 200 - 20 - 20 = 160
         assertEquals(160, ogre.getHitPoints());
     }
@@ -126,33 +126,9 @@ class MonsterTest {
             }
         };
         rm.setMockIntValue(5);
-        gremlin.setRandom(rm);
+        gremlin.setMyRandom(rm);
         gremlin.attack(ogre);
         assertEquals(200, ogre.getHitPoints());
     }
 
-    /**
-     * Extends the {@link java.util.Random} class to provide a mock implementation for testing purposes.
-     * Allows setting the mock values for generating random double and int values.
-     */
-    private static class RandomMock extends Random {
-        private double myMockDoubleValue;
-        private int myMockIntValue;
-
-        private void setMockDoubleValue(final double theDouble) {
-            this.myMockDoubleValue = theDouble;
-        }
-
-        private void setMockIntValue(final int theInt) {
-            this.myMockIntValue = theInt;
-        }
-        @Override
-        public double nextDouble() {
-            return myMockDoubleValue;
-        }
-        @Override
-        public int nextInt(final int theBound) {
-            return myMockIntValue;
-        }
-    }
 }
