@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import static model.Direction.*;
+
 /**
  * Serves as the main entry point for the game and orchestrates the actions of the player, monsters,
  * and other entities within the game. Overall, it manages the game flow by handling user input, updating the game state,
@@ -149,6 +151,11 @@ public class DungeonAdventure {
         actions.put("Go " + direction, () -> { /* handle moving to another room action */ });
         actions.put("Battle " + monster, () -> handleCombat(monster));
         actions.put("See Inventory", () -> myInventoryView.showInventory(myHero.getMyInventory()));
+        actions.put("Go North", () -> myDungeon.move(NORTH));
+        actions.put("Go South", () -> myDungeon.move(SOUTH));
+        actions.put("Go East", () -> myDungeon.move(EAST));
+        actions.put("Go West", () -> myDungeon.move(WEST));
+        actions.put("See Inventory", () -> myInventoryView.showInventory(myHero.getMyInventory().toArray(new Item[0])));
         actions.put("Look Around", () -> { /* handle Look Around action */ });
         final Runnable action = actions.get(theChoice);
         action.run();
