@@ -1,13 +1,11 @@
 package model;
 
-
 import view.CombatView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Combat {
-
     CombatView myCombatView;
 
     public Combat() {
@@ -21,15 +19,21 @@ public class Combat {
                 thePlayer.getHitPoints(), null);
         while (!thePlayer.isFainted() && !theOpponent.isFainted()) {
             if (isPlayersTurn) {
-                thePlayer.attack(theOpponent);
-                actionLog.add(thePlayer.getName() + " attacked " + theOpponent.getName() + " with " + thePlayer.getTotalDamage() + " damage!");
+                handleAttack(thePlayer, theOpponent, actionLog);
             } else {
-                theOpponent.attack(thePlayer);
-                actionLog.add(theOpponent.getName() + " attacked " + thePlayer.getName() + " with " + theOpponent.getTotalDamage() + " damage!");
+                handleAttack(theOpponent, thePlayer, actionLog);
             }
             isPlayersTurn = !isPlayersTurn;
         }
         myCombatView.showCombat(thePlayer.getName(), theOpponent.getName(), theOpponent.getHitPoints(),
                 thePlayer.getHitPoints(), actionLog.toArray(new String[0]));
+    }
+    private void handleAttack(final DungeonCharacter theCombatant1, final DungeonCharacter theCombatant2, final List<String> theActionLog) {
+        theCombatant1.attack(theCombatant2);
+        theActionLog.add(theCombatant1.getName() + " attacked " + theCombatant2.getName() + " with " + theCombatant1.getTotalDamage() + " damage!");
+        if (theCombatant2 instanceof Healable) {
+            ((Healable) theCombatant2).heal();
+            theActionLog.add(theCombatant2.getName() + " healed by " + ((Healable) theCombatant2).healAmount() + " hit points");
+        }
     }
 }

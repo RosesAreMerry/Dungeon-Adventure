@@ -24,7 +24,7 @@ public class DungeonAdventure {
     public DungeonAdventure() {
         myAdventureView = new AdventureView();
         final Consumer<Item> myItemHandler = item -> {
-            if (item instanceof final Potion thePotion) {
+            if (item instanceof final Potion thePotion) { // refactor this
                 thePotion.use(myHero);
             }
         };
