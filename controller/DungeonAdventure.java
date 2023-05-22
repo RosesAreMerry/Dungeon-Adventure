@@ -2,10 +2,13 @@ package controller;
 
 import model.*;
 import view.AdventureView;
+import view.CombatView;
 import view.InventoryView;
 import view.RoomData;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -18,8 +21,9 @@ public class DungeonAdventure {
     private Dungeon myDungeon;
     private Hero myHero;
     private final AdventureView myAdventureView;
-
     private final InventoryView myInventoryView;
+    private final CombatView myCombatView;
+    private final RoomData myRoomData;
 
     public DungeonAdventure() {
         myAdventureView = new AdventureView();
@@ -29,6 +33,12 @@ public class DungeonAdventure {
             }
         };
         myInventoryView = new InventoryView(myItemHandler);
+        myCombatView = new CombatView();
+        myRoomData = new RoomData("You walk into a room",
+                new String[]{"North", "South"},
+                new String[]{"Health Potion"},
+                new String[]{"Ogre", "Gremlin"},
+                false, false);
         boolean playAgain = true;
         while (playAgain) {
             playGame();
@@ -46,12 +56,6 @@ public class DungeonAdventure {
         createDungeon();
         myHero.addToInventory(new HealingPotion());
         myAdventureView.sendMessage("\nYou walk into a dungeon.");
-        myAdventureView.printRoom(new RoomData(
-                "You walk into a room",
-                new String[]{"North", "South"},
-                new String[]{"Health Potion"},
-                new String[]{"Ogre"},
-                false, false), null);
 
         // Main game loop
         do {
@@ -82,8 +86,6 @@ public class DungeonAdventure {
         final String name = myAdventureView.promptUserInput("\nWhat is your name? ", "Please enter a name: ", (String s) -> s != null && s.length() > 0);
         myAdventureView.sendMessage("Pick your character: ");
         final String character = myAdventureView.promptUserChoice(new String[]{"Thief", "Warrior", "Priestess"}, false);
-
-        // TODO: Refactor this
         switch (character) {
             case "Thief" -> {
                 return new Thief(name);
@@ -109,6 +111,7 @@ public class DungeonAdventure {
      * This method shows the description of the current room, along with any available items in the room.
      */
     private void displayCurrentRoom() {
+        myAdventureView.printRoom(myRoomData, null);
     }
 
     /**
@@ -117,8 +120,19 @@ public class DungeonAdventure {
      */
     private void displayOptions() {
         myAdventureView.sendMessage("What do you want to do?");
-        final String choice = myAdventureView.promptUserChoice(new String[]{"Go North", "Go South", "See Inventory", "Look Around"}, true);
-        myAdventureView.sendMessage("You chose: " + choice + "\n");
+        final List<String> options = new ArrayList<>();
+        if (myRoomData.getMonsters().length == 0) {
+            for (final String door : myRoomData.getDoors()) {
+                options.add("Go " + door);
+            }
+            options.add("Look Around");
+        }
+        options.add("See Inventory");
+        for (final String monster : myRoomData.getMonsters()) {
+            options.add("Battle " + monster);
+        }
+        final String choice = myAdventureView.promptUserChoice(options.toArray(new String[0]));
+        myAdventureView.sendMessage("You chose: " + choice);
         handleAction(choice);
     }
 
@@ -130,14 +144,27 @@ public class DungeonAdventure {
      */
     private void handleAction(final String theChoice) {
         final Map<String, Runnable> actions = new HashMap<>();
-        actions.put("Go North", () -> myDungeon.move("North"));
-        actions.put("Go South", () -> myDungeon.move("South"));
-        actions.put("Go East", () -> myDungeon.move("East"));
-        actions.put("Go West", () -> myDungeon.move("West"));
+        final String direction = theChoice.substring(3);
+        final String monster = theChoice.substring(7);
+        actions.put("Go " + direction, () -> { /* handle moving to another room action */ });
+        actions.put("Battle " + monster, () -> handleCombat(monster));
         actions.put("See Inventory", () -> myInventoryView.showInventory(myHero.getMyInventory()));
         actions.put("Look Around", () -> { /* handle Look Around action */ });
         final Runnable action = actions.get(theChoice);
         action.run();
+    }
+
+    private void handleCombat(final String theOpponent) {
+        if (myRoomData.getMonsters() != null && myRoomData.getMonsters().length > 0) {
+            final Combat combat = new Combat();
+            final MonsterFactory monsterFactory = new MonsterFactory();
+            final Monster opponent = monsterFactory.createMonster(theOpponent);
+            combat.initiateCombat(myHero, opponent);
+            myRoomData.removeMonsterFromRoom(theOpponent);
+            if (opponent.isFainted()) {
+                myAdventureView.sendMessage(theOpponent + " was defeated!");
+            }
+        }
     }
 
     /**

@@ -8,19 +8,15 @@ import java.util.ArrayList;
  * @author Chelsea Dacones
  */
 public abstract class Hero extends DungeonCharacter {
-    private final int myMaxHealth;
     private final double myBlockChance;
     private final ArrayList<Item> myInventory;
     private int myHealth;
-    private final int myMaxHitPoints;
 
-    public Hero(final String theName, final int theHitPoints, final double theHitChance, final int theDamageMin,
+    protected Hero(final String theName, final int theHitPoints, final double theHitChance, final int theDamageMin,
                 final int theDamageMax, final int theAttackSpeed, final double theBlockChance) {
         super(theName, theHitPoints, theHitChance, theDamageMin, theDamageMax, theAttackSpeed);
-        this.myBlockChance = theBlockChance;
-        this.myMaxHitPoints = theHitPoints;
+        myBlockChance = theBlockChance;
         myHealth = getHitPoints();
-        myMaxHealth = getHitPoints();
         myInventory = new ArrayList<>();
     }
 
@@ -53,16 +49,13 @@ public abstract class Hero extends DungeonCharacter {
 
     protected void useHealingPotion(final int theHealthRestore) {
         // ensure hit points do not exceed maximum hit points
-        myHealth = Math.min(myHealth + theHealthRestore, myMaxHealth);
+        myHealth = Math.min(getHitPoints() + theHealthRestore, getMaxHitPoints());
         setHitPoints(myHealth);
     }
 
-    protected boolean canBlock() {
+    @Override
+    protected boolean canBlockAttack() {
         final double randomValue = Math.random();
-        return randomValue < myBlockChance;
-    }
-
-    protected int getMaxHitPoints() {
-        return myMaxHitPoints;
+        return randomValue <= myBlockChance;
     }
 }

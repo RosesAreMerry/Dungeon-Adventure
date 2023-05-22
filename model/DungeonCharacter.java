@@ -31,14 +31,14 @@ public abstract class DungeonCharacter {
      * @param theDamageMax   the maximum damage the character can inflict
      * @param theAttackSpeed the attack speed of the character
      */
-    protected DungeonCharacter(final String theName, final int theHitPoints, final double theHitChance,
-                            final int theDamageMin, final int theDamageMax, final int theAttackSpeed) {
-        myName = theName;
-        myHitPoints = theHitPoints;
-        myHitChance = theHitChance;
-        myDamageMin = theDamageMin;
-        myDamageMax = theDamageMax;
-        myAttackSpeed = theAttackSpeed;
+    public DungeonCharacter(final String theName, final int theHitPoints, final double theHitChance,
+                               final int theDamageMin, final int theDamageMax, final int theAttackSpeed) {
+        this.myName = theName;
+        this.myHitPoints = theHitPoints;
+        this.myHitChance = theHitChance;
+        this.myDamageMin = theDamageMin;
+        this.myDamageMax = theDamageMax;
+        this.myAttackSpeed = theAttackSpeed;
         myRandom = new Random();
         myIsAttacked = false;
         myMaxHitPoints = theHitPoints;

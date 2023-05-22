@@ -1,7 +1,6 @@
 package model;
 
 import java.util.Random;
-
 /**
  * This is the healable inteface for other classes to use
  * @author malihahossain
