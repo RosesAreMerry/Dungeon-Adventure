@@ -13,7 +13,7 @@ public class DungeonBuilderTest {
     public void testDungeonBuilder() {
         DungeonBuilder dungeonBuilder = DungeonBuilder.INSTANCE;
         try {
-            dungeonBuilder.buildDungeon(100);
+            dungeonBuilder.buildDungeon(2000);
         } catch (final Exception e) {
             e.printStackTrace();
             fail();
