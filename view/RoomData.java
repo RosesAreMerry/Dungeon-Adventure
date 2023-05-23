@@ -1,5 +1,7 @@
 package view;
 
+import model.Room;
+
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -33,6 +35,12 @@ public class RoomData {
                     final boolean theIsPit,
                     final boolean theIsExit) {
         this("You are in a room.", theDoors, theItems, theMonsters, theIsPit, theIsExit);
+    }
+
+
+    public RoomData(final Room theRoom) {
+        // TODO: Implement this constructor
+        throw new UnsupportedOperationException("Method not yet implemented");
     }
 
     public String[] getDoors() {
