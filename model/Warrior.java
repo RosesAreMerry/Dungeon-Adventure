@@ -64,4 +64,6 @@ public class Warrior extends Hero {
     public void setMyRandom(final Random theRandom) {
         myRandom = theRandom;
     }
+
+
 }
