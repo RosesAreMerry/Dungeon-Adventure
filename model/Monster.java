@@ -88,7 +88,6 @@ public class Monster extends DungeonCharacter implements Healable {
     /**
      * THe Monster's statistics.
      * Made for testing purposes.
-     *
      * @return the Monster's statistics.
      */
     @Override
