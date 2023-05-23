@@ -11,21 +11,23 @@ import java.util.Random;
 public class Warrior extends Hero {
     /**
      * constructor to initialize the states
+     *
      * @param theName
      */
     private boolean myUsedSpecialCase;
     private Random myRandom;
+
     public Warrior(final String theName) {
         super(theName, 125, 0.8, 35, 60, 4, 0.2);
-        myUsedSpecialCase= useSpecialSkill();
-         myRandom= new Random();
+        myUsedSpecialCase = useSpecialSkill();
+        myRandom = new Random();
     }
 
 
     public void attack(final DungeonCharacter theOpponent) {
         if (canAttack()) {
             if (myUsedSpecialCase) {
-                int damage =myRandom.nextInt(101) + 75; // 75 to 175 points of damage
+                final int damage = myRandom.nextInt(101) + 75; // 75 to 175 points of damage
                 theOpponent.setHitPoints(theOpponent.getHitPoints() - damage);
                 theOpponent.setAttacked(true);
 
@@ -42,6 +44,7 @@ public class Warrior extends Hero {
     /**
      * Checks whether Warrior can use Crushing Blow skill.
      * Has 40% chance of succeeding.
+     *
      * @return true if Warrior can use special skill; otherwise false
      */
     private boolean useSpecialSkill() {
@@ -51,14 +54,15 @@ public class Warrior extends Hero {
 
     /**
      * this is for testing
-     * @param value
+     *
+     * @param theValue
      */
-    public void setspecialcase(boolean value){
-        myUsedSpecialCase=value;
+    public void setSpecialCase(final boolean theValue) {
+        myUsedSpecialCase = theValue;
     }
 
-    public void setMyRandom(Random random) {
-        myRandom = random;
+    public void setMyRandom(final Random theRandom) {
+        myRandom = theRandom;
     }
 
 

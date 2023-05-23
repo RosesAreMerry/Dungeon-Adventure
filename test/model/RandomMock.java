@@ -1,15 +1,12 @@
 package model;
-/**
- * test class for warrior
- * @author Maliha Hoss
- */
 
 import java.util.Random;
+
 /**
  * Extends the {@link java.util.Random} class to provide a mock implementation for testing purposes.
  * Allows setting the mock values for generating random double and int values.
  */
-public   class RandomMock extends Random {
+class RandomMock extends Random {
     private double myMockDoubleValue;
     private int myMockIntValue;
 

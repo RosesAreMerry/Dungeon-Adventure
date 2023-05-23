@@ -4,52 +4,62 @@ import java.util.Random;
 
 /**
  * The parent class for the character hierarchy.
+ *
  * @author Maliha Hossain
  * @author Chelsea Dacones
  * @version May 14th 2023
  */
 public abstract class DungeonCharacter {
     private  String myName;
-    private int myHitPoints;
     private final int myDamageMin;
     private final int myDamageMax;
     private final int myAttackSpeed;
     private final double myHitChance;
+    private final int myMaxHitPoints;
+    private int myHitPoints;
     private Random myRandom;
-
     private boolean myIsAttacked;
+    private int myTotalDamage;
 
     /**
-     * Initialize the instance fields.
+     * Constructs a new DungeonCharacter and initializes instance fields.
+     *
+     * @param theName        the character's name
+     * @param theHitPoints   the maximum number of hit points of the character
+     * @param theHitChance   the character's probability to attack
+     * @param theDamageMin   the minimum damage the character can inflict
+     * @param theDamageMax   the maximum damage the character can inflict
+     * @param theAttackSpeed the attack speed of the character
      */
     protected DungeonCharacter(final String theName, final int theHitPoints, final double theHitChance,
-                               final int theDamageMin, final int theDamageMax, final int theAttackSpeed) {
-        this.myName = theName;
-        this.myHitPoints = theHitPoints;
-        this.myHitChance = theHitChance;
-        this.myDamageMin = theDamageMin;
-        this.myDamageMax = theDamageMax;
-        this.myAttackSpeed = theAttackSpeed;
-        this.myRandom = new Random();
-        this.myIsAttacked = false;
+                            final int theDamageMin, final int theDamageMax, final int theAttackSpeed) {
+        myName = theName;
+        myHitPoints = theHitPoints;
+        myHitChance = theHitChance;
+        myDamageMin = theDamageMin;
+        myDamageMax = theDamageMax;
+        myAttackSpeed = theAttackSpeed;
+        myRandom = new Random();
+        myIsAttacked = false;
+        myMaxHitPoints = theHitPoints;
+        myTotalDamage = 0;
     }
-    
+
     /**
      * Checks if character is fainted.
+     *
      * @return true if hit points is less than or equal to 0; otherwise false.
      */
     public boolean isFainted() {
         return myHitPoints <= 0;
     }
+
     public String getName() {
-       return myName;
+        return myName;
     }
 
-    public void setName(final String theName) {
-        this.myName = theName;
-    }
     public int getHitPoints() {
-      return myHitPoints;
+        return myHitPoints;
     }
 
     public void setHitPoints(final int theHitPoints) {
@@ -64,18 +74,31 @@ public abstract class DungeonCharacter {
         return myDamageMax;
     }
 
-    public Double getMyHitChance(){
+    public Double getHitChance() {
         return myHitChance;
     }
+
     public int getDamageMin() {
         return myDamageMin;
     }
 
+    public int getMaxHitPoints() {
+        return myMaxHitPoints;
+    }
+
+    public int getTotalDamage() {
+        return myTotalDamage;
+    }
+
+    public void setTotalDamage(final int theTotalDamage) {
+        myTotalDamage = theTotalDamage;
+    }
+
     /**
      * Decides if character can attack based on chance to hit.
+     *
      * @return true if character can attack opponent; otherwise false
      */
-    //refactor
     protected boolean canAttack() {
         final double randomValue = new Random().nextDouble();
         return randomValue < myHitChance;
@@ -83,6 +106,7 @@ public abstract class DungeonCharacter {
 
     /**
      * Performs an attack on the opponent of the character.
+     *
      * @param theOpponent the character to attack.
      */
     public void attack(final DungeonCharacter theOpponent) {
@@ -103,13 +127,17 @@ public abstract class DungeonCharacter {
      *
      * @param theOpponent the character to inflict damage on.
      */
-    protected void calculateDamage(final DungeonCharacter theOpponent) {
+    protected int calculateDamage(final DungeonCharacter theOpponent) {
         final int numOfAttacks = Math.max(1, this.getAttackSpeed() / theOpponent.getAttackSpeed());
+        myTotalDamage = 0;
         for (int i = 0; i < numOfAttacks; i++) {
             final int damage = myRandom.nextInt(getDamageMax() - getDamageMin() + 1)
                     + getDamageMin();
+            myTotalDamage += damage;
             theOpponent.setHitPoints(theOpponent.getHitPoints() - damage);
+            setTotalDamage(myTotalDamage);
         }
+        return myTotalDamage;
     }
 
     /**
@@ -120,6 +148,10 @@ public abstract class DungeonCharacter {
      */
     protected boolean isAttacked() {
         return myIsAttacked;
+    }
+
+    protected boolean canBlockAttack() {
+        return false;
     }
 
     /**
@@ -133,9 +165,10 @@ public abstract class DungeonCharacter {
 
     /**
      * Sets the Random object for testing purposes.
+     *
      * @param theRandom the Random object to set.
      */
-    public void setMyRandom(final Random theRandom) {
+    public void setRandom(final Random theRandom) {
         this.myRandom = theRandom;
     }
 

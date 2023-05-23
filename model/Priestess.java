@@ -1,8 +1,10 @@
 package model;
 
 import java.util.Random;
+
 /**
  * Represents a Priestess in the game.
+ *
  * @author Maliha Hossain
  * @author Chelsea Dacones
  */
@@ -21,6 +23,7 @@ public class Priestess extends Hero implements Healable {
         myCurrentHitPoints = this.getHitPoints();
         myRandom= new Random();
     }
+
     @Override
     public void heal() {
         final int minBound = 1; // Minimum bound for the healAmount
