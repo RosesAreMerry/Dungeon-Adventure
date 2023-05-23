@@ -10,7 +10,7 @@ import java.util.Random;
  */
 public class Priestess extends Hero implements Healable {
     boolean success;
-    int myCurrentHitPoints;
+
     private Random myRandom;
 
     private int myHealAmount;
@@ -23,13 +23,13 @@ public class Priestess extends Hero implements Healable {
     public Priestess(final String theName) {
         super(theName, 75, .7, 25, 45, 5, .3);
         success = false;
-        myCurrentHitPoints = this.getHitPoints();
         myRandom = new Random();
         myHealAmount = 0;
     }
 
     @Override
     public void heal() {
+        int myCurrentHitPoints = getHitPoints();
         myHealAmount = myRandom.nextInt(20 - 10 + 1) + 10;
         myCurrentHitPoints += myHealAmount;
         // Ensure the monster's hit points do not exceed maximum hit points

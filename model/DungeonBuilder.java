@@ -6,13 +6,13 @@ import java.util.stream.IntStream;
 import static model.Direction.*;
 import static model.Direction.WEST;
 
-class DungeonBuilder {
+public class DungeonBuilder {
     public static final DungeonBuilder INSTANCE = new DungeonBuilder();
 
     private final List<Coordinate> myOccupiedSpaces = new ArrayList<>();
     private Random myRandom = new Random();
 
-    private DungeonBuilder() { }
+    public DungeonBuilder() { }
 
 
     public Dungeon buildDungeon(final int theNumberOfRooms) {

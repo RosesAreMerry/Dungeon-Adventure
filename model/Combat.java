@@ -30,10 +30,12 @@ public class Combat {
     }
     private void handleAttack(final DungeonCharacter theCombatant1, final DungeonCharacter theCombatant2, final List<String> theActionLog) {
         theCombatant1.attack(theCombatant2);
-        theActionLog.add(theCombatant1.getName() + " attacked " + theCombatant2.getName() + " with " + theCombatant1.getTotalDamage() + " damage!");
-        if (theCombatant2 instanceof Healable) {
-            ((Healable) theCombatant2).heal();
-            theActionLog.add(theCombatant2.getName() + " healed by " + ((Healable) theCombatant2).healAmount() + " hit points");
+        if (theCombatant2.isAttacked()) {
+            theActionLog.add(theCombatant1.getName() + " attacked " + theCombatant2.getName() + " with " + theCombatant1.getTotalDamage() + " damage!");
+            if (theCombatant2 instanceof Healable) {
+                ((Healable) theCombatant2).heal();
+                theActionLog.add(theCombatant2.getName() + " healed by " + ((Healable) theCombatant2).healAmount() + " hit points");
+            }
         }
     }
 }

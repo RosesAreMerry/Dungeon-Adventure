@@ -14,19 +14,17 @@ public class Warrior extends Hero {
      *
      * @param theName
      */
-    private boolean myUsedSpecialCase;
     private Random myRandom;
 
     public Warrior(final String theName) {
         super(theName, 125, 0.8, 35, 60, 4, 0.2);
-        myUsedSpecialCase = useSpecialSkill();
         myRandom = new Random();
     }
 
 
     public void attack(final DungeonCharacter theOpponent) {
         if (canAttack()) {
-            if (myUsedSpecialCase) {
+            if (useSpecialSkill()) {
                 final int damage = myRandom.nextInt(101) + 75; // 75 to 175 points of damage
                 theOpponent.setHitPoints(theOpponent.getHitPoints() - damage);
                 theOpponent.setAttacked(true);
@@ -47,18 +45,9 @@ public class Warrior extends Hero {
      *
      * @return true if Warrior can use special skill; otherwise false
      */
-    private boolean useSpecialSkill() {
+    protected boolean useSpecialSkill() {
         final double randomValue = Math.random();
         return randomValue < 0.4;
-    }
-
-    /**
-     * this is for testing
-     *
-     * @param theValue
-     */
-    public void setSpecialCase(final boolean theValue) {
-        myUsedSpecialCase = theValue;
     }
 
     public void setMyRandom(final Random theRandom) {

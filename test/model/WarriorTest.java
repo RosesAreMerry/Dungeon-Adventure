@@ -30,7 +30,7 @@ public class WarriorTest extends RandomMock{
     @Test
     public void testAttackSpecialSkilltrue() {
         rm.setMockIntValue(60);
-        mywarrior.setSpecialCase(true);
+//        mywarrior.setSpecialCase(true);
         mywarrior.attack(opponent);
         int expectedHitPoints =65; //200-135=95
         int actualHitPoints = opponent.getHitPoints();
