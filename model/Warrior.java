@@ -26,9 +26,8 @@ public class Warrior extends Hero {
         if (canAttack()) {
             if (useSpecialSkill()) {
                 final int damage = myRandom.nextInt(101) + 75; // 75 to 175 points of damage
-                theOpponent.setHitPoints(theOpponent.getHitPoints() - damage);
+                theOpponent.setHitPoints(Math.max(theOpponent.getHitPoints() - damage, 0));
                 theOpponent.setAttacked(true);
-
                 return; // exit method after performing special skill
             }
             calculateDamage(theOpponent); // if special skill is unsuccessful, perform normal attack

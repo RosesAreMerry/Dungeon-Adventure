@@ -32,7 +32,8 @@ public class Priestess extends Hero implements Healable {
         int myCurrentHitPoints = getHitPoints();
         myHealAmount = myRandom.nextInt(20 - 10 + 1) + 10;
         myCurrentHitPoints += myHealAmount;
-        // Ensure the monster's hit points do not exceed maximum hit points
+        setHealAmount(myHealAmount);
+        // Ensure the hit points do not exceed maximum hit points
         myCurrentHitPoints = Math.min(myCurrentHitPoints, getMaxHitPoints());
         setHitPoints(myCurrentHitPoints);
 
@@ -41,6 +42,10 @@ public class Priestess extends Hero implements Healable {
 //        final int healAmount = myRandom.nextInt(maxBound) + minBound;
 //        myHealedHitPoints = this.getHitPoints() + healAmount;
 //        this.setHitPoints(myHealedHitPoints);
+    }
+
+    private void setHealAmount(int theHealAmount) {
+        myHealAmount = theHealAmount;
     }
     @Override
     public int healAmount() {

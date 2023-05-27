@@ -91,59 +91,6 @@ public class DungeonAdventure {
         myDungeon = myDungeonBuilder.buildDungeon(10);
         setUpRoom(myDungeon.getCurrentRoom());
     }
-
-    private String[] generateItems() {
-        final int itemCount = (int) (Math.random() * 3);
-        String[] myItems = new String[0];
-        for (int i = 0; i < itemCount; i++) {
-            final List<String> myItemList = new ArrayList<>(Arrays.asList(myItems));
-            final Item item = generateRandomItem();
-            myHero.addToInventory(item);
-            // Add the new element
-            myItemList.add(item.getName());
-            // Convert the Arraylist to array
-            myItems = myItemList.toArray(myItems);
-        }
-        return myItems;
-    }
-
-    private Item generateRandomItem() {
-        final int itemType = (int) (Math.random() * 6);
-        return switch (itemType) {
-            case 0 -> new HealingPotion();
-            case 1 -> new VisionPotion();
-            case 2 -> new PillarOfOO("Abstraction");
-            case 3 -> new PillarOfOO("Encapsulation");
-            case 4 -> new PillarOfOO("Inheritance");
-            case 5 -> new PillarOfOO("Polymorphism");
-            default -> null;
-        };
-    }
-
-    private String[] generateMonsters() {
-        final int monsterCount = (int) (Math.random() * 3);
-        String[] myMonsters = new String[0];
-        for (int i = 0; i < monsterCount; i++) {
-            final List<String> myMonsterList = new ArrayList<>(Arrays.asList(myMonsters));
-            final Monster monster = generateRandomMonster();
-            // Add the new element
-            myMonsterList.add(monster.getName());
-            // Convert the Arraylist to array
-            myMonsters = myMonsterList.toArray(myMonsters);
-        }
-        return myMonsters;
-    }
-
-    private Monster generateRandomMonster() {
-        final int monsterType = (int) (Math.random() * 3);
-        final MonsterFactory monsterFactory = new MonsterFactory();
-        return switch (monsterType) {
-            case 0 -> monsterFactory.createMonster("Ogre");
-            case 1 -> monsterFactory.createMonster("Gremlin");
-            case 2 -> monsterFactory.createMonster("Skeleton");
-            default -> null;
-        };
-    }
     
     /**
      * Displays the current room to the user.
@@ -165,8 +112,8 @@ public class DungeonAdventure {
                         + direction.toString().substring(1).toLowerCase())
                 .toArray(String[]::new);
         myCurrentRoomData = new RoomData(doorsString,
-                generateItems(),
-                generateMonsters(), false, false);
+                new String[]{"Vision Potion"},
+                new String[]{"Ogre"}, false, false);
         setRoomData(myCurrentRoomData);
     }
 

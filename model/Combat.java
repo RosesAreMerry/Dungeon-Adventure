@@ -36,6 +36,8 @@ public class Combat {
                 ((Healable) theCombatant2).heal();
                 theActionLog.add(theCombatant2.getName() + " healed by " + ((Healable) theCombatant2).healAmount() + " hit points");
             }
+        } else {
+            theActionLog.add(theCombatant1.getName() + " failed to attack " + theCombatant2.getName());
         }
     }
 }

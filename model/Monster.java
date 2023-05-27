@@ -37,6 +37,7 @@ public class Monster extends DungeonCharacter implements Healable {
             if (randomValue < myChanceToHeal) { //
                 myHealAmount = myRandom.nextInt(myMaxHeal - myMinHeal + 1) + myMinHeal;
                 myCurrentHitPoints += myHealAmount;
+                setHealAmount(myHealAmount);
                 // Ensure the monster's hit points do not exceed maximum hit points
                 myCurrentHitPoints = Math.min(myCurrentHitPoints, getMaxHitPoints());
                 setHitPoints(myCurrentHitPoints);
@@ -53,7 +54,7 @@ public class Monster extends DungeonCharacter implements Healable {
      */
     @Override
     public void attack(final DungeonCharacter theOpponent) {
-        if (theOpponent.canBlockAttack()) {
+        if (theOpponent.canBlockAttack() || !theOpponent.canAttack()) {
             theOpponent.setAttacked(false);
             return;
         }
@@ -72,6 +73,11 @@ public class Monster extends DungeonCharacter implements Healable {
 
     public int getMyMaxHeal() {
         return myMaxHeal;
+    }
+
+
+    private void setHealAmount(int theHealAmount) {
+        myHealAmount = theHealAmount;
     }
 
     @Override

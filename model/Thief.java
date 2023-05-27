@@ -12,11 +12,14 @@ public class Thief extends Hero{
     
     private Random myRandom;
 
+    private int myTotalDamage;
+
     public Thief(final String theName) {
         super(theName, 75, 0.8, 20, 40, 6, 0.4);
         mySurpriseAttack = false;
         myCaught = false;
         myRandom = new Random();
+        myTotalDamage = 0;
     }
     /**
      * determines if the specialskill was used or not
@@ -27,9 +30,7 @@ public class Thief extends Hero{
         }
         return mySurpriseAttack;
     }
-    /**
-     * determines if the specialskill was used or not
-     */
+
     private boolean caught() {
         if (myRandom.nextDouble() <= .2) {
             myCaught = true;
@@ -45,22 +46,22 @@ public class Thief extends Hero{
     @Override
     public void attack(final DungeonCharacter theOpponent) {
         final int numOfAttack = Math.max(1, this.getAttackSpeed() / theOpponent.getAttackSpeed());
-        if (caught()) { // don't perform attack if caught
-            System.out.println(getName() + " was caught");
+        if (caught() || !canAttack()) { // don't perform attack if caught, or cannot attack based on chance to hit
+            theOpponent.setAttacked(false);
             return;
         }
         if (useSpecialSkill()) {
             for (int i = 0; i < numOfAttack + 1; i++) {
                 final int damage = myRandom.nextInt(getDamageMax() - getDamageMin() + 1)
                         + getDamageMin();
-                theOpponent.setHitPoints(theOpponent.getHitPoints() - damage);
+                myTotalDamage += damage;
+                setTotalDamage(myTotalDamage);
+                theOpponent.setHitPoints(Math.max(theOpponent.getHitPoints() - damage, 0));
+                theOpponent.setAttacked(true);
             }
         } else { // normal attack
-            for (int i = 0; i < numOfAttack; i++) {
-                final int damage = myRandom.nextInt(getDamageMax() - getDamageMin() + 1)
-                        + getDamageMin();
-                theOpponent.setHitPoints(theOpponent.getHitPoints() - damage);
-            }
+            calculateDamage(theOpponent);
+            theOpponent.setAttacked(true);
         }
     }
 
@@ -69,7 +70,7 @@ public class Thief extends Hero{
      *
      * @param theRandom the Random object to set.
      */
-    public void setRandom(final Random theRandom) {
+    public void setMyRandom(final Random theRandom) {
         this.myRandom = theRandom;
     }
 }
