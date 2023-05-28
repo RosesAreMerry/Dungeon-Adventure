@@ -5,6 +5,7 @@ import view.AdventureView;
 import view.InventoryView;
 import view.RoomData;
 
+import javax.swing.tree.RowMapper;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -25,8 +26,11 @@ public class DungeonAdventure {
         myAdventureView = new AdventureView();
         myCurrentRoom = null;
         final Consumer<Item> myItemHandler = item -> {
-            if (item instanceof final Potion thePotion) {
+            if (item instanceof final HealingPotion thePotion) {
                 thePotion.use(myHero);
+            }
+            if (item instanceof VisionPotion) {
+                useVisionPotion();
             }
         };
         myInventoryView = new InventoryView(myItemHandler);
@@ -91,7 +95,7 @@ public class DungeonAdventure {
         myDungeon = myDungeonBuilder.buildDungeon(10);
         setUpRoom(myDungeon.getCurrentRoom());
     }
-    
+
     /**
      * Displays the current room to the user.
      * This method shows the description of the current room, along with any available items in the room.
@@ -114,6 +118,7 @@ public class DungeonAdventure {
         myCurrentRoomData = new RoomData(doorsString,
                 new String[]{"Vision Potion"},
                 new String[]{"Ogre"}, false, false);
+        myHero.addToInventory(new VisionPotion());
         setRoomData(myCurrentRoomData);
     }
 
@@ -177,6 +182,20 @@ public class DungeonAdventure {
         myDungeon.move(enumDirection);
         setUpRoom(myDungeon.getCurrentRoom());
         System.out.println(myHero.getName() + " has moved to the " + theDirection);
+    }
+
+    public void useVisionPotion() {
+        final Room myCurrentRoom = myDungeon.getCurrentRoom();
+        final Map<String, RoomData> adjacentRooms = new HashMap<>();
+        final Map<Direction, Room> doors = myCurrentRoom.getDoors();
+        for (Map.Entry<Direction, Room> entry : doors.entrySet()) {
+            final Direction direction = entry.getKey();
+            final Room room = entry.getValue();
+            RoomData roomData = null; // RoomData roomData = new RoomData(room);
+            adjacentRooms.put(direction.toString(), roomData);
+
+        }
+        myAdventureView.printRoom(myCurrentRoomData, adjacentRooms);
     }
 
     /**
