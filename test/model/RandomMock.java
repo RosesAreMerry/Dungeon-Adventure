@@ -1,5 +1,6 @@
 package model;
 
+import java.util.Queue;
 import java.util.Random;
 
 /**
@@ -8,17 +9,24 @@ import java.util.Random;
  */
 class RandomMock extends Random {
     private double myMockDoubleValue;
+    private Queue<Double> myMockDoubleValues;
     private int myMockIntValue;
 
     public void setMockDoubleValue(final double theDouble) {
-        this.myMockDoubleValue = theDouble;
+        myMockDoubleValue = theDouble;
+    }
+    public void setMockDoubleValues(final Queue<Double> theDoubleValues) {
+        myMockDoubleValues = theDoubleValues;
     }
 
     public void setMockIntValue(final int theInt) {
-        this.myMockIntValue = theInt;
+        myMockIntValue = theInt;
     }
     @Override
     public double nextDouble() {
+        if (myMockDoubleValues != null && !myMockDoubleValues.isEmpty()) {
+            return myMockDoubleValues.remove();
+        }
         return myMockDoubleValue;
     }
     @Override
