@@ -17,7 +17,7 @@ public abstract class DungeonCharacter {
     private final double myHitChance;
     private final int myMaxHitPoints;
     private int myHitPoints;
-    private Random myRandom;
+    protected Random myRandom;
     private boolean myIsAttacked;
     private int myTotalDamage;
 
@@ -100,7 +100,7 @@ public abstract class DungeonCharacter {
      * @return true if character can attack opponent; otherwise false
      */
     protected boolean canAttack() {
-        final double randomValue = new Random().nextDouble();
+        final double randomValue = myRandom.nextDouble();
         return randomValue < myHitChance;
     }
 
@@ -169,13 +169,13 @@ public abstract class DungeonCharacter {
      * @param theRandom the Random object to set.
      */
     public void setRandom(final Random theRandom) {
-        this.myRandom = theRandom;
+        myRandom = theRandom;
     }
 
     public String toString() {
         return "Monster: " + getName() +
                 "\nHit Points: " + getHitPoints() +
-                "\nChance to Hit: " + getMyHitChance() +
+                "\nChance to Hit: " + getHitChance() +
                 "\nMinimum Damage: " + getDamageMin() +
                 "\nMaximum Damage: " + getDamageMax() +
                 "\nAttack Speed: " + getAttackSpeed() ;

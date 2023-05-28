@@ -2,6 +2,10 @@ package model;
 
 import java.util.*;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static model.Direction.*;
 
 public class Room {
 
@@ -87,36 +91,64 @@ public class Room {
         myHasPit = false;
         myIsExit = true;
     }
-    public String getDirections() {
-        return getDirections(null);
-    }
 
-    private String getDirections(final Direction[] theDirections) {
+    /**
+     * Makes a string representation of the room.
+     * Example of a room containing the pillar of Polymorphism and doors on all sides:<br>
+     * *-*<br>
+     * |P|<br>
+     * *-*<br>
+     *
+     * @return a string representation of the room
+     * */
+    @Override
+    public String toString() {
+        final Map<Direction, Character> doors = Stream.of(NORTH, SOUTH, EAST, WEST).filter(myDoors::containsKey)
+                .collect(Collectors.toMap(dir -> dir, dir -> dir == NORTH || dir == SOUTH ? '-' : '|'));
         final StringBuilder sb = new StringBuilder();
-        if (theDirections != null) {
-            for (final Direction direction : theDirections) {
-                sb.append(direction.getDirChar());
-            }
-        }
 
-        sb.append('\n');
-        myDoors.forEach((final Direction direction, final Room room) -> {
-            if (room != null && (theDirections == null || direction != Direction.opposite(theDirections[theDirections.length-1]))) {
-                final Direction[] newDirections;
-                if (theDirections != null) {
-                    newDirections = new Direction[theDirections.length + 1];
-                    System.arraycopy(theDirections, 0, newDirections, 0, theDirections.length);
-                } else {
-                    newDirections = new Direction[1];
-                }
+        sb.append('*').append(doors.getOrDefault(NORTH, '*')).append('*').append('\n');
 
-                newDirections[newDirections.length - 1] = direction;
+        sb.append(doors.getOrDefault(WEST, '*')).append(getRoomChar()).append(doors.getOrDefault(EAST, '*')).append('\n');
 
-                sb.append(room.getDirections(newDirections));
-            }
-        });
+        sb.append('*').append(doors.getOrDefault(SOUTH, '*')).append('*').append('\n');
 
         return sb.toString();
+    }
+
+    /**
+     * Returns the character to represent the room.
+     * M - Multiple Items
+     * X - Pit
+     * i - Entrance (In)
+     * O - Exit (Out)
+     * V - Vision Potion
+     * H - Healing Potion
+     * <space> - Empty Room
+     * A, E, I, P - Pillars
+     *
+     * @return the character to represent the room
+     * */
+    private char getRoomChar() {
+        if (myItems.size() > 1) {
+            return 'M';
+        } else if (myHasPit) {
+            return 'X';
+        } else if (myIsEntrance) {
+            return 'i';
+        } else if (myIsExit) {
+            return 'O';
+        } else if (myItems.size() == 1) {
+            final Item item = myItems.get(0);
+            if (item instanceof VisionPotion) {
+                return 'V';
+            } else if (item instanceof HealingPotion) {
+                return 'H';
+            } else if (item instanceof final PillarOfOO thePillar) {
+                return thePillar.getName().charAt(0);
+            }
+        }
+        return ' ';
     }
 
 }
