@@ -22,15 +22,15 @@ public class DungeonAdventure {
     private RoomData myCurrentRoomData;
     private Room myCurrentRoom;
 
-    public DungeonAdventure() {
+    public DungeonAdventure() throws InterruptedException {
         myAdventureView = new AdventureView();
         myCurrentRoom = null;
         final Consumer<Item> myItemHandler = item -> {
-            if (item instanceof final HealingPotion thePotion) {
+            if (item instanceof final Potion thePotion) {
                 thePotion.use(myHero);
             }
-            if (item instanceof VisionPotion) {
-                useVisionPotion();
+            if (item instanceof PillarOfOO) {
+                myAdventureView.sendMessage("Pillars cannot be used");
             }
         };
         myInventoryView = new InventoryView(myItemHandler);
@@ -44,7 +44,7 @@ public class DungeonAdventure {
     /**
      * Handles the overall game play.
      */
-    private void playGame() {
+    private void playGame() throws InterruptedException {
         // Introduction and game setup
         displayIntroduction();
         myHero = createAdventurer();
@@ -53,8 +53,11 @@ public class DungeonAdventure {
 
         // Main game loop
         do {
+            Thread.sleep(1000);
             displayCurrentRoom();
+            Thread.sleep(2000);
             displayOptions();
+
         } while (!myHero.isFainted());
 
         // Game conclusion
@@ -115,10 +118,10 @@ public class DungeonAdventure {
                 .map(direction -> direction.toString().substring(0, 1).toUpperCase()
                         + direction.toString().substring(1).toLowerCase())
                 .toArray(String[]::new);
+        final String[] myItems = myCurrentRoom.getItems().stream().map(Item::getName).toArray(String[]::new);
         myCurrentRoomData = new RoomData(doorsString,
-                new String[]{"Vision Potion"},
-                new String[]{"Ogre"}, false, false);
-        myHero.addToInventory(new VisionPotion());
+                myItems, new String[]{}, false, false);
+//        myHero.addToInventory(myCurrentRoom.getItems());
         setRoomData(myCurrentRoomData);
     }
 
@@ -127,6 +130,11 @@ public class DungeonAdventure {
      * Presents a list of available choices to the user and handles the action associated with the choice.
      */
     private void displayOptions() {
+        if (myCurrentRoomData.getMonsters() != null) {
+            for (final String monster : myCurrentRoomData.getMonsters()) {
+                handleCombat(monster);
+            }
+        }
         myAdventureView.sendMessage("What do you want to do?");
         final List<String> options = new ArrayList<>();
         if (myCurrentRoomData.getMonsters().length == 0) {
@@ -134,11 +142,14 @@ public class DungeonAdventure {
                 final String doorTitleCase = door.substring(0, 1).toUpperCase() + door.substring(1).toLowerCase();
                 options.add("Go " + doorTitleCase);
             }
+            options.add("Look Around");
         }
-        options.add("See Inventory");
-        for (final String monster : myCurrentRoomData.getMonsters()) {
-            options.add("Battle " + monster);
+        if (myHero.getMyInventory().size() > 0) {
+            options.add("See Inventory");
         }
+//        for (final String monster : myCurrentRoomData.getMonsters()) {
+//            options.add("Battle " + monster);
+//        }
         final String choice = myAdventureView.promptUserChoice(options.toArray(new String[0]));
         myAdventureView.sendMessage("You chose: " + choice);
         handleAction(choice);
@@ -157,7 +168,8 @@ public class DungeonAdventure {
             actions.put("Go " + direction, () -> handleMoving(direction));
         }
         final String monster = theChoice.substring(7);
-        actions.put("Battle " + monster, () -> handleCombat(monster));
+//        actions.put("Battle " + monster, () -> handleCombat(monster));
+        actions.put("Look Around", this::lookAroundAction);
         actions.put("See Inventory", () -> myInventoryView.showInventory(myHero.getMyInventory()));
         final Runnable action = actions.get(theChoice);
         action.run();
@@ -184,18 +196,26 @@ public class DungeonAdventure {
         System.out.println(myHero.getName() + " has moved to the " + theDirection);
     }
 
-    public void useVisionPotion() {
-        final Room myCurrentRoom = myDungeon.getCurrentRoom();
-        final Map<String, RoomData> adjacentRooms = new HashMap<>();
-        final Map<Direction, Room> doors = myCurrentRoom.getDoors();
-        for (Map.Entry<Direction, Room> entry : doors.entrySet()) {
-            final Direction direction = entry.getKey();
-            final Room room = entry.getValue();
-            RoomData roomData = null; // RoomData roomData = new RoomData(room);
-            adjacentRooms.put(direction.toString(), roomData);
-
+    private void lookAroundAction() {
+        if (myCurrentRoomData.getItems().length > 0) {
+            final StringBuilder sb = new StringBuilder();
+            myAdventureView.buildList(sb,
+                    myCurrentRoomData.getItems(),
+                    "You acquired ",
+                    "You acquired ",
+                    "!",
+                    true);
+            myAdventureView.sendMessage(String.valueOf(sb));
+            myHero.addToInventory(myCurrentRoom.getItems());
+            myCurrentRoomData.removeItemFromRoom(myCurrentRoom.getItems(), myCurrentRoomData.getItems());
         }
-        myAdventureView.printRoom(myCurrentRoomData, adjacentRooms);
+        final Direction[] doors = (myCurrentRoom.getDoors()).keySet().toArray(new Direction[0]);
+        final String[] doorsString = Arrays.stream(doors)
+                .map(direction -> direction.toString().substring(0, 1).toUpperCase()
+                        + direction.toString().substring(1).toLowerCase())
+                .toArray(String[]::new);
+        myCurrentRoomData = new RoomData(doorsString, new String[]{}, new String[]{}, false, false);
+        setRoomData(myCurrentRoomData);
     }
 
     /**
@@ -232,7 +252,7 @@ public class DungeonAdventure {
      *
      * @param theArgs command line arguments (not used)
      */
-    public static void main(final String[] theArgs) {
+    public static void main(final String[] theArgs) throws InterruptedException {
         new DungeonAdventure();
     }
 }

@@ -50,7 +50,7 @@ public class CombatView extends ConsoleView {
 
         if (theActionLog != null && theActionLog.length > 0) {
             sb.append("\n\n").append("Action Log:\n");
-            final int actionLogLength = Math.min(theActionLog.length, 5); // why?
+            final int actionLogLength = theActionLog.length; // Math.min(theActionLog.length, 5) why?
             for (int i = 0; i < actionLogLength; i++) {
                 sb.append(theActionLog[i]).append("\n\n");
             }

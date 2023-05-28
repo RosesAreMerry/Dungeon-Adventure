@@ -10,12 +10,12 @@ import java.util.Random;
  * @version May 14th 2023
  */
 public abstract class DungeonCharacter {
-    private  String myName;
     private final int myDamageMin;
     private final int myDamageMax;
     private final int myAttackSpeed;
     private final double myHitChance;
     private final int myMaxHitPoints;
+    private final String myName;
     private int myHitPoints;
     private Random myRandom;
     private boolean myIsAttacked;
@@ -32,7 +32,7 @@ public abstract class DungeonCharacter {
      * @param theAttackSpeed the attack speed of the character
      */
     public DungeonCharacter(final String theName, final int theHitPoints, final double theHitChance,
-                               final int theDamageMin, final int theDamageMax, final int theAttackSpeed) {
+                            final int theDamageMin, final int theDamageMax, final int theAttackSpeed) {
         this.myName = theName;
         this.myHitPoints = theHitPoints;
         this.myHitChance = theHitChance;
@@ -134,7 +134,7 @@ public abstract class DungeonCharacter {
             final int damage = myRandom.nextInt(getDamageMax() - getDamageMin() + 1)
                     + getDamageMin();
             myTotalDamage += damage;
-            theOpponent.setHitPoints(Math.max((theOpponent.getHitPoints() - damage), 0));
+            theOpponent.setHitPoints(Math.max(0, (theOpponent.getHitPoints() - damage)));
             setTotalDamage(myTotalDamage);
         }
         return myTotalDamage;
@@ -170,15 +170,6 @@ public abstract class DungeonCharacter {
      */
     public void setRandom(final Random theRandom) {
         this.myRandom = theRandom;
-    }
-
-    public String toString() {
-        return "Monster: " + getName() +
-                "\nHit Points: " + getHitPoints() +
-                "\nChance to Hit: " + getMyHitChance() +
-                "\nMinimum Damage: " + getDamageMin() +
-                "\nMaximum Damage: " + getDamageMax() +
-                "\nAttack Speed: " + getAttackSpeed() ;
     }
 
 }

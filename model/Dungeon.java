@@ -13,9 +13,15 @@ public class Dungeon {
         myRooms = theRooms;
     }
     public Room getCurrentRoom() {
-        throw new UnsupportedOperationException("Method not yet implemented");
+        return myHeroLocation;
     }
-    public void move(String theString) {
+
+    public void move(final Direction theDirection) {
+        if (myHeroLocation.getDoor(theDirection) != null) {
+            myHeroLocation = myHeroLocation.getDoor(theDirection);
+        } else {
+            throw new IllegalArgumentException("There is no door in that direction");
+        }
     }
 
     /**

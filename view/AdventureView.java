@@ -122,12 +122,12 @@ public class AdventureView extends ConsoleView {
         theSB.append('\n');
     }
 
-    void buildList(final StringBuilder theSB,
-                   final String[] theItems,
-                   final String thePrefix,
-                   final String thePrefixPlural,
-                   final String thePostfix,
-                   final boolean theUseIA) {
+    public void buildList(final StringBuilder theSB,
+                          final String[] theItems,
+                          final String thePrefix,
+                          final String thePrefixPlural,
+                          final String thePostfix,
+                          final boolean theUseIA) {
         if (theItems == null || theItems.length == 0) {
             return;
         }

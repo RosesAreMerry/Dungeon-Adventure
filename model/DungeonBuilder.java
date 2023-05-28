@@ -5,7 +5,7 @@ import java.util.stream.Stream;
 
 import static model.Direction.*;
 
-class DungeonBuilder {
+public class DungeonBuilder {
     public static final DungeonBuilder INSTANCE = new DungeonBuilder();
 
     /** This is a constant that means that it will generate a hallway until there is this number
@@ -14,7 +14,7 @@ class DungeonBuilder {
     private final Map<Coordinate, Room> coordinateRoomMap = new HashMap<>();
     private Random myRandom = new Random();
 
-    private DungeonBuilder() { }
+    public DungeonBuilder() { }
 
     /**
      * Main builder function. This is the only function that should be called from outside this class.
