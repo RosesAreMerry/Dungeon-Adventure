@@ -1,5 +1,4 @@
 package model;
-
 public class PillarOfOO implements Item{
     private final String myName;
     public PillarOfOO(final String theName) {

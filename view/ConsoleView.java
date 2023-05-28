@@ -1,5 +1,6 @@
 package view;
 
+import java.io.Serializable;
 import java.util.Locale;
 import java.util.Scanner;
 import java.util.function.Consumer;
@@ -19,7 +20,7 @@ import java.util.function.Supplier;
  */
 abstract class ConsoleView {
 
-    private Scanner myDefaultReader;
+    transient private Scanner myDefaultReader;
 
     private final Consumer<String> myWriter;
 

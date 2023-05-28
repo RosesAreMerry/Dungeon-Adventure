@@ -1,9 +1,10 @@
 package view;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;
 
-public class RoomData {
+public class RoomData implements Serializable {
     private final String myFlavorText;
     private final String[] myDoors;
     private final String[] myItems;
@@ -76,4 +77,5 @@ public class RoomData {
     private String[] removeNullValues(final String[] theMonsters) {
         return Arrays.stream(theMonsters).filter(Objects::nonNull).toArray(String[]::new);
     }
+
 }

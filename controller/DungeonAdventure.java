@@ -6,6 +6,7 @@ import view.CombatView;
 import view.InventoryView;
 import view.RoomData;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,13 +18,17 @@ import java.util.function.Consumer;
  * and other entities within the game. Overall, it manages the game flow by handling user input, updating the game state,
  * and displays relevant information to users.
  */
-public class DungeonAdventure {
+public class DungeonAdventure implements Serializable {
     private Dungeon myDungeon;
     private Hero myHero;
     private final AdventureView myAdventureView;
     private final InventoryView myInventoryView;
     private final CombatView myCombatView;
-    private final RoomData myRoomData;
+    private RoomData myRoomData;
+    //private String[] monsters;
+    private List<Monster> monsters;
+
+    private static final long serialVersionUID = 1L;
 
     public DungeonAdventure() {
         myAdventureView = new AdventureView();
@@ -32,8 +37,10 @@ public class DungeonAdventure {
                 thePotion.use(myHero);
             }
         };
+
         myInventoryView = new InventoryView(myItemHandler);
         myCombatView = new CombatView();
+        monsters=new ArrayList<>();//Maliha
         myRoomData = new RoomData("You walk into a room",
                 new String[]{"North", "South"},
                 new String[]{"Health Potion"},
@@ -106,6 +113,7 @@ public class DungeonAdventure {
     private void createDungeon() {
     }
 
+
     /**
      * Displays the current room to the user.
      * This method shows the description of the current room, along with any available items in the room.
@@ -145,7 +153,7 @@ public class DungeonAdventure {
     private void handleAction(final String theChoice) {
         final Map<String, Runnable> actions = new HashMap<>();
         final String direction = theChoice.substring(3);
-        final String monster = theChoice.substring(7);
+        final String monster = theChoice.substring(7); //??
         actions.put("Go " + direction, () -> { /* handle moving to another room action */ });
         actions.put("Battle " + monster, () -> handleCombat(monster));
         actions.put("See Inventory", () -> myInventoryView.showInventory(myHero.getMyInventory()));
@@ -154,18 +162,27 @@ public class DungeonAdventure {
         action.run();
     }
 
+    /**
+     * Edited this- added the opponent to the monsters array
+     * need ti make a monster array here
+     * @param theOpponent
+     */
     private void handleCombat(final String theOpponent) {
         if (myRoomData.getMonsters() != null && myRoomData.getMonsters().length > 0) {
             final Combat combat = new Combat();
             final MonsterFactory monsterFactory = new MonsterFactory();
-            final Monster opponent = monsterFactory.createMonster(theOpponent);
+            //making opponent a global variable to be able to access it for serialization
+             final Monster opponent = monsterFactory.createMonster(theOpponent);
             combat.initiateCombat(myHero, opponent);
             myRoomData.removeMonsterFromRoom(theOpponent);
             if (opponent.isFainted()) {
                 myAdventureView.sendMessage(theOpponent + " was defeated!");
             }
+            // add the opponent to an array
+           monsters.add(opponent);
         }
     }
+
 
     /**
      * Displays the final game result to the user.
@@ -195,6 +212,42 @@ public class DungeonAdventure {
         final String choice = myAdventureView.promptUserChoice(new String[] {"Play Again", "Exit"}, false);
         return choice.equals("Play Again");
     }
+    public void saveGameState() {
+        String filename="DungeonAdventure.ser";
+        try {
+            //saving the object in a file
+            FileOutputStream file = new FileOutputStream(filename);
+            ObjectOutputStream out = new ObjectOutputStream(file);
+            out.writeObject(this.myHero);
+            out.writeObject(monsters); // the monsters hero battles
+            out.close();
+            System.out.println("object has been serialized .");
+        } catch (IOException ex) {
+            System.out.println("IOException is caught");
+        }
+    }
+    public void loadGameState() {
+        this.myHero=null;
+        //this.opponent=null;
+        try {
+            FileInputStream file = new FileInputStream("DungeonAdventure.ser");
+            ObjectInputStream in = new ObjectInputStream(file);
+            this.myHero= (Hero) in.readObject();
+            monsters = (ArrayList) in.readObject();
+            in.close();
+            file.close();
+            System.out.println("Game state loaded successfully.");
+            System.out.println("Serialized data: " + myHero);
+            for(int i=0; i<monsters.size();i++) {
+                System.out.println("Serialized data" + monsters.get(i));
+            }
+
+        } catch (IOException | ClassNotFoundException e) {
+            System.out.println("Error loading game state: " + e.getMessage());
+
+        }
+    }
+
 
     /**
      * The main entry point of the game.
@@ -202,6 +255,8 @@ public class DungeonAdventure {
      * @param theArgs command line arguments (not used)
      */
     public static void main(final String[] theArgs) {
-        new DungeonAdventure();
+        DungeonAdventure game = new DungeonAdventure();
+        game.saveGameState();
+        game.loadGameState();
     }
 }

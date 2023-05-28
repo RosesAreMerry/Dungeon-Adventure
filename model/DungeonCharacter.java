@@ -1,15 +1,14 @@
 package model;
 
+import java.io.Serializable;
 import java.util.Random;
-
 /**
  * The parent class for the character hierarchy.
- *
  * @author Maliha Hossain
  * @author Chelsea Dacones
  * @version May 14th 2023
  */
-public abstract class DungeonCharacter {
+public abstract class DungeonCharacter implements Serializable {
     private  String myName;
     private final int myDamageMin;
     private final int myDamageMax;
@@ -175,11 +174,12 @@ public abstract class DungeonCharacter {
     public String toString() {
         return "Monster: " + getName() +
                 "\nHit Points: " + getHitPoints() +
-                "\nChance to Hit: " + getMyHitChance() +
+                "\nChance to Hit: " + getHitChance() +
                 "\nMinimum Damage: " + getDamageMin() +
                 "\nMaximum Damage: " + getDamageMax() +
                 "\nAttack Speed: " + getAttackSpeed() ;
     }
+
 
 }
 

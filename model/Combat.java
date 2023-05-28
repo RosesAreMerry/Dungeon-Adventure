@@ -3,10 +3,11 @@ package model;
 
 import view.CombatView;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Combat {
+public class Combat implements Serializable {
 
     CombatView myCombatView;
 
