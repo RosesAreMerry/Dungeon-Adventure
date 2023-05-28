@@ -3,8 +3,6 @@ package model;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Random;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class MonsterTest extends RandomMock {
@@ -82,7 +80,7 @@ class MonsterTest extends RandomMock {
      */
     @Test
     void testUnsuccessfulHeal() {
-        final Monster monster = myMonsterFactory.createMonster("Gremlin");
+        final Monster monster = myMonsterFactory.createMonsterByName("Gremlin");
         myRandomMock.setMockDoubleValue(0.5); // 0.5 ≮ 0.4
         myRandomMock.setMockIntValue(10);
         monster.setMyRandom(myRandomMock);
@@ -97,7 +95,7 @@ class MonsterTest extends RandomMock {
      */
     @Test
     void testSuccessfulAttack() {
-        final Monster ogre = myMonsterFactory.createMonster("Ogre");
+        final Monster ogre = myMonsterFactory.createMonsterByName("Ogre");
         final Monster gremlin = new Monster("Gremlin", 70, 0.8, 15,
                 30, 5, 0.4, 20, 40) {
             @Override
@@ -117,7 +115,7 @@ class MonsterTest extends RandomMock {
      */
     @Test
     void testUnsuccessfulAttack() {
-        final Monster ogre = myMonsterFactory.createMonster("Ogre");
+        final Monster ogre = myMonsterFactory.createMonsterByName("Ogre");
         final Monster gremlin = new Monster("Gremlin", 70, 0.8, 15,
                 30, 5, 0.4, 20, 40) {
             @Override

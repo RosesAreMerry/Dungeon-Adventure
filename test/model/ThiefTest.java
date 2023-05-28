@@ -13,7 +13,7 @@ class ThiefTest {
     @BeforeEach
     void setUp() {
         myMonsterFactory = new MonsterFactory();
-        myOpponent = myMonsterFactory.createMonster("Ogre");
+        myOpponent = myMonsterFactory.createMonsterByName("Ogre");
         myThief = new Thief("Test Thief") {
             @Override
             protected boolean canAttack() {

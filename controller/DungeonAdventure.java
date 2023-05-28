@@ -179,7 +179,7 @@ public class DungeonAdventure {
         if (myCurrentRoomData.getMonsters() != null && myCurrentRoomData.getMonsters().length > 0) {
             final Combat combat = new Combat();
             final MonsterFactory monsterFactory = new MonsterFactory();
-            final Monster opponent = monsterFactory.createMonster(theOpponent);
+            final Monster opponent = monsterFactory.createMonsterByName(theOpponent);
             combat.initiateCombat(myHero, opponent);
             myCurrentRoomData.removeMonsterFromRoom(theOpponent);
             setRoomData(myCurrentRoomData);
