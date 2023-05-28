@@ -7,8 +7,8 @@ public class Room {
 
     private static final double PIT_PROBABILITY = 0.1;
     private static final double MONSTER_PROBABILITY = 0.1;
-    private static final double HEALTH_POTION_PROBABILITY = 0.1;
-    private static final double VISION_POTION_PROBABILITY = 0.1;
+    private static final double HEALTH_POTION_PROBABILITY = 0.9;
+    private static final double VISION_POTION_PROBABILITY = 0.9;
 
     private String myFlavorText;
     private final ArrayList<Item> myItems;

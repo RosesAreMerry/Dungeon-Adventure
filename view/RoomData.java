@@ -1,14 +1,16 @@
 package view;
 
+import model.Item;
 import model.Room;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 
 public class RoomData {
     private final String myFlavorText;
     private final String[] myDoors;
-    private final String[] myItems;
+    private String[] myItems;
     private String[] myMonsters;
 
     private final boolean myIsPit;
@@ -63,6 +65,10 @@ public class RoomData {
         myMonsters = theMonsters;
     }
 
+    public void setItems(final String[] theItems) {
+        myItems = theItems;
+    }
+
     public boolean isPit() {
         return myIsPit;
     }
@@ -81,7 +87,19 @@ public class RoomData {
         }
     }
 
-    private String[] removeNullValues(final String[] theMonsters) {
-        return Arrays.stream(theMonsters).filter(Objects::nonNull).toArray(String[]::new);
+    public void removeItemFromRoom(final ArrayList<Item> theItems, String[] itemsArray) {
+        for (final Item item: theItems) {
+            final String itemToRemove = item.getName();
+            for (int i = 0; i < itemsArray.length; i++) {
+                if (itemsArray[i] != null && itemsArray[i].equals(itemToRemove)) {
+                    itemsArray[i] = null;
+                    setItems(removeNullValues(itemsArray));
+                }
+            }
+        }
+    }
+
+    private String[] removeNullValues(final String[] theObject) {
+        return Arrays.stream(theObject).filter(Objects::nonNull).toArray(String[]::new);
     }
 }

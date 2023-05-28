@@ -1,8 +1,11 @@
 package view;
 
+import model.Hero;
 import model.Item;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -42,15 +45,26 @@ public class InventoryView extends ConsoleView {
      * */
     public void showInventory(final ArrayList<Item> theInventory) {
         final String[] options = new String[theInventory.size()];
+        final HashMap<String, Integer> itemCount = new HashMap<>();
+        for (final Item item: theInventory) {
+            final String itemName = item.getName();
+            itemCount.put(itemName, itemCount.getOrDefault(itemName, 0) + 1);
+        }
 
+        for (final Map.Entry<String, Integer> entry: itemCount.entrySet()) {
+            final String itemName = entry.getKey();
+            final int itemQuantity = entry.getValue();
+            final String itemDescription;
+            if (itemQuantity > 1) {
+                itemDescription = itemQuantity + " " + itemName + "s";
+            } else {
+                itemDescription = itemName;
+            }
+            writeLine(itemDescription);
+        }
         for (int i = 0; i < theInventory.size(); i++) {
             options[i] = theInventory.get(i).getName();
         }
-
-        for (final String name : options) {
-            writeLine(name);
-        }
-
         final int selectedItem = askForOption(options, "Enter the name of the item you want to use: ");
         final Item item = theInventory.get(selectedItem);
         myUseItem.accept(item);

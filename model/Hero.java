@@ -20,13 +20,8 @@ public abstract class Hero extends DungeonCharacter {
         myInventory = new ArrayList<>();
     }
 
-    /**
-     * Add item to inventory.
-     *
-     * @param theItem the item to add to the inventory
-     */
-    public void addToInventory(final Item theItem) {
-        myInventory.add(theItem);
+    public void addToInventory(final ArrayList<Item> theItem) {
+        myInventory.addAll(theItem);
     }
 
     /**

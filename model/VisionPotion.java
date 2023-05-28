@@ -9,5 +9,6 @@ public class VisionPotion extends Potion {
     }
     @Override
     public void use(final Hero theHero) {
+        theHero.removeFromInventory(this);
     }
 }

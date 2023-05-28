@@ -10,4 +10,6 @@ public interface Healable {
 
     void heal();
 
+    int healAmount();
+
 }
