@@ -1,6 +1,7 @@
 package model;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 import static model.Direction.*;
 
@@ -25,6 +26,9 @@ class DungeonBuilder {
      * @return a dungeon with the specified number of rooms.
      * */
     public Dungeon buildDungeon(final int theNumberOfRooms) {
+        if (theNumberOfRooms < 6) {
+            throw new IllegalArgumentException("The number of rooms must be at least 6.");
+        }
         Room entrance = new Room();
         int generatedRooms = 0;
         // This loop will keep trying to generate a dungeon until it succeeds.
@@ -32,9 +36,12 @@ class DungeonBuilder {
         // It sucks, but it does work, and reworking it to work better would take a lot of time.
         while (generatedRooms < theNumberOfRooms - 1) {
             coordinateRoomMap.clear();
-            entrance = new Room();
+            entrance = new Room(true);
             coordinateRoomMap.put(new Coordinate(0, 0), entrance);
             generatedRooms = addRoomsRecursively(entrance, null, null, theNumberOfRooms - 1, new Coordinate(0, 0));
+
+            addExit();
+            addPillarsOfOO();
         }
         return new Dungeon(entrance, coordinateRoomMap);
     }
@@ -138,7 +145,6 @@ class DungeonBuilder {
         return theNumberRemaining - roomsToDistribute;
     }
 
-
     /**
      * Search through adjacent spaces to see if there is a room there.
      *
@@ -163,4 +169,29 @@ class DungeonBuilder {
 
         return result;
     }
+
+    private void addPillarsOfOO() {
+        final List<PillarOfOO> pillars = Stream.of("Abstraction", "Encapsulation", "Inheritance", "Polymorphism")
+                .map(PillarOfOO::new)
+                .toList();
+
+        pillars.forEach((final PillarOfOO pillar) -> {
+            final Room room = getValidRoom();
+            room.getItems().add(pillar);
+        });
+    }
+
+    private void addExit() {
+        getValidRoom().setExit();
+    }
+
+    private Room getValidRoom() {
+        return coordinateRoomMap.values().stream()
+                .filter((final Room room) ->
+                        !room.isEntrance() &&
+                        !room.isExit() &&
+                        room.getItems().stream().noneMatch((final Item item) -> item instanceof PillarOfOO))
+                .findAny().orElseThrow(() -> new RuntimeException("Dungeon generation failed. No valid rooms found for exit or pillars."));
+    }
+
 }

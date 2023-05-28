@@ -1,42 +1,76 @@
 package model;
 
-import java.awt.*;
 import java.util.*;
 import java.util.List;
 
-import static model.Direction.*;
-
 public class Room {
 
-    private Item[] myItems;
-    private Monster[] myMonsters;
+    private static final double PIT_PROBABILITY = 0.1;
+    private static final double MONSTER_PROBABILITY = 0.1;
+    private static final double HEALTH_POTION_PROBABILITY = 0.1;
+    private static final double VISION_POTION_PROBABILITY = 0.1;
+
+    private String myFlavorText;
+    private final ArrayList<Item> myItems;
+    private Monster myMonster;
     private boolean myIsExit;
     private boolean myIsEntrance;
     private boolean myHasPit;
-    private Map<Direction, Room> myDoors;
-    private Random myRandom;
-
-    private Coordinate myPosition;
+    private final Map<Direction, Room> myDoors;
+    private final Random myRandom;
 
     Room() {
         myRandom = new Random();
         myDoors = new HashMap<>();
+        myItems = generateItems();
+        myMonster = generateMonster();
+        myHasPit = myRandom.nextDouble() < PIT_PROBABILITY;
+        myIsExit = false;
     }
 
-    public Monster[] getMyMonsters() {
-        return myMonsters;
+    Room(final boolean theIsEntrance) {
+        myRandom = new Random();
+        myDoors = new HashMap<>();
+        myItems = new ArrayList<>();
+        myMonster = null;
+        myHasPit = false;
+        myIsEntrance = theIsEntrance;
+        myIsExit = false;
     }
-    public Item[] getItems() {
+
+    private ArrayList<Item> generateItems() {
+        final ArrayList<Item> items = new ArrayList<>();
+        if (myRandom.nextDouble() < HEALTH_POTION_PROBABILITY) {
+            items.add(new HealingPotion());
+        }
+        if (myRandom.nextDouble() < VISION_POTION_PROBABILITY) {
+            items.add(new VisionPotion());
+        }
+        return items;
+    }
+
+    private Monster generateMonster() {
+        if (myRandom.nextDouble() < MONSTER_PROBABILITY) {
+            //TODO: make monster factory a singleton and add a method to randomly generate a monster.
+            //return new MonsterFactory().createMonster("Ogre"); This is causing exceptions.
+        }
+        return null;
+    }
+
+    public Monster getMyMonster() {
+        return myMonster;
+    }
+    public ArrayList<Item> getItems() {
         return myItems;
     }
     public boolean isEntrance() {
-        throw new UnsupportedOperationException("Method not yet implemented");
+        return myIsEntrance;
     }
     public boolean isExit() {
-        throw new UnsupportedOperationException("Method not yet implemented");
+        return myIsExit;
     }
     public boolean hasPit() {
-        throw new UnsupportedOperationException("Method not yet implemented");
+        return myHasPit;
     }
     public Room getDoor(final Direction theDirection) {
         return myDoors.get(theDirection);
@@ -47,12 +81,17 @@ public class Room {
     void addDoor(final Direction theDirection, final Room theRoom) {
         myDoors.put(theDirection, theRoom);
     }
-    @Override
-    public String toString() {
-        return toString(null);
+    void setExit() {
+        myItems.clear();
+        myMonster = null;
+        myHasPit = false;
+        myIsExit = true;
+    }
+    public String getDirections() {
+        return getDirections(null);
     }
 
-    private String toString(final Direction[] theDirections) {
+    private String getDirections(final Direction[] theDirections) {
         final StringBuilder sb = new StringBuilder();
         if (theDirections != null) {
             for (final Direction direction : theDirections) {
@@ -73,7 +112,7 @@ public class Room {
 
                 newDirections[newDirections.length - 1] = direction;
 
-                sb.append(room.toString(newDirections));
+                sb.append(room.getDirections(newDirections));
             }
         });
 

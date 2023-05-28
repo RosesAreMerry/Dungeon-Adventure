@@ -2,17 +2,12 @@ package model;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.function.Function;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class DungeonBuilderTest {
-
-    // I would love to add more tests than this, but honestly, there's really only one thing that the builder asserts
-    // that is not inherent in the structure of the builder which is that a certain number of rooms will be generated.
-    // I would test traversal as well, but the structure means there is no way to have an un traversable dungeon.
-    // The fact that every room is added to a map with Coordinates as keys means that there is no way to have a room
-    // intersect with another room
 
     @Test
     public void testDungeonHasCorrectNumberOfRooms() {
@@ -59,6 +54,76 @@ public class DungeonBuilderTest {
     }
 
     @Test
+    public void testDungeonContainsEntrance() {
+        final DungeonBuilder dungeonBuilder = DungeonBuilder.INSTANCE;
+        try {
+            final Dungeon dungeon = dungeonBuilder.buildDungeon(1000);
+            assertTrue(dungeon.getAllRooms().values().stream().anyMatch(Room::isEntrance));
+        } catch (final Exception e) {
+            e.printStackTrace();
+            fail();
+        }
+    }
+
+    @Test
+    public void testDungeonContainsOneEntrance() {
+        final DungeonBuilder dungeonBuilder = DungeonBuilder.INSTANCE;
+        try {
+            final Dungeon dungeon = dungeonBuilder.buildDungeon(1000);
+            assertEquals(1, dungeon.getAllRooms().values().stream().filter(Room::isEntrance).count());
+        } catch (final Exception e) {
+            e.printStackTrace();
+            fail();
+        }
+    }
+
+    @Test
+    public void testDungeonContainsExit() {
+        final DungeonBuilder dungeonBuilder = DungeonBuilder.INSTANCE;
+        try {
+            final Dungeon dungeon = dungeonBuilder.buildDungeon(1000);
+            assertTrue(dungeon.getAllRooms().values().stream().anyMatch(Room::isExit));
+        } catch (final Exception e) {
+            e.printStackTrace();
+            fail();
+        }
+    }
+
+    @Test
+    public void testDungeonContainsOneExit() {
+        final DungeonBuilder dungeonBuilder = DungeonBuilder.INSTANCE;
+        try {
+            final Dungeon dungeon = dungeonBuilder.buildDungeon(1000);
+            assertEquals(1, dungeon.getAllRooms().values().stream().filter(Room::isExit).count());
+        } catch (final Exception e) {
+            e.printStackTrace();
+            fail();
+        }
+    }
+
+    @Test
+    public void testDungeonContainsOneEachPillar() {
+        final DungeonBuilder dungeonBuilder = DungeonBuilder.INSTANCE;
+        try {
+            final Dungeon dungeon = dungeonBuilder.buildDungeon(1000);
+
+            final Function<String, Boolean> containsPillar = (name) -> dungeon
+                    .getAllRooms().values().stream()
+                    .filter(room -> room.getItems().stream().anyMatch(item -> item.getName().equals(name)))
+                    .count() == 1;
+
+
+            assertTrue(containsPillar.apply("Abstraction"));
+            assertTrue(containsPillar.apply("Encapsulation"));
+            assertTrue(containsPillar.apply("Inheritance"));
+            assertTrue(containsPillar.apply("Polymorphism"));
+        } catch (final Exception e) {
+            e.printStackTrace();
+            fail();
+        }
+    }
+
+    @Test
     public void testDungeonHasCorrectBranchingFactor() {
         final DungeonBuilder dungeonBuilder = DungeonBuilder.INSTANCE;
         try {
@@ -67,6 +132,7 @@ public class DungeonBuilderTest {
                     .map(this::getBranchingFactor)
                     .reduce(0.0, Double::sum) / 990.0;
             assertTrue(overallBranching > 0.3);
+            System.out.printf("Overall Branching: %2.2f%%", overallBranching * 100);
         } catch (final Exception e) {
             e.printStackTrace();
             fail();
@@ -79,7 +145,7 @@ public class DungeonBuilderTest {
      * straight lines will have a branching factor of 1 (however, since the first 5 rooms are not counted as branches this is impossible).
      * This is a measure of how much the dungeon branches out, and is a good measure of how interesting the dungeon is.
      * Currently, the generation does not assert a specific branching factor, but over a large number of tests, it should
-     * average out to a certain number.
+     * average out to a certain number, currently 0.65, but I only make sure its above 0.3.
      *
      * @param theDungeon the dungeon to get the branching factor of
      *
