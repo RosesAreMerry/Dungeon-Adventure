@@ -1,28 +1,71 @@
 package model;
 
 import java.util.*;
-import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import static model.Direction.*;
-import static model.Direction.WEST;
 
-public class DungeonBuilder {
+class DungeonBuilder {
     public static final DungeonBuilder INSTANCE = new DungeonBuilder();
 
-    private final List<Coordinate> myOccupiedSpaces = new ArrayList<>();
+    /** This is a constant that means that it will generate a hallway until there is this number
+     *  rooms left in the current branch, when it will start normal gen. Decreasing this increases the length of hallways.*/
+
+    private final Map<Coordinate, Room> coordinateRoomMap = new HashMap<>();
     private Random myRandom = new Random();
 
-    public DungeonBuilder() { }
+    private DungeonBuilder() { }
 
-
+    /**
+     * Main builder function. This is the only function that should be called from outside this class.
+     * This will generate a dungeon with the specified number of rooms, or keep trying until it succeeds.
+     * It shouldn't take too long, but it could.
+     *
+     * @param theNumberOfRooms the number of rooms to generate.
+     *
+     * @return a dungeon with the specified number of rooms.
+     * */
     public Dungeon buildDungeon(final int theNumberOfRooms) {
-        final Room entrance = new Room();
-        myOccupiedSpaces.add(new Coordinate(0, 0));
-        addRoomsRecursively(entrance, null, null, theNumberOfRooms - 1, new Coordinate(0, 0));
-        return new Dungeon(entrance);
+        if (theNumberOfRooms < 6) {
+            throw new IllegalArgumentException("The number of rooms must be at least 6.");
+        }
+        Room entrance = new Room();
+        int generatedRooms = 0;
+        // This loop will keep trying to generate a dungeon until it succeeds.
+        // This is a brute force method, but it is guaranteed to work eventually.
+        // It sucks, but it does work, and reworking it to work better would take a lot of time.
+        while (generatedRooms < theNumberOfRooms - 1) {
+            coordinateRoomMap.clear();
+            entrance = new Room(true);
+            coordinateRoomMap.put(new Coordinate(0, 0), entrance);
+            generatedRooms = addRoomsRecursively(entrance, null, null, theNumberOfRooms - 1, new Coordinate(0, 0));
+
+            addExit();
+            addPillarsOfOO();
+        }
+        return new Dungeon(entrance, coordinateRoomMap);
     }
 
-    private void addRoomsRecursively(
+    /**
+     * Main recursive method for generating the dungeon.
+     *
+     * @param theRoom the room to add rooms to.
+     *                This is the room that the recursive call is currently adding rooms to.
+     *
+     * @param theEntryRoom the room that the recursive call came from.
+     *
+     * @param theEntryDirection the direction that the recursive call came from.
+     *                          This is the direction that the recursive call is currently adding rooms to.
+     *                          This is null if the recursive call is the first call.
+     *
+     * @param theNumberRemaining the number of rooms left to generate.
+     *                           This is the number of rooms left to generate in the current branch.
+     *
+     * @param thePosition the position of theRoom.
+     *
+     * @return the number of rooms generated (should be the number requested, but weird edge cases exist).
+     * */
+    private int addRoomsRecursively(
             final Room theRoom,
             final Room theEntryRoom,
             final Direction theEntryDirection,
@@ -34,8 +77,8 @@ public class DungeonBuilder {
         }
 
         // theNumberRemaining == 0 is the base case
-        if (theNumberRemaining == 0) {
-            return;
+        if (theNumberRemaining <= 0) {
+            return 0;
         }
 
         final List<Direction> availableDirections = new ArrayList<>(List.of(NORTH, EAST, SOUTH, WEST));
@@ -45,13 +88,27 @@ public class DungeonBuilder {
 
 
         // How many rooms to generate is the minimum of the number of available directions and the number remaining.
-        final int numberToGen = Math.min(availableDirections.size(), theNumberRemaining);
+        final int maxNumberToGen = Math.min(availableDirections.size(), theNumberRemaining);
+
+        if (maxNumberToGen == 0) {
+            return 0;
+        }
+
+        final int numberToGen;
+
+        if (theEntryDirection == null) {
+            numberToGen = values().length;
+        } else {
+            numberToGen = myRandom.nextInt(maxNumberToGen) + 1;
+        }
 
         // This code generates the rooms directly adjacent to this room.
         for (int i = numberToGen; i > 0; i--) {
-            final Direction nextDirection = availableDirections.get(myRandom.nextInt(availableDirections.size()));
-            theRoom.addDoor(nextDirection, new Room());
-            myOccupiedSpaces.add(nextDirection.applyToCoordinate(thePosition));
+            final Direction nextDirection;
+            nextDirection = availableDirections.get(myRandom.nextInt(availableDirections.size()));
+            final Room nextRoom = new Room();
+            theRoom.addDoor(nextDirection, nextRoom);
+            coordinateRoomMap.put(nextDirection.applyToCoordinate(thePosition), nextRoom);
             availableDirections.remove(nextDirection);
         }
 
@@ -62,24 +119,38 @@ public class DungeonBuilder {
         final Map<Direction, Room> doors = theRoom.getDoors();
 
 
-        int roomsToGenerate = theNumberRemaining - numberToGen;
-        final int idealRoomsPerDoor = (int) Math.ceil((float) roomsToGenerate / doors.size());
+        int roomsToDistribute = theNumberRemaining - numberToGen;
+        int doorsLeft = theEntryDirection != null ? doors.size() - 1 : doors.size();
+
 
         for (final Direction direction : doors.keySet()) {
             if (doors.get(direction) != theEntryRoom) {
-                final int branchRooms = Math.min(idealRoomsPerDoor, roomsToGenerate);
-                addRoomsRecursively(
+                final int idealRoomsPerDoor = (int) Math.ceil((float) roomsToDistribute / doorsLeft) + 1;
+
+                final int branchRooms = Math.min(idealRoomsPerDoor, roomsToDistribute);
+
+                final int generatedRooms = addRoomsRecursively(
                         doors.get(direction),
                         theRoom,
                         Direction.opposite(direction),
                         branchRooms,
                         direction.applyToCoordinate(thePosition)
                 );
-                roomsToGenerate -= branchRooms;
+                roomsToDistribute -= generatedRooms;
+                doorsLeft--;
             }
         }
+
+        // rooms to generate is now the number of rooms that were not generated.
+        return theNumberRemaining - roomsToDistribute;
     }
 
+    /**
+     * Search through adjacent spaces to see if there is a room there.
+     *
+     * @param thePosition The position to search around.
+     * @return A list of directions that have rooms adjacent to the position.
+     * */
     private List<Direction> searchAdjacent(final Coordinate thePosition) {
         final Map<Coordinate, Direction> adjacentSpaces = Map.of(
                 NORTH.applyToCoordinate(thePosition), NORTH,
@@ -91,7 +162,7 @@ public class DungeonBuilder {
         final ArrayList<Direction> result = new ArrayList<>();
 
         adjacentSpaces.forEach((final Coordinate coordinate, final Direction direction) -> {
-            if (myOccupiedSpaces.contains(coordinate)) {
+            if (coordinateRoomMap.containsKey(coordinate)) {
                 result.add(direction);
             }
         });
@@ -99,7 +170,28 @@ public class DungeonBuilder {
         return result;
     }
 
-    void setRandom(final Random theRandom) {
-        myRandom = theRandom;
+    private void addPillarsOfOO() {
+        final List<PillarOfOO> pillars = Stream.of("Abstraction", "Encapsulation", "Inheritance", "Polymorphism")
+                .map(PillarOfOO::new)
+                .toList();
+
+        pillars.forEach((final PillarOfOO pillar) -> {
+            final Room room = getValidRoom();
+            room.getItems().add(pillar);
+        });
     }
+
+    private void addExit() {
+        getValidRoom().setExit();
+    }
+
+    private Room getValidRoom() {
+        return coordinateRoomMap.values().stream()
+                .filter((final Room room) ->
+                        !room.isEntrance() &&
+                        !room.isExit() &&
+                        room.getItems().stream().noneMatch((final Item item) -> item instanceof PillarOfOO))
+                .findAny().orElseThrow(() -> new RuntimeException("Dungeon generation failed. No valid rooms found for exit or pillars."));
+    }
+
 }

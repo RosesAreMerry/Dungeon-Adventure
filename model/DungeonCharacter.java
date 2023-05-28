@@ -10,12 +10,12 @@ import java.util.Random;
  * @version May 14th 2023
  */
 public abstract class DungeonCharacter {
+    private  String myName;
     private final int myDamageMin;
     private final int myDamageMax;
     private final int myAttackSpeed;
     private final double myHitChance;
     private final int myMaxHitPoints;
-    private final String myName;
     private int myHitPoints;
     private Random myRandom;
     private boolean myIsAttacked;
@@ -170,6 +170,15 @@ public abstract class DungeonCharacter {
      */
     public void setRandom(final Random theRandom) {
         this.myRandom = theRandom;
+    }
+
+    public String toString() {
+        return "Monster: " + getName() +
+                "\nHit Points: " + getHitPoints() +
+                "\nChance to Hit: " + getMyHitChance() +
+                "\nMinimum Damage: " + getDamageMin() +
+                "\nMaximum Damage: " + getDamageMax() +
+                "\nAttack Speed: " + getAttackSpeed() ;
     }
 
 }

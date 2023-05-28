@@ -15,6 +15,10 @@ public enum Direction {
         };
     }
 
+    public Direction opposite() {
+        return opposite(this);
+    }
+
     public Coordinate applyToCoordinate(final Coordinate theCoordinate) {
         return switch (this) {
             case NORTH -> new Coordinate(theCoordinate.getX() + 1, theCoordinate.getY());
