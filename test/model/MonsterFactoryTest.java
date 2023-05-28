@@ -12,7 +12,7 @@ class MonsterFactoryTest {
     @Test
     void testCreateMonster() {
         final MonsterFactory mf = new MonsterFactory();
-        final Monster ogre = mf.createMonster("Ogre");
+        final Monster ogre = mf.createMonsterByName("Ogre");
         assertEquals("Monster: Ogre" +
                 "\nHit Points: 200" +
                 "\nChance to Hit: 0.6" +
@@ -31,7 +31,7 @@ class MonsterFactoryTest {
     @Test
     void testCreateMonsterNull() {
         final MonsterFactory mf = new MonsterFactory();
-        final Monster yeti = mf.createMonster("Yeti");
+        final Monster yeti = mf.createMonsterByName("Yeti");
         assertNull(yeti);
     }
 }

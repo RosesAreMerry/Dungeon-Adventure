@@ -15,12 +15,10 @@ public class Warrior extends Hero {
      * @param theName
      */
     private boolean myUsedSpecialCase;
-    private Random myRandom;
 
     public Warrior(final String theName) {
         super(theName, 125, 0.8, 35, 60, 4, 0.2);
         myUsedSpecialCase = useSpecialSkill();
-        myRandom = new Random();
     }
 
 
@@ -59,10 +57,6 @@ public class Warrior extends Hero {
      */
     public void setSpecialCase(final boolean theValue) {
         myUsedSpecialCase = theValue;
-    }
-
-    public void setMyRandom(final Random theRandom) {
-        myRandom = theRandom;
     }
 
 

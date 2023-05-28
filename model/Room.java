@@ -1,7 +1,10 @@
 package model;
 
 import java.util.*;
-import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static model.Direction.*;
 
 public class Room {
 
@@ -9,6 +12,51 @@ public class Room {
     private static final double MONSTER_PROBABILITY = 0.1;
     private static final double HEALTH_POTION_PROBABILITY = 0.1;
     private static final double VISION_POTION_PROBABILITY = 0.1;
+    private static final String[] FLAVOR_TEXTS_EMPTY = new String[] {
+            "This room is dark and damp.",
+            "As you open the door, a musty scent hits your nose.",
+            "You hear a faint dripping sound.",
+            "A burst of humid air hits you as you open the door.",
+            "You hear a faint scurrying sound.",
+            "You hear a faint hissing sound.",
+            "You hear a faint scratching sound.",
+            "A creaking sound comes from the ceiling.",
+            "You hear a distant scream.",
+            "Water is dripping from the ceiling.",
+            "Dust covers every surface of this abandoned room.",
+            "A faint breeze blows through the room.",
+    };
+
+    private static final String[] FLAVOR_TEXTS_MONSTER = new String[] {
+            "A monster is in the room!",
+            "As soon as you enter this room, you realize that you are not alone.",
+            "A monster is lurking in the shadows.",
+            "As you search the dark corners of this room, glowing eyes look back at you.",
+            "You feel a presence in the room.",
+            "You hear a faint growling sound.",
+            "As you enter, a chill runs down your spine."
+    };
+
+    private static final String[] FLAVOR_TEXTS_PIT = new String[] {
+            "As you enter, you hear a slight click.",
+            "You hear a faint rumbling sound.",
+            "As you enter, you trip over a loose stone.",
+            "As you enter, you trip over a nearly invisible wire.",
+            "You hear a faint creaking sound.",
+            "Slightly too late, you realize that the floor is not solid.",
+            "There is something strange about the floor here.",
+    };
+
+    private static final String[] FLAVOR_TEXTS_ITEMS = new String[]{
+            "This room is piled high with random nick nacks.",
+            "Dust covers almost every surface of this abandoned room.",
+            "Piles of bones litter the floor.",
+            "The contents of this room are scattered across the floor.",
+            "This room seems unaffected by the ravages of time, you must be the first to enter in a long time.",
+            "This room is filled with old furniture.",
+            "This room is filled with old paintings.",
+            "This room is filled with old books.",
+    };
 
     private String myFlavorText;
     private final ArrayList<Item> myItems;
@@ -20,12 +68,16 @@ public class Room {
     private final Random myRandom;
 
     Room() {
-        myRandom = new Random();
+        this(new Random());
+    }
+    Room(final Random theRandom) {
+        myRandom = theRandom;
         myDoors = new HashMap<>();
         myItems = generateItems();
         myMonster = generateMonster();
         myHasPit = myRandom.nextDouble() < PIT_PROBABILITY;
         myIsExit = false;
+        myFlavorText = generateFlavorText();
     }
 
     Room(final boolean theIsEntrance) {
@@ -51,13 +103,31 @@ public class Room {
 
     private Monster generateMonster() {
         if (myRandom.nextDouble() < MONSTER_PROBABILITY) {
-            //TODO: make monster factory a singleton and add a method to randomly generate a monster.
-            //return new MonsterFactory().createMonster("Ogre"); This is causing exceptions.
+            return new MonsterFactory().createMonsterRandom();
         }
         return null;
     }
 
-    public Monster getMyMonster() {
+    private String generateFlavorText() {
+        if (myIsEntrance) {
+            return "Light filters in from the entrance, as you enter the room you hear a faint click behind you. You are trapped!";
+        }
+        if (myIsExit) {
+            return "You see something strange and welcome to your dark adjusted eyes, natural light! You have found the exit!";
+        }
+        if (myHasPit) {
+            return FLAVOR_TEXTS_PIT[myRandom.nextInt(FLAVOR_TEXTS_PIT.length)];
+        }
+        if (myMonster != null) {
+            return FLAVOR_TEXTS_MONSTER[myRandom.nextInt(FLAVOR_TEXTS_MONSTER.length)];
+        }
+        if (myItems.size() > 0) {
+            return FLAVOR_TEXTS_ITEMS[myRandom.nextInt(FLAVOR_TEXTS_ITEMS.length)];
+        }
+        return FLAVOR_TEXTS_EMPTY[myRandom.nextInt(FLAVOR_TEXTS_EMPTY.length)];
+    }
+
+    public Monster getMonster() {
         return myMonster;
     }
     public ArrayList<Item> getItems() {
@@ -87,36 +157,64 @@ public class Room {
         myHasPit = false;
         myIsExit = true;
     }
-    public String getDirections() {
-        return getDirections(null);
-    }
 
-    private String getDirections(final Direction[] theDirections) {
+    /**
+     * Makes a string representation of the room.
+     * Example of a room containing the pillar of Polymorphism and doors on all sides:<br>
+     * *-*<br>
+     * |P|<br>
+     * *-*<br>
+     *
+     * @return a string representation of the room
+     * */
+    @Override
+    public String toString() {
+        final Map<Direction, Character> doors = Stream.of(NORTH, SOUTH, EAST, WEST).filter(myDoors::containsKey)
+                .collect(Collectors.toMap(dir -> dir, dir -> dir == NORTH || dir == SOUTH ? '-' : '|'));
         final StringBuilder sb = new StringBuilder();
-        if (theDirections != null) {
-            for (final Direction direction : theDirections) {
-                sb.append(direction.getDirChar());
-            }
-        }
 
-        sb.append('\n');
-        myDoors.forEach((final Direction direction, final Room room) -> {
-            if (room != null && (theDirections == null || direction != Direction.opposite(theDirections[theDirections.length-1]))) {
-                final Direction[] newDirections;
-                if (theDirections != null) {
-                    newDirections = new Direction[theDirections.length + 1];
-                    System.arraycopy(theDirections, 0, newDirections, 0, theDirections.length);
-                } else {
-                    newDirections = new Direction[1];
-                }
+        sb.append('*').append(doors.getOrDefault(NORTH, '*')).append('*').append('\n');
 
-                newDirections[newDirections.length - 1] = direction;
+        sb.append(doors.getOrDefault(WEST, '*')).append(getRoomChar()).append(doors.getOrDefault(EAST, '*')).append('\n');
 
-                sb.append(room.getDirections(newDirections));
-            }
-        });
+        sb.append('*').append(doors.getOrDefault(SOUTH, '*')).append('*').append('\n');
 
         return sb.toString();
+    }
+
+    /**
+     * Returns the character to represent the room.
+     * M - Multiple Items
+     * X - Pit
+     * i - Entrance (In)
+     * O - Exit (Out)
+     * V - Vision Potion
+     * H - Healing Potion
+     * <space> - Empty Room
+     * A, E, I, P - Pillars
+     *
+     * @return the character to represent the room
+     * */
+    private char getRoomChar() {
+        if (myItems.size() > 1) {
+            return 'M';
+        } else if (myHasPit) {
+            return 'X';
+        } else if (myIsEntrance) {
+            return 'i';
+        } else if (myIsExit) {
+            return 'O';
+        } else if (myItems.size() == 1) {
+            final Item item = myItems.get(0);
+            if (item instanceof VisionPotion) {
+                return 'V';
+            } else if (item instanceof HealingPotion) {
+                return 'H';
+            } else if (item instanceof final PillarOfOO thePillar) {
+                return thePillar.getName().charAt(0);
+            }
+        }
+        return ' ';
     }
 
 }
