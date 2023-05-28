@@ -2,16 +2,24 @@ package model;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import view.AdventureView;
+import view.CombatView;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class CombatTest extends RandomMock {
-    DungeonCharacter myPlayer;
-    DungeonCharacter myOpponent;
-    RandomMock myRandom;
-    Combat myCombat;
+    private DungeonCharacter myPlayer;
+    private DungeonCharacter myOpponent;
+    private RandomMock myRandom;
+    private Combat myCombat;
+
     @BeforeEach
     void setUp() {
         myRandom = new RandomMock();
@@ -61,6 +69,15 @@ class CombatTest extends RandomMock {
         myCombat.initiateCombat(adventurer, monster);
         assertEquals(0, monster.getHitPoints());
         assertEquals(150, adventurer.getHitPoints());
+    }
+
+    @Test
+    void testInitiateCombatUnsuccessful() {
+        final DungeonCharacter hero = new DungeonCharacter("Hero", 125, 0.0,
+                30, 60, 4) {
+        };
+        myCombat.initiateCombat(hero, myOpponent);
+        assertEquals(70, myOpponent.getHitPoints());
     }
 
     private static class MockDungeonCharacter extends DungeonCharacter implements Healable {
