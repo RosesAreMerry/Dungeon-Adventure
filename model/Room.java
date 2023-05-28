@@ -54,20 +54,12 @@ public class Room {
 
     private String toString(final Direction[] theDirections) {
         final StringBuilder sb = new StringBuilder();
-        if (theDirections == null) {
-            sb.append("First Room");
-        } else {
-            sb.append("Room ");
+        if (theDirections != null) {
             for (final Direction direction : theDirections) {
                 sb.append(direction.getDirChar());
             }
         }
-        sb.append("\nDoors: \n");
-        myDoors.forEach((final Direction direction, final Room _room) -> {
-            if (direction != null) {
-                sb.append(direction.getDirChar()).append(" ");
-            }
-        });
+
         sb.append('\n');
         myDoors.forEach((final Direction direction, final Room room) -> {
             if (room != null && (theDirections == null || direction != Direction.opposite(theDirections[theDirections.length-1]))) {
@@ -84,7 +76,6 @@ public class Room {
                 sb.append(room.toString(newDirections));
             }
         });
-        sb.append('\n');
 
         return sb.toString();
     }
