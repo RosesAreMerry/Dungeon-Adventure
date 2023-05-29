@@ -1,16 +1,15 @@
 package view;
 
-import model.Direction;
 import model.Item;
-import model.Monster;
 import model.Room;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Objects;
 
 public class RoomData {
     private final String myFlavorText;
     private final String[] myDoors;
-    private String[] myItems;
+    private final String[] myItems;
     private String[] myMonsters;
 
     private final boolean myIsPit;
@@ -41,12 +40,12 @@ public class RoomData {
 
 
     public RoomData(final Room theRoom) {
-        myFlavorText = theRoom.getMyFlavorText();
-        myDoors = extractDoorDirections(theRoom);
-        myItems = extractItems(theRoom.getItems());
-        myMonsters = extractMonsters(theRoom.getMonster());
-        myIsPit = theRoom.hasPit();
-        myIsExit = theRoom.isExit();;
+        this(theRoom.getFlavorText(),
+                theRoom.getDoors().keySet().stream().sorted().map(Objects::toString).toArray(String[]::new),
+                theRoom.getItems().stream().map(Item::getName).toArray(String[]::new),
+                theRoom.getMonster() == null ? new String[0] : new String[]{theRoom.getMonster().getName()},
+                theRoom.hasPit(),
+                theRoom.isExit());
     }
 
     public String[] getDoors() {
@@ -65,36 +64,8 @@ public class RoomData {
         return myMonsters;
     }
 
-    private String[] extractDoorDirections(final Room theRoom) {
-        final Direction[] doors = (theRoom.getDoors()).keySet().toArray(new Direction[0]);
-        return Arrays.stream(doors)
-                .map(direction -> direction.toString().substring(0, 1).toUpperCase()
-                        + direction.toString().substring(1).toLowerCase())
-                .toArray(String[]::new);
-    }
-
-    private String[] extractItems(ArrayList<Item> items) {
-        List<String> itemNames = new ArrayList<>();
-        for (Item item: items) {
-            itemNames.add(item.getName());
-        }
-        return itemNames.toArray(new String[0]);
-    }
-
-    private String[] extractMonsters(Monster monster) {
-        List<String> monsterNames = new ArrayList<>();
-        if (monster != null) {
-            monsterNames.add(monster.getName());
-        }
-        return monsterNames.toArray(new String[0]);
-    }
-
     public void setMonsters(final String[] theMonsters) {
         myMonsters = theMonsters;
-    }
-
-    public void setItems(final String[] theItems) {
-        myItems = theItems;
     }
 
     public boolean isPit() {

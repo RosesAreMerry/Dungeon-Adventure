@@ -63,6 +63,10 @@ abstract class ConsoleView {
         return promptUserChoice(theOptions, true);
     }
 
+    public String promptUserChoice(final String[] theOptions, final boolean theShowNumbers) {
+        return promptUserChoice(theOptions, theShowNumbers, "Choose an option: ");
+    }
+
     /**
      * Shows a list of options to the user and asks for their choice.
      *
@@ -72,7 +76,7 @@ abstract class ConsoleView {
      *
      * @return The name of the option chosen by the user.
      * */
-    public String promptUserChoice(final String[] theOptions, final boolean theShowNumbers) {
+    public String promptUserChoice(final String[] theOptions, final boolean theShowNumbers, final String thePrompt) {
         if (theOptions.length == 0) {
             throw new IllegalArgumentException("Must have at least one option.");
         }
@@ -84,7 +88,7 @@ abstract class ConsoleView {
             write(theOptions[i] + "\n");
         }
 
-        return theOptions[askForOption(theOptions)];
+        return theOptions[askForOption(theOptions, thePrompt)];
     }
 
     /**
