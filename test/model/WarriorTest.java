@@ -38,11 +38,16 @@ public class WarriorTest extends RandomMock {
      */
     @Test
     public void testAttackSpecialSkillTrue() {
-        myRandomMock.setMockIntValue(60);
-        myWarrior.attack(myOpponent);
-        final int expectedHitPoints = 65; // 200 - 135 = 95
-        final int actualHitPoints = myOpponent.getHitPoints();
-        Assertions.assertEquals(expectedHitPoints, actualHitPoints);
+        final Warrior warrior = new Warrior("Test Warrior") {
+            @Override
+            protected boolean useSpecialSkill() {
+                return true;
+            }
+        };
+        myRandomMock.setMockIntValue(30);
+        warrior.setMyRandom(myRandomMock);
+        warrior.attack(myOpponent);
+        Assertions.assertEquals(95, myOpponent.getHitPoints());
     }
 }
 

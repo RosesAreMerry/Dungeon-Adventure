@@ -41,7 +41,7 @@ public class MonsterFactory {
      *
      * @return a Monster
      * */
-    public Monster createMonsterByName(String theMonsterName) {
+    public Monster createMonsterByName(final String theMonsterName) {
         try {
             // prepare a SQL statement to select the Monster's stats from the database
             final PreparedStatement statement = myConnection.prepareStatement("SELECT * FROM Monster WHERE Name = ?");
@@ -55,9 +55,9 @@ public class MonsterFactory {
     }
 
     /**
-     * Creates a Monster based on a sql query.
+     * Creates a Monster based on a SQL query.
      *
-     * @param theQuery the sql query
+     * @param theQuery the SQL query
      * @return a Monster
      */
     Monster createMonster(final PreparedStatement theQuery) {

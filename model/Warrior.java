@@ -21,7 +21,7 @@ public class Warrior extends Hero {
         myRandom = new Random();
     }
 
-
+    @Override
     public void attack(final DungeonCharacter theOpponent) {
         if (canAttack()) {
             if (useSpecialSkill()) {

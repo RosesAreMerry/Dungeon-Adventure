@@ -54,7 +54,7 @@ public class Monster extends DungeonCharacter implements Healable {
      */
     @Override
     public void attack(final DungeonCharacter theOpponent) {
-        if (theOpponent.canBlockAttack() || !theOpponent.canAttack()) {
+        if (theOpponent.canBlockAttack() || !canAttack()) {
             theOpponent.setAttacked(false);
             return;
         }

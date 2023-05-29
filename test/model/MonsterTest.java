@@ -96,13 +96,8 @@ class MonsterTest extends RandomMock {
     @Test
     void testSuccessfulAttack() {
         final Monster ogre = myMonsterFactory.createMonsterByName("Ogre");
-        final Monster gremlin = new Monster("Gremlin", 70, 0.8, 15,
-                30, 5, 0.4, 20, 40) {
-            @Override
-            public boolean canAttack() {
-                return true;
-            }
-        };
+        final Monster gremlin = new Monster("Gremlin", 70, 1.0, 15,
+                30, 5, 0.4, 20, 40) {};
         myRandomMock.setMockIntValue(5); // damage = 5 + 15 = 20
         gremlin.setRandom(myRandomMock);
         gremlin.attack(ogre); // gremlin gets two attacks; ogre hit points = 200 - 20 - 20 = 160
