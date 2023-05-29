@@ -57,7 +57,6 @@ public class DungeonAdventure {
             displayCurrentRoom();
             Thread.sleep(2000);
             displayOptions();
-
         } while (!myHero.isFainted());
 
         // Game conclusion
@@ -105,6 +104,7 @@ public class DungeonAdventure {
      */
     private void displayCurrentRoom() {
         myAdventureView.printRoom(myCurrentRoomData, null);
+        myAdventureView.sendMessage(myCurrentRoom.toString());
     }
 
     private void setRoomData(final RoomData theRoomData) {
@@ -113,15 +113,16 @@ public class DungeonAdventure {
 
     private void setUpRoom(final Room theRoom) {
         myCurrentRoom = theRoom;
-        final Direction[] doors = (myCurrentRoom.getDoors()).keySet().toArray(new Direction[0]);
-        final String[] doorsString = Arrays.stream(doors)
-                .map(direction -> direction.toString().substring(0, 1).toUpperCase()
-                        + direction.toString().substring(1).toLowerCase())
-                .toArray(String[]::new);
-        final String[] myItems = myCurrentRoom.getItems().stream().map(Item::getName).toArray(String[]::new);
-        myCurrentRoomData = new RoomData(doorsString,
-                myItems, new String[]{}, false, false);
+//        final Direction[] doors = (myCurrentRoom.getDoors()).keySet().toArray(new Direction[0]);
+//        final String[] doorsString = Arrays.stream(doors)
+//                .map(direction -> direction.toString().substring(0, 1).toUpperCase()
+//                        + direction.toString().substring(1).toLowerCase())
+//                .toArray(String[]::new);
+//        final String[] myItems = myCurrentRoom.getItems().stream().map(Item::getName).toArray(String[]::new);
+//        myCurrentRoomData = new RoomData(doorsString,
+//                myItems, new String[]{}, false, false);
 //        myHero.addToInventory(myCurrentRoom.getItems());
+        myCurrentRoomData = new RoomData(myCurrentRoom);
         setRoomData(myCurrentRoomData);
     }
 
@@ -134,25 +135,26 @@ public class DungeonAdventure {
             for (final String monster : myCurrentRoomData.getMonsters()) {
                 handleCombat(monster);
             }
-        }
-        myAdventureView.sendMessage("What do you want to do?");
-        final List<String> options = new ArrayList<>();
-        if (myCurrentRoomData.getMonsters().length == 0) {
-            for (final String door : myCurrentRoomData.getDoors()) {
-                final String doorTitleCase = door.substring(0, 1).toUpperCase() + door.substring(1).toLowerCase();
-                options.add("Go " + doorTitleCase);
+        } if (!myHero.isFainted()) {
+            myAdventureView.sendMessage("What do you want to do?");
+            final List<String> options = new ArrayList<>();
+            if (myCurrentRoomData.getMonsters().length == 0) {
+                for (final String door : myCurrentRoomData.getDoors()) {
+                    final String doorTitleCase = door.substring(0, 1).toUpperCase() + door.substring(1).toLowerCase();
+                    options.add("Go " + doorTitleCase);
+                }
+                options.add("Look Around");
             }
-            options.add("Look Around");
-        }
-        if (myHero.getMyInventory().size() > 0) {
-            options.add("See Inventory");
-        }
+            if (myHero.getMyInventory().size() > 0) {
+                options.add("See Inventory");
+            }
 //        for (final String monster : myCurrentRoomData.getMonsters()) {
 //            options.add("Battle " + monster);
 //        }
-        final String choice = myAdventureView.promptUserChoice(options.toArray(new String[0]));
-        myAdventureView.sendMessage("You chose: " + choice);
-        handleAction(choice);
+            final String choice = myAdventureView.promptUserChoice(options.toArray(new String[0]));
+            myAdventureView.sendMessage("You chose: " + choice);
+            handleAction(choice);
+        }
     }
 
     /**
@@ -185,6 +187,8 @@ public class DungeonAdventure {
             setRoomData(myCurrentRoomData);
             if (opponent.isFainted()) {
                 myAdventureView.sendMessage(theOpponent + " was defeated!");
+            } else {
+                myAdventureView.sendMessage("You were defeated by the " + theOpponent + "!");
             }
         }
     }
@@ -193,7 +197,7 @@ public class DungeonAdventure {
         final Direction enumDirection = Direction.valueOf(theDirection.toUpperCase());
         myDungeon.move(enumDirection);
         setUpRoom(myDungeon.getCurrentRoom());
-        System.out.println(myHero.getName() + " has moved to the " + theDirection);
+        System.out.println("You have moved to the " + theDirection);
     }
 
     private void lookAroundAction() {
@@ -207,14 +211,10 @@ public class DungeonAdventure {
                     true);
             myAdventureView.sendMessage(String.valueOf(sb));
             myHero.addToInventory(myCurrentRoom.getItems());
-            myCurrentRoomData.removeItemFromRoom(myCurrentRoom.getItems(), myCurrentRoomData.getItems());
+            myCurrentRoom.getItems().clear();
         }
-        final Direction[] doors = (myCurrentRoom.getDoors()).keySet().toArray(new Direction[0]);
-        final String[] doorsString = Arrays.stream(doors)
-                .map(direction -> direction.toString().substring(0, 1).toUpperCase()
-                        + direction.toString().substring(1).toLowerCase())
-                .toArray(String[]::new);
-        myCurrentRoomData = new RoomData(doorsString, new String[]{}, new String[]{}, false, false);
+        myCurrentRoomData = new RoomData(myCurrentRoomData.getFlavor(), myCurrentRoomData.getDoors(),
+                new String[]{}, new String[]{}, myCurrentRoomData.isPit(), myCurrentRoomData.isExit());
         setRoomData(myCurrentRoomData);
     }
 
@@ -234,7 +234,6 @@ public class DungeonAdventure {
      * Displays the entire dungeon layout to the user.
      */
     private void displayDungeon() {
-
     }
 
     /**

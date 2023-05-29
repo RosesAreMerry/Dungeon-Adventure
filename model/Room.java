@@ -9,7 +9,7 @@ import static model.Direction.*;
 public class Room {
 
     private static final double PIT_PROBABILITY = 0.1;
-    private static final double MONSTER_PROBABILITY = 0.1;
+    private static final double MONSTER_PROBABILITY = 0.8;
     private static final double HEALTH_POTION_PROBABILITY = 0.9;
     private static final double VISION_POTION_PROBABILITY = 0.9;
     private static final String[] FLAVOR_TEXTS_EMPTY = new String[] {
@@ -150,6 +150,9 @@ public class Room {
     }
     void addDoor(final Direction theDirection, final Room theRoom) {
         myDoors.put(theDirection, theRoom);
+    }
+    public String getMyFlavorText() {
+        return myFlavorText;
     }
     void setExit() {
         myItems.clear();

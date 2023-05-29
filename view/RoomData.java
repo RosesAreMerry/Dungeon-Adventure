@@ -1,11 +1,11 @@
 package view;
 
+import model.Direction;
 import model.Item;
+import model.Monster;
 import model.Room;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Objects;
+import java.util.*;
 
 public class RoomData {
     private final String myFlavorText;
@@ -41,8 +41,12 @@ public class RoomData {
 
 
     public RoomData(final Room theRoom) {
-        // TODO: Implement this constructor
-        throw new UnsupportedOperationException("Method not yet implemented");
+        myFlavorText = theRoom.getMyFlavorText();
+        myDoors = extractDoorDirections(theRoom);
+        myItems = extractItems(theRoom.getItems());
+        myMonsters = extractMonsters(theRoom.getMonster());
+        myIsPit = theRoom.hasPit();
+        myIsExit = theRoom.isExit();;
     }
 
     public String[] getDoors() {
@@ -59,6 +63,30 @@ public class RoomData {
 
     public String[] getMonsters() {
         return myMonsters;
+    }
+
+    private String[] extractDoorDirections(final Room theRoom) {
+        final Direction[] doors = (theRoom.getDoors()).keySet().toArray(new Direction[0]);
+        return Arrays.stream(doors)
+                .map(direction -> direction.toString().substring(0, 1).toUpperCase()
+                        + direction.toString().substring(1).toLowerCase())
+                .toArray(String[]::new);
+    }
+
+    private String[] extractItems(ArrayList<Item> items) {
+        List<String> itemNames = new ArrayList<>();
+        for (Item item: items) {
+            itemNames.add(item.getName());
+        }
+        return itemNames.toArray(new String[0]);
+    }
+
+    private String[] extractMonsters(Monster monster) {
+        List<String> monsterNames = new ArrayList<>();
+        if (monster != null) {
+            monsterNames.add(monster.getName());
+        }
+        return monsterNames.toArray(new String[0]);
     }
 
     public void setMonsters(final String[] theMonsters) {
@@ -83,18 +111,6 @@ public class RoomData {
             if (monsters[i].equals(theMonster)) {
                 monsters[i] = null;
                 setMonsters(removeNullValues(monsters));
-            }
-        }
-    }
-
-    public void removeItemFromRoom(final ArrayList<Item> theItems, String[] itemsArray) {
-        for (final Item item: theItems) {
-            final String itemToRemove = item.getName();
-            for (int i = 0; i < itemsArray.length; i++) {
-                if (itemsArray[i] != null && itemsArray[i].equals(itemToRemove)) {
-                    itemsArray[i] = null;
-                    setItems(removeNullValues(itemsArray));
-                }
             }
         }
     }
