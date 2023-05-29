@@ -19,9 +19,9 @@ public class DungeonAdventure {
     public static final int MAX_PIT_DAMAGE = 10;
     private Dungeon myDungeon;
     private Hero myHero;
+    private RoomData myCurrentRoomData;
     private final AdventureView myAdventureView;
     private final InventoryView myInventoryView;
-    private final CombatView myCombatView;
 
     public DungeonAdventure() throws InterruptedException {
         myAdventureView = new AdventureView();
@@ -34,7 +34,6 @@ public class DungeonAdventure {
             }
         };
         myInventoryView = new InventoryView(myItemHandler);
-        myCombatView = new CombatView();
         boolean playAgain = true;
         while (playAgain) {
             playGame();
@@ -50,7 +49,7 @@ public class DungeonAdventure {
         displayIntroduction();
         myHero = createAdventurer();
         myDungeon = createDungeon();
-        myHero.addToInventory(new HealingPotion());
+        myCurrentRoomData = getCurrentRoomData();
         myAdventureView.sendMessage("\nYou walk into a dungeon.");
 
         // Main game loop
@@ -95,24 +94,23 @@ public class DungeonAdventure {
      * Creates the dungeon for the game.
      */
     private Dungeon createDungeon() {
-        final String[] options = new String[]{"Small", "Medium", "Large"};
+        final String[] options = {"Small", "Medium", "Large"};
         final String choice = myAdventureView.promptUserChoice(options, false, "What size dungeon do you want to explore? ");
 
-        switch (choice) {
-            case "Medium" -> {
-                return DungeonBuilder.INSTANCE.buildDungeon(25);
-            }
-            case "Large" -> {
-                return DungeonBuilder.INSTANCE.buildDungeon(50);
-            }
-            default -> {
-                return DungeonBuilder.INSTANCE.buildDungeon(10);
-            }
-        }
+        return switch (choice) {
+            case "Medium" -> DungeonBuilder.INSTANCE.buildDungeon(25);
+            case "Large" -> DungeonBuilder.INSTANCE.buildDungeon(50);
+            default -> DungeonBuilder.INSTANCE.buildDungeon(10);
+        };
     }
+
 
     private RoomData getCurrentRoomData() {
         return new RoomData(myDungeon.getCurrentRoom());
+    }
+
+    private void setCurrentRoomData(final RoomData theRoomData) {
+        myCurrentRoomData = theRoomData;
     }
 
     /**
@@ -160,15 +158,14 @@ public class DungeonAdventure {
 
         myAdventureView.sendMessage("What do you want to do?");
         final List<String> options = new ArrayList<>();
-        RoomData rd = getCurrentRoomData();
-        if (rd.getMonsters().length == 0) {
-            for (final String door : rd.getDoors()) {
+        if (myCurrentRoomData.getMonsters().length == 0) {
+            for (final String door : myCurrentRoomData.getDoors()) {
                 options.add("Go " + door);
             }
             options.add("Look Around");
         }
         options.add("See Inventory");
-        for (final String monster : rd.getMonsters()) {
+        for (final String monster : myCurrentRoomData.getMonsters()) {
             options.add("Battle " + monster);
         }
         final String choice = myAdventureView.promptUserChoice(options.toArray(new String[0]));
@@ -198,13 +195,13 @@ public class DungeonAdventure {
     }
 
     private void handleCombat(final String theOpponent) {
-        final RoomData roomData = getCurrentRoomData();
-        if (roomData.getMonsters() != null && roomData.getMonsters().length > 0) {
+        myCurrentRoomData = getCurrentRoomData();
+        if (myCurrentRoomData.getMonsters() != null && myCurrentRoomData.getMonsters().length > 0) {
             final Combat combat = new Combat();
             final MonsterFactory monsterFactory = new MonsterFactory();
             final Monster opponent = monsterFactory.createMonsterByName(theOpponent);
             combat.initiateCombat(myHero, opponent);
-            roomData.removeMonsterFromRoom(theOpponent);
+            myCurrentRoomData.removeMonsterFromRoom(theOpponent);
             if (opponent.isFainted()) {
                 myAdventureView.sendMessage(theOpponent + " was defeated!");
                 myDungeon.getCurrentRoom().killMonster();
@@ -231,12 +228,11 @@ public class DungeonAdventure {
             myHero.getMyInventory().add(item);
             myAdventureView.sendMessage("You picked up " + item.getName());
         }
-
         myDungeon.getCurrentRoom().getItems().removeIf(item -> true);
     }
 
     private void lookAroundAction() {
-        RoomData myCurrentRoomData = getCurrentRoomData();
+        myCurrentRoomData = getCurrentRoomData();
         if (myCurrentRoomData.getItems().length > 0) {
             final StringBuilder sb = new StringBuilder();
             myAdventureView.buildList(sb,
@@ -251,7 +247,7 @@ public class DungeonAdventure {
         }
         myCurrentRoomData = new RoomData(myCurrentRoomData.getFlavor(), myCurrentRoomData.getDoors(),
                 new String[]{}, new String[]{}, myCurrentRoomData.isPit(), myCurrentRoomData.isExit());
-        setRoomData(myCurrentRoomData);
+        setCurrentRoomData(myCurrentRoomData);
     }
 
     /**
