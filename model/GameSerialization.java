@@ -6,10 +6,10 @@ public class GameSerialization {
 
     public static void saveGame(final String theFileName, final GameData theGameData) {
         try {
-            String saveDirectory = "saves/";
-            File saveDir = new File(saveDirectory);
-            saveDir.mkdirs();
-            File saveFile = new File(saveDirectory + theFileName);
+            final String saveDirectory = "saves/";
+            final File saveDir = new File(saveDirectory);
+            final saveDir.mkdirs();
+            final File saveFile = new File(saveDirectory + theFileName);
             ObjectOutputStream outputStream =  new ObjectOutputStream(new FileOutputStream(saveFile));
             outputStream.writeObject(theGameData);
             outputStream.close();
@@ -20,10 +20,10 @@ public class GameSerialization {
 
     public static GameData loadGame(final String theFileName) {
         try{
-            String saveDirectory = "saves/";
-            File saveFile = new File(saveDirectory + theFileName);
-            ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(saveFile));
-            GameData gameData = (GameData) inputStream.readObject();
+            final String saveDirectory = "saves/";
+            final File saveFile = new File(saveDirectory + theFileName);
+            final ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(saveFile));
+            final GameData gameData = (GameData) inputStream.readObject();
             inputStream.close();
             return gameData;
         } catch (IOException | ClassNotFoundException e) {

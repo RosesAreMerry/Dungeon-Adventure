@@ -22,6 +22,7 @@ public class DungeonAdventure implements Serializable {
     private RoomData myCurrentRoomData;
     private Room myCurrentRoom;
     private GameData myGameData;
+    @Serial
     private static final long serialVersionUID = 1L;
 
 
@@ -50,7 +51,7 @@ public class DungeonAdventure implements Serializable {
     private void playGame() throws InterruptedException {
         // Introduction and game setup
         displayIntroduction();
-        String choice = myAdventureView.promptUserChoice(new String[]{"Load Game", "New Game"}, true);
+        final String choice = myAdventureView.promptUserChoice(new String[]{"Load Game", "New Game"}, true);
         if (choice.equals("Load Game")) {
             loadSavedGame();
         }  else {
@@ -166,7 +167,7 @@ public class DungeonAdventure implements Serializable {
      */
     private void handleAction(final String theChoice) {
         final Map<String, Runnable> actions = new HashMap<>();
-        GameData gameData = new GameData(myDungeon, myHero);
+        final GameData gameData = new GameData(myDungeon, myHero);
         if (theChoice.startsWith("Go")) { // handle moving to other rooms
             final String direction = theChoice.substring(3);
             actions.put("Go " + direction, () -> handleMoving(direction));
@@ -305,11 +306,11 @@ public class DungeonAdventure implements Serializable {
     }
 
     public List<String> getSavedGames() {
-        List<String> savedGames = new ArrayList<>();
-        File saveDirectory = new File("saves/");
-        File[] saveFiles = saveDirectory.listFiles();
+        final List<String> savedGames = new ArrayList<>();
+        final File saveDirectory = new File("saves/");
+        final File[] saveFiles = saveDirectory.listFiles();
         if (saveFiles != null) {
-            for (File file : saveFiles) {
+            for (final File file : saveFiles) {
                 savedGames.add(file.getName());
             }
         }
