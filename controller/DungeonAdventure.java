@@ -185,14 +185,17 @@ public class DungeonAdventure implements Serializable {
 //        actions.put("Battle " + monster, () -> handleCombat(monster));
         actions.put("Look Around", this::lookAroundAction);
         actions.put("See Inventory", () -> myInventoryView.showInventory(myHero.getMyInventory()));
-        actions.put("Save Game", () -> GameSerializationUtil.saveGame("DA", gameData));
+        if (theChoice.equals("Save Game")) {
+            final String fileName = myAdventureView.promptUserInput("Please enter a name for your game entry: ",
+                    "Please enter a name for your game entry: ", (String s) -> s != null && s.length() > 0);
+            actions.put("Save Game", () -> GameSerialization.saveGame(fileName, gameData));
+        }
         final Runnable action = actions.get(theChoice);
         action.run();
     }
 
     /**
-     * Edited this-added the opponent to the monsters array
-     * need ti make a monster array here
+     *
      * @param theOpponent
      */
     private void handleCombat(final String theOpponent) {
@@ -266,54 +269,68 @@ public class DungeonAdventure implements Serializable {
         final String choice = myAdventureView.promptUserChoice(new String[] {"Play Again", "Exit"}, false);
         return choice.equals("Play Again");
     }
-    public void saveGameState() {
-        String filename="DungeonAdventure.ser";
-        try {
-            //saving the object in a file
-            FileOutputStream file = new FileOutputStream(filename);
-            ObjectOutputStream out = new ObjectOutputStream(file);
-            out.writeObject(this.myHero);
-            out.writeObject(monsters); // the monsters hero battles
-            out.close();
-            System.out.println("object has been serialized .");
-        } catch (IOException ex) {
-            System.out.println("IOException is caught");
-        }
-    }
-    public void loadGameState() {
-        this.myHero=null;
-        //this.opponent=null;
-        try {
-            FileInputStream file = new FileInputStream("DungeonAdventure.ser");
-            ObjectInputStream in = new ObjectInputStream(file);
-            this.myHero= (Hero) in.readObject();
-            monsters = (ArrayList) in.readObject();
-            in.close();
-            file.close();
-            System.out.println("Game state loaded successfully.");
-            System.out.println("Serialized data: " + myHero);
-            for(int i=0; i<monsters.size();i++) {
-                System.out.println("Serialized data" + monsters.get(i));
-            }
 
-        } catch (IOException | ClassNotFoundException e) {
-            System.out.println("Error loading game state: " + e.getMessage());
-
-        }
-    }
+//    public void saveGameState() {
+//        String filename="DungeonAdventure.ser";
+//        try {
+//            //saving the object in a file
+//            FileOutputStream file = new FileOutputStream(filename);
+//            ObjectOutputStream out = new ObjectOutputStream(file);
+//            out.writeObject(this.myHero);
+//            out.writeObject(monsters); // the monsters hero battles
+//            out.close();
+//            System.out.println("object has been serialized .");
+//        } catch (IOException ex) {
+//            System.out.println("IOException is caught");
+//        }
+//    }
+//    public void loadGameState() {
+//        this.myHero=null;
+//        //this.opponent=null;
+//        try {
+//            FileInputStream file = new FileInputStream("DungeonAdventure.ser");
+//            ObjectInputStream in = new ObjectInputStream(file);
+//            this.myHero= (Hero) in.readObject();
+//            monsters = (ArrayList) in.readObject();
+//            in.close();
+//            file.close();
+//            System.out.println("Game state loaded successfully.");
+//            System.out.println("Serialized data: " + myHero);
+//            for(int i=0; i<monsters.size();i++) {
+//                System.out.println("Serialized data" + monsters.get(i));
+//            }
+//
+//        } catch (IOException | ClassNotFoundException e) {
+//            System.out.println("Error loading game state: " + e.getMessage());
+//
+//        }
+//    }
 
     public void loadSavedGame() {
-        myGameData = GameSerializationUtil.loadGame("DA");
+        final String fileName = myAdventureView.promptUserChoice(getSavedGames().toArray(new String[0]), true);
+        myGameData = GameSerialization.loadGame(fileName);
         if (myGameData != null) {
             myCurrentRoomData = new RoomData(myGameData.getDungeon().getCurrentRoom());
             myCurrentRoom = myGameData.getDungeon().getCurrentRoom();
             setRoomData(myCurrentRoomData);
             myHero = myGameData.getHero();
-            myAdventureView.sendMessage("Game loaded successfully!");
+            myAdventureView.sendMessage(fileName + " loaded successfully!");
             myAdventureView.sendMessage("\nCurrent hit points: " + myHero.getHitPoints());
         } else {
-            myAdventureView.sendMessage("Failed to load game.");
+            myAdventureView.sendMessage("Failed to load " + fileName);
         }
+    }
+
+    public List<String> getSavedGames() {
+        List<String> savedGames = new ArrayList<>();
+        File saveDirectory = new File("saves/");
+        File[] saveFiles = saveDirectory.listFiles();
+        if (saveFiles != null) {
+            for (File file : saveFiles) {
+                savedGames.add(file.getName());
+            }
+        }
+        return savedGames;
     }
 
     /**

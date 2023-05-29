@@ -3,11 +3,10 @@ package model;
 import java.io.Serializable;
 
 public class GameData implements Serializable {
+    private final Dungeon myDungeon;
+    private final Hero myHero;
 
-    private Dungeon myDungeon;
-    private Hero myHero;
-
-    public GameData(Dungeon theDungeon, Hero theHero) {
+    public GameData(final Dungeon theDungeon, final Hero theHero) {
         myDungeon = theDungeon;
         myHero = theHero;
     }
