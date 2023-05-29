@@ -21,9 +21,9 @@ public class DungeonAdventure implements Serializable {
     private Hero myHero;
     private RoomData myCurrentRoomData;
     private Room myCurrentRoom;
-    private List<Monster> monsters;
     private GameData myGameData;
     private static final long serialVersionUID = 1L;
+
 
     public DungeonAdventure() throws InterruptedException {
         myAdventureView = new AdventureView();
@@ -37,7 +37,6 @@ public class DungeonAdventure implements Serializable {
             }
         };
         myInventoryView = new InventoryView(myItemHandler);
-        monsters = new ArrayList<>(); // maliha
         boolean playAgain = true;
         while (playAgain) {
             playGame();
@@ -123,15 +122,6 @@ public class DungeonAdventure implements Serializable {
 
     private void setUpRoom(final Room theRoom) {
         myCurrentRoom = theRoom;
-//        final Direction[] doors = (myCurrentRoom.getDoors()).keySet().toArray(new Direction[0]);
-//        final String[] doorsString = Arrays.stream(doors)
-//                .map(direction -> direction.toString().substring(0, 1).toUpperCase()
-//                        + direction.toString().substring(1).toLowerCase())
-//                .toArray(String[]::new);
-//        final String[] myItems = myCurrentRoom.getItems().stream().map(Item::getName).toArray(String[]::new);
-//        myCurrentRoomData = new RoomData(doorsString,
-//                myItems, new String[]{}, false, false);
-//        myHero.addToInventory(myCurrentRoom.getItems());
         myCurrentRoomData = new RoomData(myCurrentRoom);
         setRoomData(myCurrentRoomData);
     }
@@ -194,16 +184,11 @@ public class DungeonAdventure implements Serializable {
         action.run();
     }
 
-    /**
-     *
-     * @param theOpponent
-     */
     private void handleCombat(final String theOpponent) {
         if (myCurrentRoomData.getMonsters() != null && myCurrentRoomData.getMonsters().length > 0) {
             final Combat combat = new Combat();
             final MonsterFactory monsterFactory = new MonsterFactory();
-            //making opponent a global variable to be able to access it for serialization
-             final Monster opponent = monsterFactory.createMonsterByName(theOpponent);
+            final Monster opponent = monsterFactory.createMonsterByName(theOpponent);
             combat.initiateCombat(myHero, opponent);
             myCurrentRoomData.removeMonsterFromRoom(theOpponent);
             setRoomData(myCurrentRoomData);
@@ -212,8 +197,6 @@ public class DungeonAdventure implements Serializable {
             } else {
                 myAdventureView.sendMessage("You were defeated by the " + theOpponent + "!");
             }
-            // add the opponent to an array
-           monsters.add(opponent);
         }
     }
 
