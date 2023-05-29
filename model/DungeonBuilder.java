@@ -5,7 +5,7 @@ import java.util.stream.Stream;
 
 import static model.Direction.*;
 
-class DungeonBuilder {
+public class DungeonBuilder {
     public static final DungeonBuilder INSTANCE = new DungeonBuilder();
 
     /** This is a constant that means that it will generate a hallway until there is this number
@@ -29,7 +29,7 @@ class DungeonBuilder {
         if (theNumberOfRooms < 6) {
             throw new IllegalArgumentException("The number of rooms must be at least 6.");
         }
-        Room entrance = new Room();
+        Room entrance = new Room(true);
         int generatedRooms = 0;
         // This loop will keep trying to generate a dungeon until it succeeds.
         // This is a brute force method, but it is guaranteed to work eventually.

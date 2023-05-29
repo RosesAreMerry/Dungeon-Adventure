@@ -87,6 +87,7 @@ public class Room {
         myMonster = null;
         myHasPit = false;
         myIsEntrance = theIsEntrance;
+        myFlavorText = generateFlavorText();
         myIsExit = false;
     }
 
@@ -110,7 +111,7 @@ public class Room {
 
     private String generateFlavorText() {
         if (myIsEntrance) {
-            return "Light filters in from the entrance, as you enter the room you hear a faint click behind you. You are trapped!";
+            return "The door to the dungeon is closed. You are trapped in the dark.";
         }
         if (myIsExit) {
             return "You see something strange and welcome to your dark adjusted eyes, natural light! You have found the exit!";
@@ -147,6 +148,16 @@ public class Room {
     }
     public Map<Direction, Room> getDoors() {
         return myDoors;
+    }
+    public String getFlavorText() {
+        return myFlavorText;
+    }
+    public void killMonster() {
+        myMonster = null;
+        myFlavorText = generateFlavorText();
+    }
+    public void removePit() {
+        myHasPit = false;
     }
     void addDoor(final Direction theDirection, final Room theRoom) {
         myDoors.put(theDirection, theRoom);

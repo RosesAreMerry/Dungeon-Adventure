@@ -6,11 +6,9 @@ import view.CombatView;
 import view.InventoryView;
 import view.RoomData;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 /**
  * Serves as the main entry point for the game and orchestrates the actions of the player, monsters,
@@ -18,12 +16,12 @@ import java.util.function.Consumer;
  * and displays relevant information to users.
  */
 public class DungeonAdventure {
+    public static final int MAX_PIT_DAMAGE = 10;
     private Dungeon myDungeon;
     private Hero myHero;
     private final AdventureView myAdventureView;
     private final InventoryView myInventoryView;
     private final CombatView myCombatView;
-    private final RoomData myRoomData;
 
     public DungeonAdventure() {
         myAdventureView = new AdventureView();
@@ -34,11 +32,6 @@ public class DungeonAdventure {
         };
         myInventoryView = new InventoryView(myItemHandler);
         myCombatView = new CombatView();
-        myRoomData = new RoomData("You walk into a room",
-                new String[]{"North", "South"},
-                new String[]{"Health Potion"},
-                new String[]{"Ogre", "Gremlin"},
-                false, false);
         boolean playAgain = true;
         while (playAgain) {
             playGame();
@@ -53,7 +46,7 @@ public class DungeonAdventure {
         // Introduction and game setup
         displayIntroduction();
         myHero = createAdventurer();
-        createDungeon();
+        myDungeon = createDungeon();
         myHero.addToInventory(new HealingPotion());
         myAdventureView.sendMessage("\nYou walk into a dungeon.");
 
@@ -103,7 +96,25 @@ public class DungeonAdventure {
     /**
      * Creates the dungeon for the game.
      */
-    private void createDungeon() {
+    private Dungeon createDungeon() {
+        final String[] options = new String[]{"Small", "Medium", "Large"};
+        final String choice = myAdventureView.promptUserChoice(options, false, "What size dungeon do you want to explore? ");
+
+        switch (choice) {
+            case "Medium" -> {
+                return DungeonBuilder.INSTANCE.buildDungeon(25);
+            }
+            case "Large" -> {
+                return DungeonBuilder.INSTANCE.buildDungeon(50);
+            }
+            default -> {
+                return DungeonBuilder.INSTANCE.buildDungeon(10);
+            }
+        }
+    }
+
+    private RoomData getCurrentRoomData() {
+        return new RoomData(myDungeon.getCurrentRoom());
     }
 
     /**
@@ -111,7 +122,11 @@ public class DungeonAdventure {
      * This method shows the description of the current room, along with any available items in the room.
      */
     private void displayCurrentRoom() {
-        myAdventureView.printRoom(myRoomData, null);
+        myAdventureView.printRoom(getCurrentRoomData(), null);
+        if (myDungeon.getCurrentRoom().hasPit()) {
+            handlePit();
+        }
+        handleItems();
     }
 
     /**
@@ -121,14 +136,15 @@ public class DungeonAdventure {
     private void displayOptions() {
         myAdventureView.sendMessage("What do you want to do?");
         final List<String> options = new ArrayList<>();
-        if (myRoomData.getMonsters().length == 0) {
-            for (final String door : myRoomData.getDoors()) {
+        RoomData rd = getCurrentRoomData();
+        if (rd.getMonsters().length == 0) {
+            for (final String door : rd.getDoors()) {
                 options.add("Go " + door);
             }
             options.add("Look Around");
         }
         options.add("See Inventory");
-        for (final String monster : myRoomData.getMonsters()) {
+        for (final String monster : rd.getMonsters()) {
             options.add("Battle " + monster);
         }
         final String choice = myAdventureView.promptUserChoice(options.toArray(new String[0]));
@@ -146,7 +162,7 @@ public class DungeonAdventure {
         final Map<String, Runnable> actions = new HashMap<>();
         final String direction = theChoice.substring(3);
         final String monster = theChoice.substring(7);
-        actions.put("Go " + direction, () -> { /* handle moving to another room action */ });
+        actions.put("Go " + direction, () -> { handleMove(direction); });
         actions.put("Battle " + monster, () -> handleCombat(monster));
         actions.put("See Inventory", () -> myInventoryView.showInventory(myHero.getMyInventory()));
         actions.put("Look Around", () -> { /* handle Look Around action */ });
@@ -155,16 +171,41 @@ public class DungeonAdventure {
     }
 
     private void handleCombat(final String theOpponent) {
-        if (myRoomData.getMonsters() != null && myRoomData.getMonsters().length > 0) {
+        final RoomData roomData = getCurrentRoomData();
+        if (roomData.getMonsters() != null && roomData.getMonsters().length > 0) {
             final Combat combat = new Combat();
             final MonsterFactory monsterFactory = new MonsterFactory();
             final Monster opponent = monsterFactory.createMonsterByName(theOpponent);
             combat.initiateCombat(myHero, opponent);
-            myRoomData.removeMonsterFromRoom(theOpponent);
+            roomData.removeMonsterFromRoom(theOpponent);
             if (opponent.isFainted()) {
                 myAdventureView.sendMessage(theOpponent + " was defeated!");
+                myDungeon.getCurrentRoom().killMonster();
             }
         }
+    }
+
+    private void handleMove(final String theDir) {
+        final Direction direction = Direction.valueOf(theDir.toUpperCase());
+        myDungeon.move(direction);
+    }
+
+    private void handlePit() {
+        myAdventureView.sendMessage("You fell into a pit!");
+        final int damage = new Random().nextInt(MAX_PIT_DAMAGE) + 1;
+        myAdventureView.sendMessage("You took " + damage + " damage! " + myHero.getHitPoints() + " hit points remaining.");
+        myHero.setHitPoints(myHero.getHitPoints() - damage);
+        myDungeon.getCurrentRoom().removePit();
+    }
+
+    private void handleItems() {
+        final List<Item> items = myDungeon.getCurrentRoom().getItems();
+        for (final Item item : items) {
+            myHero.getMyInventory().add(item);
+            myAdventureView.sendMessage("You picked up " + item.getName());
+        }
+
+        myDungeon.getCurrentRoom().getItems().removeIf(item -> true);
     }
 
     /**

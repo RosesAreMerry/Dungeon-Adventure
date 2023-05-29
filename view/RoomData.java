@@ -1,5 +1,6 @@
 package view;
 
+import model.Item;
 import model.Room;
 
 import java.util.Arrays;
@@ -39,8 +40,12 @@ public class RoomData {
 
 
     public RoomData(final Room theRoom) {
-        // TODO: Implement this constructor
-        throw new UnsupportedOperationException("Method not yet implemented");
+        this(theRoom.getFlavorText(),
+                theRoom.getDoors().keySet().stream().sorted().map(Objects::toString).toArray(String[]::new),
+                theRoom.getItems().stream().map(Item::getName).toArray(String[]::new),
+                theRoom.getMonster() == null ? new String[0] : new String[]{theRoom.getMonster().getName()},
+                theRoom.hasPit(),
+                theRoom.isExit());
     }
 
     public String[] getDoors() {

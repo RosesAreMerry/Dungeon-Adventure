@@ -28,12 +28,13 @@ public enum Direction {
         };
     }
 
-    public char getDirChar() {
+    @Override
+    public String toString() {
         return switch (this) {
-            case NORTH -> 'N';
-            case SOUTH -> 'S';
-            case EAST -> 'E';
-            case WEST -> 'W';
+            case NORTH -> "North";
+            case SOUTH -> "South";
+            case EAST -> "East";
+            case WEST -> "West";
         };
     }
 }
