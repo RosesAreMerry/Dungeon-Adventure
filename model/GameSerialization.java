@@ -8,13 +8,13 @@ public class GameSerialization {
         try {
             final String saveDirectory = "saves/";
             final File saveDir = new File(saveDirectory);
-            final saveDir.mkdirs();
+            saveDir.mkdirs();
             final File saveFile = new File(saveDirectory + theFileName);
-            ObjectOutputStream outputStream =  new ObjectOutputStream(new FileOutputStream(saveFile));
+            final ObjectOutputStream outputStream =  new ObjectOutputStream(new FileOutputStream(saveFile));
             outputStream.writeObject(theGameData);
             outputStream.close();
-        } catch (IOException e) {
-            System.err.println("Error saving the game: " + e.getMessage());
+        } catch (final IOException theException) {
+            System.err.println("Error saving the game: " + theException.getMessage());
         }
     }
 
@@ -26,8 +26,8 @@ public class GameSerialization {
             final GameData gameData = (GameData) inputStream.readObject();
             inputStream.close();
             return gameData;
-        } catch (IOException | ClassNotFoundException e) {
-            System.err.println("Error loading the game: " + e.getMessage());
+        } catch (final IOException | ClassNotFoundException theException) {
+            System.err.println("Error loading the game: " + theException.getMessage());
         }
         return null;
     }
