@@ -57,7 +57,7 @@ public abstract class Hero extends DungeonCharacter implements Serializable {
 
     @Override
     public String toString() {
-        return  " Hero: " + this.getName() +
+        return  "Hero: " + this.getName() +
                 "\nHit Points: " + getHitPoints() +
                 "\nChance to Hit: " + getHitChance() +
                 "\nMinimum Damage: " + getDamageMin() +

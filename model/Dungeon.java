@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Collection;
 import java.util.Map;
 
-public class Dungeon implements  Serializable {
+public class Dungeon implements Serializable {
 
     private Map<Coordinate, Room> myRooms;
     private Room myHeroLocation;

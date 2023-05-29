@@ -71,6 +71,19 @@ public class Room implements Serializable {
     private final Map<Direction, Room> myDoors;
     private final Random myRandom;
 
+    Room() {
+        this(new Random());
+    }
+    Room(final Random theRandom) {
+        myRandom = theRandom;
+        myDoors = new HashMap<>();
+        myItems = generateItems();
+        myMonster = generateMonster();
+        myHasPit = myRandom.nextDouble() < PIT_PROBABILITY;
+        myIsExit = false;
+        myFlavorText = generateFlavorText();
+    }
+
     Room(final boolean theIsEntrance) {
         myRandom = new Random();
         myDoors = new HashMap<>();

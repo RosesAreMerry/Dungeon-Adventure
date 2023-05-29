@@ -1,6 +1,8 @@
 package model;
 
-class Coordinate {
+import java.io.Serializable;
+
+class Coordinate implements Serializable {
     private final int myX;
     private final int myY;
 

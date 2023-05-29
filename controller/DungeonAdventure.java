@@ -5,8 +5,7 @@ import view.AdventureView;
 import view.InventoryView;
 import view.RoomData;
 
-import javax.swing.tree.RowMapper;
-import java.io.Serializable;
+import java.io.*;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -22,6 +21,8 @@ public class DungeonAdventure implements Serializable {
     private Hero myHero;
     private RoomData myCurrentRoomData;
     private Room myCurrentRoom;
+    private List<Monster> monsters;
+    private GameData myGameData;
     private static final long serialVersionUID = 1L;
 
     public DungeonAdventure() throws InterruptedException {
@@ -36,7 +37,7 @@ public class DungeonAdventure implements Serializable {
             }
         };
         myInventoryView = new InventoryView(myItemHandler);
-        monsters = new ArrayList<>() // maliha
+        monsters = new ArrayList<>(); // maliha
         boolean playAgain = true;
         while (playAgain) {
             playGame();
@@ -50,15 +51,21 @@ public class DungeonAdventure implements Serializable {
     private void playGame() throws InterruptedException {
         // Introduction and game setup
         displayIntroduction();
-        myHero = createAdventurer();
-        createDungeon();
+        String choice = myAdventureView.promptUserChoice(new String[]{"Load Game", "New Game"}, true);
+        if (choice.equals("Load Game")) {
+            loadSavedGame();
+        }  else {
+            myHero = createAdventurer();
+            createDungeon();
+        }
+        myGameData = new GameData(myDungeon, myHero);
         myAdventureView.sendMessage("\nYou walk into a dungeon.");
 
         // Main game loop
         do {
-            Thread.sleep(1000);
+//            Thread.sleep(1000);
             displayCurrentRoom();
-            Thread.sleep(2000);
+//            Thread.sleep(2000);
             displayOptions();
         } while (!myHero.isFainted());
 
@@ -151,6 +158,7 @@ public class DungeonAdventure implements Serializable {
             if (myHero.getMyInventory().size() > 0) {
                 options.add("See Inventory");
             }
+            options.add("Save Game");
 //        for (final String monster : myCurrentRoomData.getMonsters()) {
 //            options.add("Battle " + monster);
 //        }
@@ -168,6 +176,7 @@ public class DungeonAdventure implements Serializable {
      */
     private void handleAction(final String theChoice) {
         final Map<String, Runnable> actions = new HashMap<>();
+        GameData gameData = new GameData(myDungeon, myHero);
         if (theChoice.startsWith("Go")) { // handle moving to other rooms
             final String direction = theChoice.substring(3);
             actions.put("Go " + direction, () -> handleMoving(direction));
@@ -176,12 +185,13 @@ public class DungeonAdventure implements Serializable {
 //        actions.put("Battle " + monster, () -> handleCombat(monster));
         actions.put("Look Around", this::lookAroundAction);
         actions.put("See Inventory", () -> myInventoryView.showInventory(myHero.getMyInventory()));
+        actions.put("Save Game", () -> GameSerializationUtil.saveGame("DA", gameData));
         final Runnable action = actions.get(theChoice);
         action.run();
     }
 
     /**
-     * Edited this- added the opponent to the monsters array
+     * Edited this-added the opponent to the monsters array
      * need ti make a monster array here
      * @param theOpponent
      */
@@ -292,15 +302,26 @@ public class DungeonAdventure implements Serializable {
         }
     }
 
+    public void loadSavedGame() {
+        myGameData = GameSerializationUtil.loadGame("DA");
+        if (myGameData != null) {
+            myCurrentRoomData = new RoomData(myGameData.getDungeon().getCurrentRoom());
+            myCurrentRoom = myGameData.getDungeon().getCurrentRoom();
+            setRoomData(myCurrentRoomData);
+            myHero = myGameData.getHero();
+            myAdventureView.sendMessage("Game loaded successfully!");
+            myAdventureView.sendMessage("\nCurrent hit points: " + myHero.getHitPoints());
+        } else {
+            myAdventureView.sendMessage("Failed to load game.");
+        }
+    }
 
     /**
      * The main entry point of the game.
      *
      * @param theArgs command line arguments (not used)
      */
-    public static void main(final String[] theArgs) {
-        DungeonAdventure game = new DungeonAdventure();
-        game.saveGameState();
-        game.loadGameState();
+    public static void main(final String[] theArgs) throws InterruptedException {
+        new DungeonAdventure();
     }
 }
