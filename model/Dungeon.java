@@ -1,9 +1,11 @@
 package model;
 
+import java.io.Serializable;
+import java.util.Map;
 import java.util.Collection;
 import java.util.Map;
 
-public class Dungeon {
+public class Dungeon implements  Serializable {
 
     private Map<Coordinate, Room> myRooms;
     private Room myHeroLocation;

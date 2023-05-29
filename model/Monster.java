@@ -101,7 +101,7 @@ public class Monster extends DungeonCharacter implements Healable {
      */
     @Override
     public String toString() {
-        return "Monster: " + getName() +
+        return " Monster: " + getName() +
                 "\nHit Points: " + getHitPoints() +
                 "\nChance to Hit: " + getHitChance() +
                 "\nMinimum Damage: " + getDamageMin() +

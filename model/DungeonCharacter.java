@@ -1,5 +1,6 @@
 package model;
 
+import java.io.Serializable;
 import java.util.Random;
 
 /**
@@ -9,7 +10,7 @@ import java.util.Random;
  * @author Chelsea Dacones
  * @version May 14th 2023
  */
-public abstract class DungeonCharacter {
+public abstract class DungeonCharacter implements Serializable {
     private final int myDamageMin;
     private final int myDamageMax;
     private final int myAttackSpeed;

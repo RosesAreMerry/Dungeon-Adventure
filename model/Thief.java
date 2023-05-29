@@ -28,6 +28,9 @@ public class Thief extends Hero{
         if (myRandom.nextDouble() <= .4) {
             mySurpriseAttack = true;
         }
+        else{
+            mySurpriseAttack= false;
+        }
         return mySurpriseAttack;
     }
 

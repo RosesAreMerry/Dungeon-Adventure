@@ -1,13 +1,17 @@
 package model;
 
-import java.util.*;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static model.Direction.*;
+import static model.Direction.SOUTH;
 
-public class Room {
-
+public class Room implements Serializable {
     private static final double PIT_PROBABILITY = 0.1;
     private static final double MONSTER_PROBABILITY = 0.8;
     private static final double HEALTH_POTION_PROBABILITY = 0.9;
@@ -66,19 +70,6 @@ public class Room {
     private boolean myHasPit;
     private final Map<Direction, Room> myDoors;
     private final Random myRandom;
-
-    Room() {
-        this(new Random());
-    }
-    Room(final Random theRandom) {
-        myRandom = theRandom;
-        myDoors = new HashMap<>();
-        myItems = generateItems();
-        myMonster = generateMonster();
-        myHasPit = myRandom.nextDouble() < PIT_PROBABILITY;
-        myIsExit = false;
-        myFlavorText = generateFlavorText();
-    }
 
     Room(final boolean theIsEntrance) {
         myRandom = new Random();
@@ -219,5 +210,4 @@ public class Room {
         }
         return ' ';
     }
-
 }
