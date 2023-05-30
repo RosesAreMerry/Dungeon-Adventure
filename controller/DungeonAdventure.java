@@ -8,6 +8,7 @@ import view.RoomData;
 import java.io.*;
 import java.util.*;
 import java.util.function.Consumer;
+import static model.GameSerialization.*;
 
 /**
  * Serves as the main entry point for the game and orchestrates the actions of the player, monsters,
@@ -15,6 +16,7 @@ import java.util.function.Consumer;
  * and displays relevant information to users.
  */
 public class DungeonAdventure implements Serializable {
+    public static final int MAX_PIT_DAMAGE = 10;
     private final AdventureView myAdventureView;
     private final InventoryView myInventoryView;
     private Dungeon myDungeon;
@@ -22,9 +24,6 @@ public class DungeonAdventure implements Serializable {
     private RoomData myCurrentRoomData;
     private Room myCurrentRoom;
     private GameData myGameData;
-    @Serial
-    private static final long serialVersionUID = 1L;
-
 
     public DungeonAdventure() throws InterruptedException {
         myAdventureView = new AdventureView();
@@ -54,12 +53,12 @@ public class DungeonAdventure implements Serializable {
         final String choice = myAdventureView.promptUserChoice(new String[]{"Load Game", "New Game"}, true);
         if (choice.equals("Load Game")) {
             loadSavedGame();
-        }  else {
+        } else {
             myHero = createAdventurer();
             createDungeon();
+            myAdventureView.sendMessage("\nYou walk into a dungeon.");
         }
         myGameData = new GameData(myDungeon, myHero);
-        myAdventureView.sendMessage("\nYou walk into a dungeon.");
 
         // Main game loop
         do {
@@ -105,7 +104,6 @@ public class DungeonAdventure implements Serializable {
     private void createDungeon() {
         final DungeonBuilder myDungeonBuilder = new DungeonBuilder();
         myDungeon = myDungeonBuilder.buildDungeon(10);
-        setUpRoom(myDungeon.getCurrentRoom());
     }
 
     /**
@@ -113,18 +111,16 @@ public class DungeonAdventure implements Serializable {
      * This method shows the description of the current room, along with any available items in the room.
      */
     private void displayCurrentRoom() {
-        myAdventureView.printRoom(myCurrentRoomData, null);
-        myAdventureView.sendMessage(myCurrentRoom.toString());
+        myAdventureView.printRoom(getCurrentRoomData(), null);
+        if (myDungeon.getCurrentRoom().hasPit()) {
+            handlePit();
+        }
+//        handleItems()
+        myAdventureView.sendMessage(myDungeon.getCurrentRoom().toString());
     }
 
-    private void setRoomData(final RoomData theRoomData) {
-        myCurrentRoomData = theRoomData;
-    }
-
-    private void setUpRoom(final Room theRoom) {
-        myCurrentRoom = theRoom;
-        myCurrentRoomData = new RoomData(myCurrentRoom);
-        setRoomData(myCurrentRoomData);
+    private RoomData getCurrentRoomData() {
+        return new RoomData(myDungeon.getCurrentRoom());
     }
 
     /**
@@ -132,15 +128,14 @@ public class DungeonAdventure implements Serializable {
      * Presents a list of available choices to the user and handles the action associated with the choice.
      */
     private void displayOptions() {
-        if (myCurrentRoomData.getMonsters() != null) {
-            for (final String monster : myCurrentRoomData.getMonsters()) {
-                handleCombat(monster);
-            }
-        } if (!myHero.isFainted()) {
+        if (myDungeon.getCurrentRoom().getMonster() != null) {
+                handleCombat(myDungeon.getCurrentRoom().getMonster().getName());
+        }
+        if (!myHero.isFainted()) {
             myAdventureView.sendMessage("What do you want to do?");
             final List<String> options = new ArrayList<>();
-            if (myCurrentRoomData.getMonsters().length == 0) {
-                for (final String door : myCurrentRoomData.getDoors()) {
+            if (getCurrentRoomData().getMonsters().length == 0) {
+                for (final String door : getCurrentRoomData().getDoors()) {
                     final String doorTitleCase = door.substring(0, 1).toUpperCase() + door.substring(1).toLowerCase();
                     options.add("Go " + doorTitleCase);
                 }
@@ -150,9 +145,6 @@ public class DungeonAdventure implements Serializable {
                 options.add("See Inventory");
             }
             options.add("Save Game");
-//        for (final String monster : myCurrentRoomData.getMonsters()) {
-//            options.add("Battle " + monster);
-//        }
             final String choice = myAdventureView.promptUserChoice(options.toArray(new String[0]));
             myAdventureView.sendMessage("You chose: " + choice);
             handleAction(choice);
@@ -167,63 +159,71 @@ public class DungeonAdventure implements Serializable {
      */
     private void handleAction(final String theChoice) {
         final Map<String, Runnable> actions = new HashMap<>();
-        final GameData gameData = new GameData(myDungeon, myHero);
         if (theChoice.startsWith("Go")) { // handle moving to other rooms
             final String direction = theChoice.substring(3);
-            actions.put("Go " + direction, () -> handleMoving(direction));
+            actions.put("Go " + direction, () -> handleMove(direction));
         }
-//        final String monster = theChoice.substring(7);
-//        actions.put("Battle " + monster, () -> handleCombat(monster));
         actions.put("Look Around", this::lookAroundAction);
         actions.put("See Inventory", () -> myInventoryView.showInventory(myHero.getMyInventory()));
-        if (theChoice.equals("Save Game")) {
-            final String fileName = myAdventureView.promptUserInput("Please enter a name for your game entry: ",
-                    "Please enter a name for your game entry: ", (String s) -> s != null && s.length() > 0);
-            actions.put("Save Game", () -> GameSerialization.saveGame(fileName, gameData));
-        }
+        actions.put("Save Game", this::handleSaveGame);
         final Runnable action = actions.get(theChoice);
         action.run();
     }
 
     private void handleCombat(final String theOpponent) {
-        if (myCurrentRoomData.getMonsters() != null && myCurrentRoomData.getMonsters().length > 0) {
+        final RoomData roomData = getCurrentRoomData();
+        if (roomData.getMonsters() != null && roomData.getMonsters().length > 0) {
             final Combat combat = new Combat();
             final MonsterFactory monsterFactory = new MonsterFactory();
             final Monster opponent = monsterFactory.createMonsterByName(theOpponent);
             combat.initiateCombat(myHero, opponent);
-            myCurrentRoomData.removeMonsterFromRoom(theOpponent);
-            setRoomData(myCurrentRoomData);
+            roomData.removeMonsterFromRoom(theOpponent);
             if (opponent.isFainted()) {
                 myAdventureView.sendMessage(theOpponent + " was defeated!");
+                myDungeon.getCurrentRoom().killMonster();
             } else {
                 myAdventureView.sendMessage("You were defeated by the " + theOpponent + "!");
             }
         }
     }
 
-    private void handleMoving(final String theDirection) {
-        final Direction enumDirection = Direction.valueOf(theDirection.toUpperCase());
-        myDungeon.move(enumDirection);
-        setUpRoom(myDungeon.getCurrentRoom());
-        System.out.println("You have moved to the " + theDirection);
+    private void handleMove(final String theDir) {
+        final Direction direction = Direction.valueOf(theDir.toUpperCase());
+        myDungeon.move(direction);
     }
 
+    private void handlePit() {
+        myAdventureView.sendMessage("You fell into a pit!");
+        final int damage = new Random().nextInt(MAX_PIT_DAMAGE) + 1;
+        myAdventureView.sendMessage("You took " + damage + " damage! " + myHero.getHitPoints() + " hit points remaining.");
+        myHero.setHitPoints(myHero.getHitPoints() - damage);
+        myDungeon.getCurrentRoom().removePit();
+    }
+
+//    private void handleItems() {
+//        final List<Item> items = myDungeon.getCurrentRoom().getItems();
+//        for (final Item item : items) {
+//            myHero.getMyInventory().add(item);
+//            myAdventureView.sendMessage("You picked up " + item.getName());
+//        }
+//
+//        myDungeon.getCurrentRoom().getItems().removeIf(item -> true);
+//    }
+
+
     private void lookAroundAction() {
-        if (myCurrentRoomData.getItems().length > 0) {
+        if (getCurrentRoomData().getItems().length > 0) {
             final StringBuilder sb = new StringBuilder();
             myAdventureView.buildList(sb,
-                    myCurrentRoomData.getItems(),
+                    getCurrentRoomData().getItems(),
                     "You acquired ",
                     "You acquired ",
                     "!",
                     true);
             myAdventureView.sendMessage(String.valueOf(sb));
-            myHero.addToInventory(myCurrentRoom.getItems());
-            myCurrentRoom.getItems().clear();
+            myHero.addToInventory(myDungeon.getCurrentRoom().getItems());
+            myDungeon.getCurrentRoom().getItems().clear();
         }
-        myCurrentRoomData = new RoomData(myCurrentRoomData.getFlavor(), myCurrentRoomData.getDoors(),
-                new String[]{}, new String[]{}, myCurrentRoomData.isPit(), myCurrentRoomData.isExit());
-        setRoomData(myCurrentRoomData);
     }
 
     /**
@@ -254,67 +254,37 @@ public class DungeonAdventure implements Serializable {
         return choice.equals("Play Again");
     }
 
-//    public void saveGameState() {
-//        String filename="DungeonAdventure.ser";
-//        try {
-//            //saving the object in a file
-//            FileOutputStream file = new FileOutputStream(filename);
-//            ObjectOutputStream out = new ObjectOutputStream(file);
-//            out.writeObject(this.myHero);
-//            out.writeObject(monsters); // the monsters hero battles
-//            out.close();
-//            System.out.println("object has been serialized .");
-//        } catch (IOException ex) {
-//            System.out.println("IOException is caught");
-//        }
-//    }
-//    public void loadGameState() {
-//        this.myHero=null;
-//        //this.opponent=null;
-//        try {
-//            FileInputStream file = new FileInputStream("DungeonAdventure.ser");
-//            ObjectInputStream in = new ObjectInputStream(file);
-//            this.myHero= (Hero) in.readObject();
-//            monsters = (ArrayList) in.readObject();
-//            in.close();
-//            file.close();
-//            System.out.println("Game state loaded successfully.");
-//            System.out.println("Serialized data: " + myHero);
-//            for(int i=0; i<monsters.size();i++) {
-//                System.out.println("Serialized data" + monsters.get(i));
-//            }
-//
-//        } catch (IOException | ClassNotFoundException e) {
-//            System.out.println("Error loading game state: " + e.getMessage());
-//
-//        }
-//    }
+    private void handleSaveGame() {
+        final GameData gameData = new GameData(myDungeon, myHero);
+        String fileName;
+        File saveFile;
+        do {
+            fileName =  myAdventureView.promptUserInput("Enter a name for your game entry: ",
+                "Please enter a name for your game entry: ", (String s) -> s != null && s.length() > 0);
+            saveFile = new File("savedGames/", fileName + ".ser");
+            if (saveFile.exists()) {
+                myAdventureView.sendMessage("File with the same name already exists. Do you want to overwrite?");
+                if (myAdventureView.promptUserChoice(new String[]{"Yes", "No"}).equals("Yes")) {
+                    break;
+                }
+            }
+        } while (saveFile.exists());
+        saveGame(fileName, gameData);
+        myAdventureView.sendMessage(fileName + " was successfully saved!");
+    }
 
-    public void loadSavedGame() {
-        final String fileName = myAdventureView.promptUserChoice(getSavedGames().toArray(new String[0]), true);
+    private void loadSavedGame() {
+        final String fileName = myAdventureView.promptUserChoice(getSavedGames()
+                .toArray(new String[0]), true);
         myGameData = GameSerialization.loadGame(fileName);
         if (myGameData != null) {
-            myCurrentRoomData = new RoomData(myGameData.getDungeon().getCurrentRoom());
-            myCurrentRoom = myGameData.getDungeon().getCurrentRoom();
-            setRoomData(myCurrentRoomData);
             myHero = myGameData.getHero();
+            myDungeon = myGameData.getDungeon();
             myAdventureView.sendMessage(fileName + " loaded successfully!");
             myAdventureView.sendMessage("\nCurrent hit points: " + myHero.getHitPoints());
         } else {
             myAdventureView.sendMessage("Failed to load " + fileName);
         }
-    }
-
-    public List<String> getSavedGames() {
-        final List<String> savedGames = new ArrayList<>();
-        final File saveDirectory = new File("saves/");
-        final File[] saveFiles = saveDirectory.listFiles();
-        if (saveFiles != null) {
-            for (final File file : saveFiles) {
-                savedGames.add(file.getName());
-            }
-        }
-        return savedGames;
     }
 
     /**
