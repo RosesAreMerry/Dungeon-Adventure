@@ -10,10 +10,10 @@ import java.util.Random;
  * @version May 14th 2023
  */
 public abstract class DungeonCharacter {
-    private final int myDamageMin;
-    private final int myDamageMax;
-    private final int myAttackSpeed;
-    private final double myHitChance;
+    private int myDamageMin;
+    private int myDamageMax;
+    private int myAttackSpeed;
+    private double myHitChance;
     private final int myMaxHitPoints;
     private final String myName;
     private int myHitPoints;
@@ -77,6 +77,9 @@ public abstract class DungeonCharacter {
     public Double getHitChance() {
         return myHitChance;
     }
+    public void setHitChance(Double theHitChance) {
+        myHitChance = theHitChance;
+    }
 
     public int getDamageMin() {
         return myDamageMin;
@@ -92,6 +95,18 @@ public abstract class DungeonCharacter {
 
     public void setTotalDamage(final int theTotalDamage) {
         myTotalDamage = theTotalDamage;
+    }
+
+    public void setMyDamageMin(final int myDamageMin) {
+        this.myDamageMin = myDamageMin;
+    }
+
+    public void setMyDamageMax(final int myDamageMax) {
+        this.myDamageMax = myDamageMax;
+    }
+
+    public void setMyAttackSpeed(final int myAttackSpeed) {
+        this.myAttackSpeed = myAttackSpeed;
     }
 
     /**

@@ -45,8 +45,10 @@ public class DungeonAdventure {
     private void playGame() throws InterruptedException {
         // Introduction and game setup
         displayIntroduction();
+        final DifficultyLevel myDifficultyLevel = selectDifficultyLevel();
         myHero = createAdventurer();
         myDungeon = createDungeon();
+        myDifficultyLevel.adjustGameLevel(myDungeon, myHero);
         myCurrentRoomData = getCurrentRoomData();
         myAdventureView.sendMessage("\nYou walk into a dungeon.");
 
@@ -70,6 +72,15 @@ public class DungeonAdventure {
         myAdventureView.sendMessage("[Introduction placeholder]");
     }
 
+    private DifficultyLevel selectDifficultyLevel() {
+        final String difficulty = myAdventureView.promptUserChoice(new String[]{"Easy", "Medium", "Hard"});
+        return switch (difficulty) {
+            case "Easy" -> DifficultyLevel.EASY;
+            case "Medium" -> DifficultyLevel.MEDIUM;
+            case "Hard" -> DifficultyLevel.HARD;
+            default -> throw new IllegalStateException("Unexpected value: " + difficulty);
+        };
+    }
     /**
      * Creates an adventurer character based on user's input.
      * Prompts the user for their name and character selection and returns the corresponding Hero object.
@@ -128,11 +139,10 @@ public class DungeonAdventure {
      * Presents a list of available choices to the user and handles the action associated with the choice.
      */
     private void displayOptions() {
-        if (myCurrentRoomData.getMonsters() != null) {
-            for (final String monster : myCurrentRoomData.getMonsters()) {
-                handleCombat(monster);
-            }
-        } if (!myHero.isFainted()) {
+        if (myDungeon.getCurrentRoom().getMonster() != null) {
+                handleCombat(myDungeon.getCurrentRoom().getMonster().getName());
+        }
+        if (!myHero.isFainted()) {
             myAdventureView.sendMessage("What do you want to do?");
             final List<String> options = new ArrayList<>();
             if (myCurrentRoomData.getMonsters().length == 0) {
@@ -144,9 +154,6 @@ public class DungeonAdventure {
             if (myHero.getMyInventory().size() > 0 && myHero.getMyInventory() != null) {
                 options.add("See Inventory");
             }
-//        for (final String monster : myCurrentRoomData.getMonsters()) {
-//            options.add("Battle " + monster);
-//        }
             final String choice = myAdventureView.promptUserChoice(options.toArray(new String[0]));
             myAdventureView.sendMessage("You chose: " + choice);
             handleAction(choice);

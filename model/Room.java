@@ -8,10 +8,10 @@ import static model.Direction.*;
 
 public class Room {
 
-    private static final double PIT_PROBABILITY = 0.1;
-    private static final double MONSTER_PROBABILITY = 0.8;
-    private static final double HEALTH_POTION_PROBABILITY = 0.9;
-    private static final double VISION_POTION_PROBABILITY = 0.9;
+//    private static final double PIT_PROBABILITY = 0.1;
+//    private static final double MONSTER_PROBABILITY = 0.1;
+//    private static final double HEALTH_POTION_PROBABILITY = 0.1;
+//    private static final double VISION_POTION_PROBABILITY = 0.1;
     private static final String[] FLAVOR_TEXTS_EMPTY = new String[] {
             "This room is dark and damp.",
             "As you open the door, a musty scent hits your nose.",
@@ -66,6 +66,10 @@ public class Room {
     private boolean myHasPit;
     private final Map<Direction, Room> myDoors;
     private final Random myRandom;
+    private double myPitProbability;
+    private double myHealthPotionProbability;
+    private double myVisionPotionProbability;
+    private double myMonsterProbability;
 
     Room() {
         this(new Random());
@@ -75,7 +79,7 @@ public class Room {
         myDoors = new HashMap<>();
         myItems = generateItems();
         myMonster = generateMonster();
-        myHasPit = myRandom.nextDouble() < PIT_PROBABILITY;
+        myHasPit = myRandom.nextDouble() < myPitProbability;
         myIsExit = false;
         myFlavorText = generateFlavorText();
     }
@@ -93,17 +97,17 @@ public class Room {
 
     private ArrayList<Item> generateItems() {
         final ArrayList<Item> items = new ArrayList<>();
-        if (myRandom.nextDouble() < HEALTH_POTION_PROBABILITY) {
+        if (myRandom.nextDouble() < myHealthPotionProbability) {
             items.add(new HealingPotion());
         }
-        if (myRandom.nextDouble() < VISION_POTION_PROBABILITY) {
+        if (myRandom.nextDouble() < myVisionPotionProbability) {
             items.add(new VisionPotion());
         }
         return items;
     }
 
     private Monster generateMonster() {
-        if (myRandom.nextDouble() < MONSTER_PROBABILITY) {
+        if (myRandom.nextDouble() < myMonsterProbability) {
             return new MonsterFactory().createMonsterRandom();
         }
         return null;
@@ -126,6 +130,22 @@ public class Room {
             return FLAVOR_TEXTS_ITEMS[myRandom.nextInt(FLAVOR_TEXTS_ITEMS.length)];
         }
         return FLAVOR_TEXTS_EMPTY[myRandom.nextInt(FLAVOR_TEXTS_EMPTY.length)];
+    }
+
+    public void setMyPitProbability(final double theProbability) {
+        this.myPitProbability = theProbability;
+    }
+
+    public void setMyHealthPotionProbability(final double theProbability) {
+        this.myHealthPotionProbability = theProbability;
+    }
+
+    public void setMyVisionPotionProbability(final double theProbability) {
+        this.myVisionPotionProbability = theProbability;
+    }
+
+    public void setMyMonsterProbability(final double theProbability) {
+        this.myMonsterProbability = theProbability;
     }
 
     public Monster getMonster() {

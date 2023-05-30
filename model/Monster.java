@@ -10,8 +10,8 @@ import java.util.Random;
  */
 public class Monster extends DungeonCharacter implements Healable {
     private final double myChanceToHeal;
-    private final int myMinHeal;
-    private final int myMaxHeal;
+    private int myMinHeal;
+    private int myMaxHeal;
     private Random myRandom;
     private int myHealAmount;
 
@@ -73,6 +73,14 @@ public class Monster extends DungeonCharacter implements Healable {
 
     public int getMyMaxHeal() {
         return myMaxHeal;
+    }
+
+    public void setMyMinHeal(final int myMinHeal) {
+        this.myMinHeal = myMinHeal;
+    }
+
+    public void setMyMaxHeal(final int myMaxHeal) {
+        this.myMaxHeal = myMaxHeal;
     }
 
 
