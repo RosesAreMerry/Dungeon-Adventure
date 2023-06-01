@@ -169,13 +169,6 @@ public class Room implements Serializable {
     public String getMyFlavorText() {
         return myFlavorText;
     }
-    public void killMonster() {
-        myMonster = null;
-        myFlavorText = generateFlavorText();
-    }
-    public void removePit() {
-        myHasPit = false;
-    }
 
     void setExit() {
         myItems.clear();

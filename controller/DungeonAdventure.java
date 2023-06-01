@@ -53,7 +53,6 @@ public class DungeonAdventure implements Serializable {
         } else {
             myHero = createAdventurer();
             myDungeon = createDungeon();
-            myCurrentRoomData = getCurrentRoomData();
             myAdventureView.sendMessage("\nYou walk into a dungeon.");
         }
         myGameData = new GameData(myDungeon, myHero);
@@ -120,7 +119,7 @@ public class DungeonAdventure implements Serializable {
      * This method shows the description of the current room, along with any available items in the room.
      */
     private void displayCurrentRoom() {
-        myAdventureView.printRoom(myCurrentRoomData, null);
+        myAdventureView.printRoom(getCurrentRoomData(), null);
         if (myDungeon.getCurrentRoom().hasPit()) {
             handlePit();
         }
