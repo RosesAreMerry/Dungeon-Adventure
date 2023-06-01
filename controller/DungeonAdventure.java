@@ -14,6 +14,7 @@ import java.util.stream.Stream;
  * Serves as the main entry point for the game and orchestrates the actions of the player, monsters,
  * and other entities within the game. Overall, it manages the game flow by handling user input, updating the game state,
  * and displays relevant information to users.
+ * @author
  */
 public class DungeonAdventure {
     public static final int MAX_PIT_DAMAGE = 10;
@@ -243,6 +244,7 @@ public class DungeonAdventure {
      * @param theArgs command line arguments (not used)
      */
     public static void main(final String[] theArgs) {
+
         new DungeonAdventure();
     }
 }
