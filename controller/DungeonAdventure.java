@@ -15,19 +15,16 @@ import static model.GameSerialization.*;
  * and other entities within the game. Overall, it manages the game flow by handling user input, updating the game state,
  * and displays relevant information to users.
  */
-public class DungeonAdventure implements Serializable {
+public class DungeonAdventure {
     public static final int MAX_PIT_DAMAGE = 10;
     private final AdventureView myAdventureView;
     private final InventoryView myInventoryView;
     private Dungeon myDungeon;
     private Hero myHero;
-    private RoomData myCurrentRoomData;
-    private Room myCurrentRoom;
     private GameData myGameData;
 
     public DungeonAdventure() throws InterruptedException {
         myAdventureView = new AdventureView();
-        myCurrentRoom = null;
         final Consumer<Item> myItemHandler = item -> {
             if (item instanceof final Potion thePotion) {
                 thePotion.use(myHero);

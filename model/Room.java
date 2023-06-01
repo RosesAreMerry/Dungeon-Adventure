@@ -1,5 +1,6 @@
 package model;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -61,6 +62,8 @@ public class Room implements Serializable {
             "This room is filled with old paintings.",
             "This room is filled with old books.",
     };
+    @Serial
+    private static final long serialVersionUID = -8969980202667648723L;
 
     private String myFlavorText;
     private final ArrayList<Item> myItems;

@@ -1,5 +1,6 @@
 package model;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -8,10 +9,12 @@ import java.util.ArrayList;
  *
  * @author Chelsea Dacones
  */
-public abstract class Hero extends DungeonCharacter implements Serializable {
+public abstract class Hero extends DungeonCharacter {
     private final double myBlockChance;
     private final ArrayList<Item> myInventory;
     private int myHealth;
+    @Serial
+    private static final long serialVersionUID = 4434118078796032667L;
 
     protected Hero(final String theName, final int theHitPoints, final double theHitChance, final int theDamageMin,
                 final int theDamageMax, final int theAttackSpeed, final double theBlockChance) {
