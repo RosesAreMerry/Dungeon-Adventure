@@ -1,5 +1,6 @@
 package model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -7,7 +8,7 @@ import java.util.ArrayList;
  *
  * @author Chelsea Dacones
  */
-public abstract class Hero extends DungeonCharacter {
+public abstract class Hero extends DungeonCharacter implements Serializable {
     private final double myBlockChance;
     private final ArrayList<Item> myInventory;
     private int myHealth;
@@ -52,5 +53,15 @@ public abstract class Hero extends DungeonCharacter {
     protected boolean canBlockAttack() {
         final double randomValue = Math.random();
         return randomValue <= myBlockChance;
+    }
+
+    @Override
+    public String toString() {
+        return  "Hero: " + this.getName() +
+                "\nHit Points: " + getHitPoints() +
+                "\nChance to Hit: " + getHitChance() +
+                "\nMinimum Damage: " + getDamageMin() +
+                "\nMaximum Damage: " + getDamageMax() +
+                "\nAttack Speed: " + getAttackSpeed() ;
     }
 }

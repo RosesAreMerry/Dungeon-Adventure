@@ -1,6 +1,8 @@
 package model;
 
-public class PillarOfOO implements Item{
+import java.io.Serializable;
+
+public class PillarOfOO implements Item, Serializable {
     private final String myName;
     public PillarOfOO(final String theName) {
         this.myName = "Pillar of " + theName;
