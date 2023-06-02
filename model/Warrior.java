@@ -19,6 +19,7 @@ public class Warrior extends Hero {
     public Warrior(final String theName) {
         super(theName, 125, 0.8, 35, 60, 4, 0.2);
         myUsedSpecialCase = useSpecialSkill();
+        //int myTotalDamage = 0;
     }
 
 
@@ -26,13 +27,15 @@ public class Warrior extends Hero {
         if (canAttack()) {
             if (myUsedSpecialCase) {
                 final int damage = myRandom.nextInt(101) + 75; // 75 to 175 points of damage
+                setTotalDamage(damage);
                 theOpponent.setHitPoints(theOpponent.getHitPoints() - damage);
                 theOpponent.setAttacked(true);
 
                 return; // exit method after performing special skill
+            }else if(!myUsedSpecialCase) {
+                calculateDamage(theOpponent); // if special skill is unsuccessful, perform normal attack
+                theOpponent.setAttacked(true);
             }
-            calculateDamage(theOpponent); // if special skill is unsuccessful, perform normal attack
-            theOpponent.setAttacked(true);
         } else {
             theOpponent.setAttacked(false);
             // report attack failure

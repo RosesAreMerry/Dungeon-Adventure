@@ -58,4 +58,20 @@ public abstract class Hero extends DungeonCharacter {
         final double randomValue = Math.random();
         return randomValue <= myBlockChance;
     }
+    public Double getblockChance(){
+        return myBlockChance;
+    }
+
+
+    public String toString() {
+        return "Hero  " + this.getName() +
+                "\nHit Points: " + getHitPoints() +
+                "\nChance to Hit: " + getHitChance() +
+                "\nMinimum Damage: " + getDamageMin() +
+                "\nMaximum Damage: " + getDamageMax() +
+                "\nAttack Speed: " + getAttackSpeed() +
+                  "\nmyBlockChance: "+ getblockChance()+
+                "\nmyHealth " + getHitPoints();
+    }
+
 }

@@ -115,8 +115,8 @@ public abstract class DungeonCharacter {
             calculateDamage(theOpponent);
             theOpponent.setAttacked(true);
         } else {
-            theOpponent.setAttacked(false);
             // report attack failure
+            theOpponent.setAttacked(false);
         }
     }
 

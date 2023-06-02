@@ -12,11 +12,15 @@ public class Thief extends Hero{
     
     private Random myRandom;
 
+    int myTotalDamage=0;
+
     public Thief(final String theName) {
         super(theName, 75, 0.8, 20, 40, 6, 0.4);
         mySurpriseAttack = false;
         myCaught = false;
         myRandom = new Random();
+        myTotalDamage=0;
+
     }
     /**
      * determines if the specialskill was used or not
@@ -24,8 +28,10 @@ public class Thief extends Hero{
     private boolean useSpecialSkill() {
         if (myRandom.nextDouble() <= .4) {
             mySurpriseAttack = true;
+        }else{
+            mySurpriseAttack = false;
         }
-        return mySurpriseAttack;
+       return mySurpriseAttack;
     }
     /**
      * determines if the specialskill was used or not
@@ -50,19 +56,21 @@ public class Thief extends Hero{
             return;
         }
         if (useSpecialSkill()) {
+            myTotalDamage = 0;
             for (int i = 0; i < numOfAttack + 1; i++) {
                 final int damage = myRandom.nextInt(getDamageMax() - getDamageMin() + 1)
                         + getDamageMin();
+                myTotalDamage += damage;
+                setTotalDamage(myTotalDamage);
                 theOpponent.setHitPoints(theOpponent.getHitPoints() - damage);
+
             }
         } else { // normal attack
-            for (int i = 0; i < numOfAttack; i++) {
-                final int damage = myRandom.nextInt(getDamageMax() - getDamageMin() + 1)
-                        + getDamageMin();
-                theOpponent.setHitPoints(theOpponent.getHitPoints() - damage);
+            calculateDamage(theOpponent);
+            theOpponent.setAttacked(true);
             }
         }
-    }
+
 
     /**
      * Sets the Random object for testing purposes.
