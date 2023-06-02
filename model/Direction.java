@@ -21,10 +21,10 @@ public enum Direction {
 
     public Coordinate applyToCoordinate(final Coordinate theCoordinate) {
         return switch (this) {
-            case NORTH -> new Coordinate(theCoordinate.getX() + 1, theCoordinate.getY());
-            case SOUTH -> new Coordinate(theCoordinate.getX() - 1, theCoordinate.getY());
-            case EAST -> new Coordinate(theCoordinate.getX(), theCoordinate.getY() + 1);
-            case WEST -> new Coordinate(theCoordinate.getX(), theCoordinate.getY() - 1);
+            case NORTH -> new Coordinate(theCoordinate.getX(), theCoordinate.getY() + 1);
+            case SOUTH -> new Coordinate(theCoordinate.getX(), theCoordinate.getY() - 1);
+            case EAST -> new Coordinate(theCoordinate.getX() + 1, theCoordinate.getY());
+            case WEST -> new Coordinate(theCoordinate.getX() - 1, theCoordinate.getY());
         };
     }
 

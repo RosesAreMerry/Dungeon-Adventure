@@ -11,7 +11,7 @@ public class Room {
     private static final double PIT_PROBABILITY = 0.1;
     private static final double MONSTER_PROBABILITY = 0.1;
     private static final double HEALTH_POTION_PROBABILITY = 0.1;
-    private static final double VISION_POTION_PROBABILITY = 0.1;
+    private static final double VISION_POTION_PROBABILITY = 1;
     private static final String[] FLAVOR_TEXTS_EMPTY = new String[] {
             "This room is dark and damp.",
             "As you open the door, a musty scent hits your nose.",
@@ -167,6 +167,7 @@ public class Room {
         myMonster = null;
         myHasPit = false;
         myIsExit = true;
+        myFlavorText = generateFlavorText();
     }
 
     /**

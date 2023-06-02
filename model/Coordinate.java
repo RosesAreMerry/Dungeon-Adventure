@@ -22,7 +22,9 @@ class Coordinate {
     }
 
     public boolean isNeighbor(final Coordinate theCoordinate) {
-        return Math.abs(getX() - theCoordinate.getX()) + Math.abs(getY() - theCoordinate.getY()) >= 1;
+        final int xDiff = Math.abs(getX() - theCoordinate.getX());
+        final int yDiff = Math.abs(getY() - theCoordinate.getY());
+        return xDiff <= 1 && yDiff <= 1 && xDiff + yDiff != 0;
     }
 
     public String getDirection(final Coordinate theOther) {

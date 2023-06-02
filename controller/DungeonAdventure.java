@@ -205,8 +205,8 @@ public class DungeonAdventure {
     private void handlePit() {
         myAdventureView.sendMessage("You fell into a pit!");
         final int damage = new Random().nextInt(MAX_PIT_DAMAGE) + 1;
-        myAdventureView.sendMessage("You took " + damage + " damage! " + myHero.getHitPoints() + " hit points remaining.");
         myHero.setHitPoints(myHero.getHitPoints() - damage);
+        myAdventureView.sendMessage("You took " + damage + " damage! " + myHero.getHitPoints() + " hit points remaining.");
         myDungeon.getCurrentRoom().removePit();
     }
 
