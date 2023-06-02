@@ -92,10 +92,10 @@ public class AdventureView extends ConsoleView {
 
         if (theAdjacentRooms != null && theAdjacentRooms.size() > 0) {
 
-            sb.append("Your vision potion gives you the ability to see through the walls.\n");
+            sb.append("Your vision potion gives you the ability to see through the walls.\n\n");
 
             theAdjacentRooms.forEach((final String s, final RoomData rd) -> {
-                sb.append("To the ").append(s.toUpperCase(Locale.ROOT)).append(", you see a room that contains the following:\n");
+                sb.append("To the ").append(s).append(", you see a room that contains the following:\n");
                 conciseRoom(sb, rd);
             });
         }
@@ -122,7 +122,7 @@ public class AdventureView extends ConsoleView {
 
         theSB.append("Pit: ");
         theSB.append(theRoom.isPit());
-        theSB.append('\n');
+        theSB.append("\n\n");
     }
 
     void buildList(final StringBuilder theSB,

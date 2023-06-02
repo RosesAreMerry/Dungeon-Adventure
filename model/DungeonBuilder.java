@@ -37,8 +37,8 @@ public class DungeonBuilder {
         while (generatedRooms < theNumberOfRooms - 1) {
             coordinateRoomMap.clear();
             entrance = new Room(true);
-            coordinateRoomMap.put(new Coordinate(0, 0), entrance);
-            generatedRooms = addRoomsRecursively(entrance, null, null, theNumberOfRooms - 1, new Coordinate(0, 0));
+            coordinateRoomMap.put(Coordinate.of(0, 0), entrance);
+            generatedRooms = addRoomsRecursively(entrance, null, null, theNumberOfRooms - 1, Coordinate.of(0, 0));
 
             addExit();
             addPillarsOfOO();

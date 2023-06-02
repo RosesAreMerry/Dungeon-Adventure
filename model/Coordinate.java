@@ -1,12 +1,34 @@
 package model;
 
+import java.util.HashSet;
+
 class Coordinate {
     private final int myX;
     private final int myY;
 
-    public Coordinate (int theX, int theY) {
+    private static final HashSet<Coordinate> COORDINATES = new HashSet<>();
+
+    private Coordinate (final int theX, final int theY) {
         myX = theX;
         myY = theY;
+    }
+
+    /**
+     * This is the way to get a Coordinate object. It will return an existing Coordinate
+     * object if it already exists, otherwise it will create a new one. Because of this,
+     * Coordinate objects are basically singletons for each unique coordinate. This is
+     * useful because it means that there cannot be duplicate coordinates in a map.
+     * */
+    public static Coordinate of(final int theX, final int theY) {
+        if (COORDINATES.stream().anyMatch(c -> c.getX() == theX && c.getY() == theY)) {
+            return COORDINATES.stream().filter(c -> c.getX() == theX && c.getY() == theY).findFirst().get();
+        }
+
+        final Coordinate newCoordinate = new Coordinate(theX, theY);
+
+        COORDINATES.add(newCoordinate);
+
+        return newCoordinate;
     }
 
     public int getX() {
@@ -31,9 +53,11 @@ class Coordinate {
         final StringBuilder sb = new StringBuilder();
 
         if (theOther.getY() > getY()) {
-            sb.append("North ");
+            sb.append("North");
         } else if (theOther.getY() < getY()) {
-            sb.append("South ");
+            sb.append("South");
+        } else if (theOther.getX() != getX()) {
+            sb.append(" ");
         }
 
         if (theOther.getX() > getX()) {
