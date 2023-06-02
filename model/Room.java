@@ -9,7 +9,7 @@ import static model.Direction.*;
 public class Room {
 
     private static final double PIT_PROBABILITY = 0.1;
-    private static final double MONSTER_PROBABILITY = 0.1;
+    private static final double MONSTER_PROBABILITY = .5;
     private static final double HEALTH_POTION_PROBABILITY = 0.1;
     private static final double VISION_POTION_PROBABILITY = 0.1;
     private static final String[] FLAVOR_TEXTS_EMPTY = new String[] {
