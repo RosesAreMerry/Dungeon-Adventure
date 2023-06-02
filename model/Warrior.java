@@ -4,7 +4,6 @@ import java.util.Random;
 
 /**
  * Represents a Warrior in the game.
- *
  * @author Maliha Hossain
  * @author Chelsea Dacones
  */
@@ -16,17 +15,20 @@ public class Warrior extends Hero {
      */
     private boolean myUsedSpecialCase;
 
+
     public Warrior(final String theName) {
         super(theName, 125, 0.8, 35, 60, 4, 0.2);
         myUsedSpecialCase = useSpecialSkill();
-        //int myTotalDamage = 0;
+
     }
 
 
     public void attack(final DungeonCharacter theOpponent) {
         if (canAttack()) {
             if (myUsedSpecialCase) {
+                int myTotalDamage = 0;
                 final int damage = myRandom.nextInt(101) + 75; // 75 to 175 points of damage
+                myTotalDamage += damage;
                 setTotalDamage(damage);
                 theOpponent.setHitPoints(theOpponent.getHitPoints() - damage);
                 theOpponent.setAttacked(true);
