@@ -8,6 +8,7 @@ import view.RoomData;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -29,6 +30,9 @@ public class DungeonAdventure {
         final Consumer<Item> myItemHandler = item -> {
             if (item instanceof final Potion thePotion) {
                 thePotion.use(myHero);
+            }
+            if (item instanceof final PillarOfOO thePillar) {
+                myAdventureView.sendMessage("This is the pillar of " + thePillar.getName() + ".");
             }
         };
         myInventoryView = new InventoryView(myItemHandler);
@@ -98,7 +102,7 @@ public class DungeonAdventure {
      * Creates the dungeon for the game.
      */
     private Dungeon createDungeon() {
-        final String[] options = new String[]{"Small", "Medium", "Large"};
+        final String[] options = {"Small", "Medium", "Large"};
         final String choice = myAdventureView.promptUserChoice(options, false, "What size dungeon do you want to explore? ");
 
         switch (choice) {
@@ -123,7 +127,13 @@ public class DungeonAdventure {
      * This method shows the description of the current room, along with any available items in the room.
      */
     private void displayCurrentRoom() {
-        myAdventureView.printRoom(getCurrentRoomData(), null);
+        Map<String, RoomData> adjacentRooms = null;
+        if (myHero.isVisionPotionActive()) {
+            adjacentRooms = myDungeon.getNeighbors().entrySet().stream()
+                    .map(e -> new AbstractMap.SimpleEntry<>(e.getKey(), new RoomData(e.getValue())))
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        }
+        myAdventureView.printRoom(getCurrentRoomData(), adjacentRooms);
         if (myDungeon.getCurrentRoom().hasPit()) {
             handlePit();
         }
@@ -189,6 +199,7 @@ public class DungeonAdventure {
     private void handleMove(final String theDir) {
         final Direction direction = Direction.valueOf(theDir.toUpperCase());
         myDungeon.move(direction);
+        myHero.reduceVisionPotionTurns();
     }
 
     private void handlePit() {

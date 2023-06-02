@@ -17,6 +17,31 @@ class Coordinate {
         return myY;
     }
 
+    public boolean isAdjacent(final Coordinate theCoordinate) {
+        return Math.abs(getX() - theCoordinate.getX()) + Math.abs(getY() - theCoordinate.getY()) == 1;
+    }
+
+    public boolean isNeighbor(final Coordinate theCoordinate) {
+        return Math.abs(getX() - theCoordinate.getX()) + Math.abs(getY() - theCoordinate.getY()) >= 1;
+    }
+
+    public String getDirection(final Coordinate theOther) {
+        final StringBuilder sb = new StringBuilder();
+
+        if (theOther.getY() > getY()) {
+            sb.append("North ");
+        } else if (theOther.getY() < getY()) {
+            sb.append("South ");
+        }
+
+        if (theOther.getX() > getX()) {
+            sb.append("East");
+        } else if (theOther.getX() < getX()) {
+            sb.append("West");
+        }
+        return sb.toString();
+    }
+
     @Override
     public boolean equals(final Object obj) {
         if (obj == this) {

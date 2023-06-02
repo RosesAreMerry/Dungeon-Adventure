@@ -1,4 +1,5 @@
 package view;
+import java.io.IOException;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -52,6 +53,8 @@ public class AdventureView extends ConsoleView {
      * */
     public void printRoom(final RoomData theRoom, final Map<String, RoomData> theAdjacentRooms) {
         final StringBuilder sb = new StringBuilder();
+
+        sb.append("----------------------------------------\n");
 
         sb.append(theRoom.getFlavor()).append("\n\n");
 
