@@ -115,8 +115,8 @@ public abstract class DungeonCharacter {
             calculateDamage(theOpponent);
             theOpponent.setAttacked(true);
         } else {
-            theOpponent.setAttacked(false);
             // report attack failure
+            theOpponent.setAttacked(false);
         }
     }
 
@@ -129,13 +129,15 @@ public abstract class DungeonCharacter {
      */
     protected int calculateDamage(final DungeonCharacter theOpponent) {
         final int numOfAttacks = Math.max(1, this.getAttackSpeed() / theOpponent.getAttackSpeed());
-        myTotalDamage = 0;
+        //removed mytotaldamage=0 to the  use setter
+        setTotalDamage(0);
         for (int i = 0; i < numOfAttacks; i++) {
             final int damage = myRandom.nextInt(getDamageMax() - getDamageMin() + 1)
                     + getDamageMin();
-            myTotalDamage += damage;
+            //used the setter
+            setTotalDamage(getTotalDamage()+ damage);
             theOpponent.setHitPoints(theOpponent.getHitPoints() - damage);
-            setTotalDamage(myTotalDamage);
+
         }
         return myTotalDamage;
     }

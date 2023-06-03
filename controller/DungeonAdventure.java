@@ -241,7 +241,6 @@ public class DungeonAdventure {
 
     /**
      * Prompts the user to play the game again or exit.
-     *
      * @return true if the user wants to play again; false otherwise.
      */
     private boolean promptPlayAgain() {
@@ -255,7 +254,6 @@ public class DungeonAdventure {
      * @param theArgs command line arguments (not used)
      */
     public static void main(final String[] theArgs) {
-
         new DungeonAdventure();
     }
 }
