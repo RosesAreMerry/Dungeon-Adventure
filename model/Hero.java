@@ -10,9 +10,11 @@ import java.util.ArrayList;
  * @author Chelsea Dacones
  */
 public abstract class Hero extends DungeonCharacter {
+    public static final int VISION_POTION_TURNS = 3;
     private final double myBlockChance;
     private final ArrayList<Item> myInventory;
     private int myHealth;
+    private int myVisionPotionTurns;
     @Serial
     private static final long serialVersionUID = 4434118078796032667L;
 
@@ -56,6 +58,28 @@ public abstract class Hero extends DungeonCharacter {
     protected boolean canBlockAttack() {
         final double randomValue = Math.random();
         return randomValue <= myBlockChance;
+    }
+
+    /**
+     * Starts the effect of the vision potion.
+     * */
+    void startVisionPotion() {
+        myVisionPotionTurns = VISION_POTION_TURNS;
+    }
+
+    /**
+     * Reduces the number of turns the vision potion is active.
+     * Once the number of turns reaches 0, the potion is no longer active.
+     * */
+    public void reduceVisionPotionTurns() {
+        myVisionPotionTurns--;
+    }
+
+    /**
+     * Returns true if the vision potion is active.
+     * */
+    public boolean isVisionPotionActive() {
+        return myVisionPotionTurns > 0;
     }
 
     @Override

@@ -1,9 +1,11 @@
 package model;
 
+import java.util.List;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Collection;
-import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Dungeon implements Serializable {
 
@@ -24,6 +26,12 @@ public class Dungeon implements Serializable {
         } else {
             throw new IllegalArgumentException("There is no door in that direction");
         }
+    }
+
+    public Map<String, Room> getNeighbors() {
+        final Coordinate current = myRooms.entrySet().stream()
+                .filter(entry -> entry.getValue().equals(myHeroLocation)).findFirst().get().getKey();
+        return myRooms.keySet().stream().filter(key -> key.isNeighbor(current)).collect(Collectors.toMap(current::getDirection, myRooms::get));
     }
 
     /**

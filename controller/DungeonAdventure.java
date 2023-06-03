@@ -2,14 +2,20 @@ package controller;
 
 import model.*;
 import view.AdventureView;
+import view.CombatView;
+import view.InventoryView;
 import view.RoomData;
 
 import java.util.*;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Serves as the main entry point for the game and orchestrates the actions of the player, monsters,
  * and other entities within the game. Overall, it manages the game flow by handling user input, updating the game state,
  * and displays relevant information to users.
+ * @author
  */
 public class DungeonAdventure {
     public static final int MAX_PIT_DAMAGE = 10;
@@ -117,7 +123,13 @@ public class DungeonAdventure {
      * This method shows the description of the current room, along with any available items in the room.
      */
     private void displayCurrentRoom() {
-        myAdventureView.printRoom(new RoomData(myDungeon.getCurrentRoom()), null);
+        Map<String, RoomData> adjacentRooms = null;
+        if (myHero.isVisionPotionActive()) {
+            adjacentRooms = myDungeon.getNeighbors().entrySet().stream()
+                    .map(e -> new AbstractMap.SimpleEntry<>(e.getKey(), new RoomData(e.getValue())))
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        }
+        myAdventureView.printRoom(new RoomData(myDungeon.getCurrentRoom()), adjacentRooms);
         if (myDungeon.getCurrentRoom().hasPit()) {
             handlePit();
         }
@@ -159,8 +171,8 @@ public class DungeonAdventure {
     public void handlePit() {
         myAdventureView.sendMessage("You fell into a pit!");
         final int damage = new Random().nextInt(MAX_PIT_DAMAGE) + 1;
-        myAdventureView.sendMessage("You took " + damage + " damage! " + myHero.getHitPoints() + " hit points remaining.");
         myHero.setHitPoints(myHero.getHitPoints() - damage);
+        myAdventureView.sendMessage("You took " + damage + " damage! " + myHero.getHitPoints() + " hit points remaining.");
         myDungeon.getCurrentRoom().removePit();
     }
 

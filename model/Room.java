@@ -178,6 +178,7 @@ public class Room implements Serializable {
         myMonster = null;
         myHasPit = false;
         myIsExit = true;
+        myFlavorText = generateFlavorText();
     }
 
     /**
