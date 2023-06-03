@@ -33,9 +33,13 @@ public class ActionHandler {
         final Consumer<Item> myItemHandler = item -> {
             if (item instanceof final Potion thePotion) {
                 thePotion.use(theHero);
+                if (item.getName().equals("Healing Potion")) {
+                    myAdventureView.sendMessage("You've used a Healing Potion. Current hit points: " +
+                            theHero.getHitPoints());
+                }
             }
             if (item instanceof PillarOfOO) {
-                myAdventureView.sendMessage("This is a " + item.getName() + ". Pillars cannot be used");
+                myAdventureView.sendMessage("This is a " + item.getName() + ". Pillars cannot be used.");
             }
         };
         myInventoryView = new InventoryView(myItemHandler);
