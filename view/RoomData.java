@@ -1,5 +1,6 @@
 package view;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;
@@ -14,12 +15,12 @@ import java.util.Objects;
 public class RoomData implements Serializable {
     private final String myFlavorText;
     private final String[] myDoors;
-    private String[] myItems;
+    private final String[] myItems;
     private String[] myMonsters;
-
     private final boolean myIsPit;
-
     private final boolean myIsExit;
+    @Serial
+    private static final long serialVersionUID = 4977661745931206197L;
 
     public RoomData(final String theFlavorText,
                     final String[] theDoors,

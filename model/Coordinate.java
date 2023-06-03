@@ -1,13 +1,15 @@
 package model;
 
-import java.io.Serializable
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.HashSet;
 
 class Coordinate implements Serializable {
     private final int myX;
     private final int myY;
-
     private static final HashSet<Coordinate> COORDINATES = new HashSet<>();
+    @Serial
+    private static final long serialVersionUID = -5760971247759619498L;
 
     private Coordinate (final int theX, final int theY) {
         myX = theX;

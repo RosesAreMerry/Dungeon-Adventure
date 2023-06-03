@@ -52,7 +52,7 @@ public class ActionHandler {
         final Map<String, Runnable> actions = new HashMap<>();
         if (theChoice.startsWith("Go")) { // handle moving to other rooms
             final String direction = theChoice.substring(3);
-            actions.put("Go " + direction, () -> handleMove(direction, theDungeon));
+            actions.put("Go " + direction, () -> handleMove(direction, theDungeon, theHero));
         } else if (theDungeon.getCurrentRoom().getMonster() != null && !theChoice.startsWith("View")) { // handle combat
             final String monster = theChoice.substring(7);
             actions.put("Battle " + monster, () -> handleCombat(monster, theDungeon, theHero));
@@ -113,10 +113,12 @@ public class ActionHandler {
      *
      * @param theDirection the direction to move to
      * @param theDungeon the game's dungeon
+     * @param theHero the player's character
      */
-    private void handleMove(final String theDirection, final Dungeon theDungeon) {
+    private void handleMove(final String theDirection, final Dungeon theDungeon, final Hero theHero) {
         final Direction direction = Direction.valueOf(theDirection.toUpperCase());
         theDungeon.move(direction);
+        theHero.reduceVisionPotionTurns();
         myAdventureView.sendMessage("You moved to the " + theDirection);
     }
 

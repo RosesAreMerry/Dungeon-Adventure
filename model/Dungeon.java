@@ -1,5 +1,6 @@
 package model;
 
+import java.io.Serial;
 import java.util.List;
 import java.io.Serializable;
 import java.util.Map;
@@ -11,6 +12,8 @@ public class Dungeon implements Serializable {
 
     private Map<Coordinate, Room> myRooms;
     private Room myHeroLocation;
+    @Serial
+    private static final long serialVersionUID = -263907444889960995L;
 
     Dungeon(final Room theEntrance, final Map<Coordinate, Room> theRooms) {
         myHeroLocation = theEntrance;

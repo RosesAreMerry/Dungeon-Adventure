@@ -7,8 +7,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Combat implements Serializable {
-
+public class Combat {
     CombatView myCombatView;
 
     public Combat() {
