@@ -1,4 +1,6 @@
 package view;
+import model.Room;
+
 import java.io.IOException;
 import java.util.Locale;
 import java.util.Map;
@@ -51,7 +53,7 @@ public class AdventureView extends ConsoleView {
      *
      * @param theAdjacentRooms Provided if the player has used a vision potion. Provides data for adjacent rooms.
      * */
-    public void printRoom(final RoomData theRoom, final Map<String, RoomData> theAdjacentRooms) {
+    public void printRoom(final RoomData theRoom, final Map<String, Room> theAdjacentRooms) {
         final StringBuilder sb = new StringBuilder();
 
         sb.append("----------------------------------------\n");
@@ -94,9 +96,10 @@ public class AdventureView extends ConsoleView {
 
             sb.append("Your vision potion gives you the ability to see through the walls.\n\n");
 
-            theAdjacentRooms.forEach((final String s, final RoomData rd) -> {
+            theAdjacentRooms.forEach((final String s, final Room room) -> {
                 sb.append("To the ").append(s).append(", you see a room that contains the following:\n");
-                conciseRoom(sb, rd);
+                conciseRoom(sb, new RoomData(room));
+                sb.append(room).append("---------------------------------------------\n");
             });
         }
 

@@ -129,7 +129,7 @@ public class ActionHandler {
      * @param theHero the player's character
      */
     private void handlePickUp(final Dungeon theDungeon, final Hero theHero) {
-        RoomData roomData = new RoomData(theDungeon.getCurrentRoom());
+        final RoomData roomData = new RoomData(theDungeon.getCurrentRoom());
         if (roomData.getItems().length > 0) {
             final StringBuilder sb = new StringBuilder();
             myAdventureView.buildList(sb,

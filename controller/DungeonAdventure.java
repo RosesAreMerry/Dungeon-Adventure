@@ -22,7 +22,7 @@ public class DungeonAdventure {
     private final AdventureView myAdventureView;
     private Dungeon myDungeon;
     private Hero myHero;
-    private final ActionHandler myActionHandler;
+    private ActionHandler myActionHandler;
     private boolean myIsPlaying;
 
     public DungeonAdventure() throws InterruptedException {
@@ -53,6 +53,7 @@ public class DungeonAdventure {
             myAdventureView.sendMessage("\nYou walk into a dungeon.");
         }
         myIsPlaying = true;
+        myActionHandler = new ActionHandler(myHero, this);
         // Main game loop
         do {
 //            Thread.sleep(1000);
@@ -123,11 +124,9 @@ public class DungeonAdventure {
      * This method shows the description of the current room, along with any available items in the room.
      */
     private void displayCurrentRoom() {
-        Map<String, RoomData> adjacentRooms = null;
+        Map<String, Room> adjacentRooms = null;
         if (myHero.isVisionPotionActive()) {
-            adjacentRooms = myDungeon.getNeighbors().entrySet().stream()
-                    .map(e -> new AbstractMap.SimpleEntry<>(e.getKey(), new RoomData(e.getValue())))
-                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+            adjacentRooms = myDungeon.getNeighbors();
         }
         myAdventureView.printRoom(new RoomData(myDungeon.getCurrentRoom()), adjacentRooms);
         if (myDungeon.getCurrentRoom().hasPit()) {
