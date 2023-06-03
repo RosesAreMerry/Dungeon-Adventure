@@ -4,14 +4,16 @@ import java.util.Random;
 
 /**
  * Represents a Priestess in the game.
+ *
  * @author Maliha Hossain
  * @author Chelsea Dacones
  */
 public class Priestess extends Hero implements Healable {
-    boolean success;
     int myHitPoints;
     private Random myRandom;
     private static final double USE_SPECIALCASE_PROBABILITY = 0.5;
+    private int myHealAmount;
+
     /**
      * initializes the states
      *
@@ -19,21 +21,30 @@ public class Priestess extends Hero implements Healable {
      */
     public Priestess(final String theName) {
         super(theName, 75, .7, 25, 45, 5, .3);
+        myRandom = new Random();
+        myHealAmount = 0;
         myHitPoints = this.getHitPoints();
-        myRandom= new Random();
     }
 
     @Override
-    public  void heal() {
+    public void heal() {
         if (!isFainted() && CanUseSpecialSkill()) {
             final int minBound = 1; // Minimum bound for the healAmount
             final int maxBound = Math.max(1, myHitPoints - this.getHitPoints()); // Positive bound
-            final int healAmount = myRandom.nextInt(maxBound) + minBound;
-            final int healedHitPoints = this.getHitPoints() + healAmount;
+            myHealAmount = myRandom.nextInt(maxBound) + minBound;
+            setHealAmount(myHealAmount);
+            final int healedHitPoints = this.getHitPoints() + myHealAmount;
             this.setHitPoints(healedHitPoints);
-        }else{
+        } else{
             return;
         }
+    }
+    private void setHealAmount(int theHealAmount) {
+        myHealAmount = theHealAmount;
+    }
+    @Override
+    public int healAmount() {
+        return myHealAmount;
     }
 
     /**
@@ -56,6 +67,7 @@ public class Priestess extends Hero implements Healable {
 
     /**
      * Sets the Random object for testing purposes.
+     *
      * @param theRandom the Random object to set.
      */
     public void setMyRandom(final Random theRandom) {

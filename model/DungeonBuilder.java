@@ -14,7 +14,7 @@ public class DungeonBuilder {
     private final Map<Coordinate, Room> coordinateRoomMap = new HashMap<>();
     private Random myRandom = new Random();
 
-    private DungeonBuilder() { }
+    public DungeonBuilder() { }
 
     /**
      * Main builder function. This is the only function that should be called from outside this class.

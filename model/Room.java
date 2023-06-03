@@ -1,13 +1,18 @@
 package model;
 
-import java.util.*;
+import java.io.Serial;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static model.Direction.*;
+import static model.Direction.SOUTH;
 
-public class Room {
-
+public class Room implements Serializable {
     private static final double PIT_PROBABILITY = 0.1;
     private static final double MONSTER_PROBABILITY = .5;
     private static final double HEALTH_POTION_PROBABILITY = 0.1;
@@ -57,6 +62,8 @@ public class Room {
             "This room is filled with old paintings.",
             "This room is filled with old books.",
     };
+    @Serial
+    private static final long serialVersionUID = -8969980202667648723L;
 
     private String myFlavorText;
     private final ArrayList<Item> myItems;
@@ -162,6 +169,10 @@ public class Room {
     void addDoor(final Direction theDirection, final Room theRoom) {
         myDoors.put(theDirection, theRoom);
     }
+    public String getMyFlavorText() {
+        return myFlavorText;
+    }
+
     void setExit() {
         myItems.clear();
         myMonster = null;
@@ -228,5 +239,4 @@ public class Room {
         }
         return ' ';
     }
-
 }

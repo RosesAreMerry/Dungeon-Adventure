@@ -13,6 +13,7 @@ public class Monster extends DungeonCharacter implements Healable {
     private final int myMinHeal;
     private final int myMaxHeal;
     private Random myRandom;
+    private int myHealAmount;
 
     Monster(final String theName, final int theHitPoints, final double theHitChance, final int theDamageMin,
                       final int theDamageMax, final int theAttackSpeed, final double theHealChance, final int theMinHeal, final int theMaxHeal) {
@@ -21,6 +22,7 @@ public class Monster extends DungeonCharacter implements Healable {
         this.myMinHeal = theMinHeal;
         this.myMaxHeal = theMaxHeal;
         this.myRandom = new Random();
+        this.myHealAmount = 0;
     }
 
     /**
@@ -33,8 +35,9 @@ public class Monster extends DungeonCharacter implements Healable {
             final double randomValue = myRandom.nextDouble();
             int myCurrentHitPoints = getHitPoints();
             if (randomValue < myChanceToHeal) { //
-                final int healAmount = myRandom.nextInt(myMaxHeal - myMinHeal + 1) + myMinHeal;
-                myCurrentHitPoints += healAmount;
+                myHealAmount = myRandom.nextInt(myMaxHeal - myMinHeal + 1) + myMinHeal;
+                myCurrentHitPoints += myHealAmount;
+                setHealAmount(myHealAmount);
                 // Ensure the monster's hit points do not exceed maximum hit points
                 myCurrentHitPoints = Math.min(myCurrentHitPoints, getMaxHitPoints());
                 setHitPoints(myCurrentHitPoints);
@@ -51,7 +54,7 @@ public class Monster extends DungeonCharacter implements Healable {
      */
     @Override
     public void attack(final DungeonCharacter theOpponent) {
-        if (theOpponent.canBlockAttack()) {
+        if (theOpponent.canBlockAttack() || !canAttack()) {
             theOpponent.setAttacked(false);
             return;
         }
@@ -73,6 +76,16 @@ public class Monster extends DungeonCharacter implements Healable {
 
     public int getMyMaxHeal() {
         return myMaxHeal;
+    }
+
+
+    private void setHealAmount(int theHealAmount) {
+        myHealAmount = theHealAmount;
+    }
+
+    @Override
+    public int healAmount() {
+        return myHealAmount;
     }
 
     /**

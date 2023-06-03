@@ -1,5 +1,7 @@
 package model;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Random;
 
 /**
@@ -9,18 +11,19 @@ import java.util.Random;
  * @author Chelsea Dacones
  * @version May 14th 2023
  */
-public abstract class DungeonCharacter {
-    private  String myName;
+public abstract class DungeonCharacter implements Serializable {
     private final int myDamageMin;
     private final int myDamageMax;
     private final int myAttackSpeed;
     private final double myHitChance;
     private final int myMaxHitPoints;
+    private final String myName;
+    private Random myRandom;
     private int myHitPoints;
-    protected Random myRandom;
     private boolean myIsAttacked;
     private int myTotalDamage;
-
+    @Serial
+    private static final long serialVersionUID = 4347694900186580770L;
     /**
      * Constructs a new DungeonCharacter and initializes instance fields.
      *

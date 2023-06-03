@@ -14,10 +14,15 @@ class ThiefTest {
     void setUp() {
         myMonsterFactory = new MonsterFactory();
         myOpponent = myMonsterFactory.createMonsterByName("Ogre");
-        myThief = new Thief("Test Thief");
+        myThief = new Thief("Test Thief") {
+            @Override
+            protected boolean canAttack() {
+                return true;
+            }
+        };
         myRandom = new RandomMock();
         myRandom.setMockIntValue(30); // damage = 30 + 20 = 50
-        myThief.setRandom(myRandom);
+        myThief.setMyRandom(myRandom);
     }
 
     /**
@@ -48,8 +53,9 @@ class ThiefTest {
      */
     @Test
     void testNormalAttack() {
+        myThief.setRandom(myRandom);
         myRandom.setMockDoubleValue(0.5);
         myThief.attack(myOpponent);
-        assertEquals(50 ,myOpponent.getHitPoints());
+        assertEquals(50, myOpponent.getHitPoints());
     }
 }
