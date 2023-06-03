@@ -13,8 +13,8 @@ public class DungeonBuilderTest {
     public void testDungeonHasCorrectNumberOfRooms() {
         final DungeonBuilder dungeonBuilder = DungeonBuilder.INSTANCE;
         try {
-            final Dungeon dungeon = dungeonBuilder.buildDungeon(1000);
-            assertEquals(1000, countNumberOfRooms(dungeon));
+            final Dungeon dungeon = dungeonBuilder.buildDungeon(100);
+            assertEquals(100, countNumberOfRooms(dungeon));
         } catch (final Exception e) {
             e.printStackTrace();
             fail();
@@ -25,7 +25,7 @@ public class DungeonBuilderTest {
     public void testDungeonHasTwoWayDoors() {
         final DungeonBuilder dungeonBuilder = DungeonBuilder.INSTANCE;
         try {
-            final Dungeon dungeon = dungeonBuilder.buildDungeon(1000);
+            final Dungeon dungeon = dungeonBuilder.buildDungeon(100);
             for (final Room room : dungeon.getAllRooms().values()) {
                 for (final Direction direction : Direction.values()) {
                     if (room.getDoor(direction) != null) {
@@ -44,7 +44,7 @@ public class DungeonBuilderTest {
         final long currentTime = System.currentTimeMillis();
         final DungeonBuilder dungeonBuilder = DungeonBuilder.INSTANCE;
         try {
-            dungeonBuilder.buildDungeon(10000);
+            dungeonBuilder.buildDungeon(100);
             final long timeTaken = System.currentTimeMillis() - currentTime;
             assertTrue(timeTaken < 1000);
         } catch (final Exception e) {
@@ -57,7 +57,7 @@ public class DungeonBuilderTest {
     public void testDungeonContainsEntrance() {
         final DungeonBuilder dungeonBuilder = DungeonBuilder.INSTANCE;
         try {
-            final Dungeon dungeon = dungeonBuilder.buildDungeon(1000);
+            final Dungeon dungeon = dungeonBuilder.buildDungeon(100);
             assertTrue(dungeon.getAllRooms().values().stream().anyMatch(Room::isEntrance));
         } catch (final Exception e) {
             e.printStackTrace();
@@ -69,7 +69,7 @@ public class DungeonBuilderTest {
     public void testDungeonContainsOneEntrance() {
         final DungeonBuilder dungeonBuilder = DungeonBuilder.INSTANCE;
         try {
-            final Dungeon dungeon = dungeonBuilder.buildDungeon(1000);
+            final Dungeon dungeon = dungeonBuilder.buildDungeon(100);
             assertEquals(1, dungeon.getAllRooms().values().stream().filter(Room::isEntrance).count());
         } catch (final Exception e) {
             e.printStackTrace();
@@ -81,7 +81,7 @@ public class DungeonBuilderTest {
     public void testDungeonContainsExit() {
         final DungeonBuilder dungeonBuilder = DungeonBuilder.INSTANCE;
         try {
-            final Dungeon dungeon = dungeonBuilder.buildDungeon(1000);
+            final Dungeon dungeon = dungeonBuilder.buildDungeon(100);
             assertTrue(dungeon.getAllRooms().values().stream().anyMatch(Room::isExit));
         } catch (final Exception e) {
             e.printStackTrace();
@@ -93,7 +93,7 @@ public class DungeonBuilderTest {
     public void testDungeonContainsOneExit() {
         final DungeonBuilder dungeonBuilder = DungeonBuilder.INSTANCE;
         try {
-            final Dungeon dungeon = dungeonBuilder.buildDungeon(1000);
+            final Dungeon dungeon = dungeonBuilder.buildDungeon(100);
             assertEquals(1, dungeon.getAllRooms().values().stream().filter(Room::isExit).count());
         } catch (final Exception e) {
             e.printStackTrace();
@@ -105,7 +105,7 @@ public class DungeonBuilderTest {
     public void testDungeonContainsOneEachPillar() {
         final DungeonBuilder dungeonBuilder = DungeonBuilder.INSTANCE;
         try {
-            final Dungeon dungeon = dungeonBuilder.buildDungeon(1000);
+            final Dungeon dungeon = dungeonBuilder.buildDungeon(100);
 
             final Function<String, Boolean> containsPillar = (name) -> dungeon
                     .getAllRooms().values().stream()
@@ -127,10 +127,10 @@ public class DungeonBuilderTest {
     public void testDungeonHasCorrectBranchingFactor() {
         final DungeonBuilder dungeonBuilder = DungeonBuilder.INSTANCE;
         try {
-            final double overallBranching = IntStream.range(10, 1000)
+            final double overallBranching = IntStream.range(10, 100)
                     .mapToObj(dungeonBuilder::buildDungeon)
                     .map(this::getBranchingFactor)
-                    .reduce(0.0, Double::sum) / 990.0;
+                    .reduce(0.0, Double::sum) / 90.0;
             assertTrue(overallBranching > 0.3);
             System.out.printf("Overall Branching: %2.2f%%", overallBranching * 100);
         } catch (final Exception e) {

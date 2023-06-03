@@ -8,9 +8,11 @@ import java.util.ArrayList;
  * @author Chelsea Dacones
  */
 public abstract class Hero extends DungeonCharacter {
+    public static final int VISION_POTION_TURNS = 3;
     private final double myBlockChance;
     private final ArrayList<Item> myInventory;
     private int myHealth;
+    private int myVisionPotionTurns;
 
     protected Hero(final String theName, final int theHitPoints, final double theHitChance, final int theDamageMin,
                 final int theDamageMax, final int theAttackSpeed, final double theBlockChance) {
@@ -58,6 +60,7 @@ public abstract class Hero extends DungeonCharacter {
         final double randomValue = Math.random();
         return randomValue <= myBlockChance;
     }
+
     public Double getblockChance(){
         return myBlockChance;
     }
@@ -70,8 +73,30 @@ public abstract class Hero extends DungeonCharacter {
                 "\nMinimum Damage: " + getDamageMin() +
                 "\nMaximum Damage: " + getDamageMax() +
                 "\nAttack Speed: " + getAttackSpeed() +
-                  "\nmyBlockChance: "+ getblockChance()+
+                 "\nmyBlockChance: "+ getblockChance()+
                 "\nmyHealth " + getHitPoints();
     }
 
+
+    /**
+     * Starts the effect of the vision potion.
+     * */
+    void startVisionPotion() {
+        myVisionPotionTurns = VISION_POTION_TURNS;
+    }
+
+    /**
+     * Reduces the number of turns the vision potion is active.
+     * Once the number of turns reaches 0, the potion is no longer active.
+     * */
+    public void reduceVisionPotionTurns() {
+        myVisionPotionTurns--;
+    }
+
+    /**
+     * Returns true if the vision potion is active.
+     * */
+    public boolean isVisionPotionActive() {
+        return myVisionPotionTurns > 0;
+    }
 }

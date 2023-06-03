@@ -1,7 +1,9 @@
 package model;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Dungeon {
 
@@ -22,6 +24,12 @@ public class Dungeon {
         } else {
             throw new IllegalArgumentException("There is no door in that direction");
         }
+    }
+
+    public Map<String, Room> getNeighbors() {
+        final Coordinate current = myRooms.entrySet().stream()
+                .filter(entry -> entry.getValue().equals(myHeroLocation)).findFirst().get().getKey();
+        return myRooms.keySet().stream().filter(key -> key.isNeighbor(current)).collect(Collectors.toMap(current::getDirection, myRooms::get));
     }
 
     /**

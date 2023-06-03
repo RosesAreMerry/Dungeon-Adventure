@@ -167,6 +167,7 @@ public class Room {
         myMonster = null;
         myHasPit = false;
         myIsExit = true;
+        myFlavorText = generateFlavorText();
     }
 
     /**
