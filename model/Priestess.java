@@ -9,7 +9,6 @@ import java.util.Random;
  * @author Chelsea Dacones
  */
 public class Priestess extends Hero implements Healable {
-    boolean success;
 
     private Random myRandom;
 
@@ -22,7 +21,6 @@ public class Priestess extends Hero implements Healable {
      */
     public Priestess(final String theName) {
         super(theName, 75, .7, 25, 45, 5, .3);
-        success = false;
         myRandom = new Random();
         myHealAmount = 0;
     }

@@ -17,8 +17,8 @@ public abstract class DungeonCharacter implements Serializable {
     private final double myHitChance;
     private final int myMaxHitPoints;
     private final String myName;
+    private Random myRandom;
     private int myHitPoints;
-    protected Random myRandom;
     private boolean myIsAttacked;
     private int myTotalDamage;
 
