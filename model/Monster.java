@@ -58,6 +58,9 @@ public class Monster extends DungeonCharacter implements Healable {
         if (canAttack()) {
             calculateDamage(theOpponent);
             theOpponent.setAttacked(true);
+            if (theOpponent instanceof Priestess) {
+                ((Priestess) theOpponent).heal();
+            }
         }
     }
 
