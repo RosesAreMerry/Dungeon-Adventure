@@ -118,8 +118,8 @@ public abstract class DungeonCharacter implements Serializable {
             calculateDamage(theOpponent);
             theOpponent.setAttacked(true);
         } else {
-            theOpponent.setAttacked(false);
             // report attack failure
+            theOpponent.setAttacked(false);
         }
     }
 
@@ -132,13 +132,15 @@ public abstract class DungeonCharacter implements Serializable {
      */
     protected int calculateDamage(final DungeonCharacter theOpponent) {
         final int numOfAttacks = Math.max(1, this.getAttackSpeed() / theOpponent.getAttackSpeed());
-        myTotalDamage = 0;
+        //removed mytotaldamage=0 to the  use setter
+        setTotalDamage(0);
         for (int i = 0; i < numOfAttacks; i++) {
             final int damage = myRandom.nextInt(getDamageMax() - getDamageMin() + 1)
                     + getDamageMin();
-            myTotalDamage += damage;
-            theOpponent.setHitPoints(Math.max(0, (theOpponent.getHitPoints() - damage)));
-            setTotalDamage(myTotalDamage);
+            //used the setter
+            setTotalDamage(getTotalDamage()+ damage);
+            theOpponent.setHitPoints(theOpponent.getHitPoints() - damage);
+
         }
         return myTotalDamage;
     }
@@ -173,6 +175,15 @@ public abstract class DungeonCharacter implements Serializable {
      */
     public void setRandom(final Random theRandom) {
         myRandom = theRandom;
+    }
+
+    public String toString() {
+        return "Monster: " + getName() +
+                "\nHit Points: " + getHitPoints() +
+                "\nChance to Hit: " + getHitChance() +
+                "\nMinimum Damage: " + getDamageMin() +
+                "\nMaximum Damage: " + getDamageMax() +
+                "\nAttack Speed: " + getAttackSpeed() ;
     }
 
 }

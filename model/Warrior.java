@@ -9,13 +9,16 @@ import java.util.Random;
  * @author Chelsea Dacones
  */
 public class Warrior extends Hero {
+    private boolean myUsedSpecialCase;
+    private static final double USE_SPECIALCASE_PROBABILITY = 0.4;
+
+    private Random myRandom;
+
     /**
      * constructor to initialize the states
      *
      * @param theName
      */
-    private Random myRandom;
-
     public Warrior(final String theName) {
         super(theName, 125, 0.8, 35, 60, 4, 0.2);
         myRandom = new Random();
@@ -27,13 +30,15 @@ public class Warrior extends Hero {
             if (useSpecialSkill()) {
                 final int damage = myRandom.nextInt(101) + 75; // 75 to 175 points of damage
                 theOpponent.setHitPoints(Math.max(theOpponent.getHitPoints() - damage, 0));
+                this.setTotalDamage(getTotalDamage()+damage);
                 theOpponent.setAttacked(true);
-                return; // exit method after performing special skill
+            } else if(!useSpecialSkill()) {
+                calculateDamage(theOpponent); // if special skill is unsuccessful, perform normal attack
+                theOpponent.setAttacked(true);
             }
-            calculateDamage(theOpponent); // if special skill is unsuccessful, perform normal attack
-            theOpponent.setAttacked(true);
         } else {
             theOpponent.setAttacked(false);
+            setTotalDamage(0);
             // report attack failure
         }
     }
@@ -46,7 +51,7 @@ public class Warrior extends Hero {
      */
     protected boolean useSpecialSkill() {
         final double randomValue = Math.random();
-        return randomValue < 0.4;
+        return randomValue <= USE_SPECIALCASE_PROBABILITY;
     }
 
     public void setMyRandom(final Random theRandom) {

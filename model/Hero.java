@@ -60,6 +60,23 @@ public abstract class Hero extends DungeonCharacter {
         return randomValue <= myBlockChance;
     }
 
+    public Double getblockChance(){
+        return myBlockChance;
+    }
+
+
+    public String toString() {
+        return "Hero  " + this.getName() +
+                "\nHit Points: " + getHitPoints() +
+                "\nChance to Hit: " + getHitChance() +
+                "\nMinimum Damage: " + getDamageMin() +
+                "\nMaximum Damage: " + getDamageMax() +
+                "\nAttack Speed: " + getAttackSpeed() +
+                 "\nmyBlockChance: "+ getblockChance()+
+                "\nmyHealth " + getHitPoints();
+    }
+
+
     /**
      * Starts the effect of the vision potion.
      * */
