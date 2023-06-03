@@ -60,7 +60,8 @@ public abstract class Hero extends DungeonCharacter {
 
     @Override
     public String toString() {
-        return  "Hero: " + this.getName() +
+        return  "Hero: " + this.getName() + " the "
+                + this.getClass().getSimpleName() +
                 "\nHit Points: " + getHitPoints() +
                 "\nChance to Hit: " + getHitChance() +
                 "\nMinimum Damage: " + getDamageMin() +

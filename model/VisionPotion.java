@@ -1,8 +1,5 @@
 package model;
 
-import controller.DungeonAdventure;
-import view.RoomData;
-
 public class VisionPotion extends Potion {
     public VisionPotion() {
         super("Vision Potion");

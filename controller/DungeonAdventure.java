@@ -2,13 +2,9 @@ package controller;
 
 import model.*;
 import view.AdventureView;
-import view.InventoryView;
 import view.RoomData;
 
-import java.io.*;
 import java.util.*;
-import java.util.function.Consumer;
-import static model.GameSerialization.*;
 
 /**
  * Serves as the main entry point for the game and orchestrates the actions of the player, monsters,
@@ -18,24 +14,19 @@ import static model.GameSerialization.*;
 public class DungeonAdventure {
     public static final int MAX_PIT_DAMAGE = 10;
     private final AdventureView myAdventureView;
-    private final InventoryView myInventoryView;
     private Dungeon myDungeon;
     private Hero myHero;
-    private GameData myGameData;
+    private final ActionHandler myActionHandler;
+    private boolean myIsPlaying;
 
     public DungeonAdventure() throws InterruptedException {
         myAdventureView = new AdventureView();
-        final Consumer<Item> myItemHandler = item -> {
-            if (item instanceof final Potion thePotion) {
-                thePotion.use(myHero);
-            }
-            if (item instanceof PillarOfOO) {
-                myAdventureView.sendMessage("Pillars cannot be used");
-            }
-        };
-        myInventoryView = new InventoryView(myItemHandler);
+        myActionHandler = new ActionHandler(myHero, this);
         boolean playAgain = true;
         while (playAgain) {
+            myIsPlaying = false;
+            displayIntroduction();
+            displayMenu();
             playGame();
             playAgain = promptPlayAgain();
         }
@@ -44,19 +35,18 @@ public class DungeonAdventure {
     /**
      * Handles the overall game play.
      */
-    private void playGame() throws InterruptedException {
-        // Introduction and game setup
-        displayIntroduction();
+    void playGame() throws InterruptedException {
         final String choice = myAdventureView.promptUserChoice(new String[]{"Load Game", "New Game"}, true);
         if (choice.equals("Load Game")) {
-            loadSavedGame();
+            final GameData gameData = myActionHandler.loadSavedGame();
+            myHero = gameData.getHero();
+            myDungeon = gameData.getDungeon();
         } else {
             myHero = createAdventurer();
             myDungeon = createDungeon();
             myAdventureView.sendMessage("\nYou walk into a dungeon.");
         }
-        myGameData = new GameData(myDungeon, myHero);
-
+        myIsPlaying = true;
         // Main game loop
         do {
 //            Thread.sleep(1000);
@@ -77,6 +67,18 @@ public class DungeonAdventure {
         myAdventureView.sendMessage("[Introduction placeholder]");
     }
 
+    void displayMenu() {
+        myAdventureView.sendMessage("---------- MENU ----------");
+        final String choice;
+        if (myIsPlaying) {
+            choice = myAdventureView.promptUserChoice(new String[]{"Instructions", "Save Game", "New Game", "Exit Game", "Close Menu"}, true);
+            myActionHandler.handleMenuAction(choice, this, myDungeon, myHero, true);
+        } else {
+            choice = myAdventureView.promptUserChoice(new String[]{"Play", "Instructions", "Exit Game"}, true);
+            myActionHandler.handleMenuAction(choice, this, null, null, false);
+        }
+    }
+
     /**
      * Creates an adventurer character based on user's input.
      * Prompts the user for their name and character selection and returns the corresponding Hero object.
@@ -85,7 +87,7 @@ public class DungeonAdventure {
      */
     private Hero createAdventurer() {
         final String name = myAdventureView.promptUserInput("\nWhat is your name? ", "Please enter a name: ", (String s) -> s != null && s.length() > 0);
-        myAdventureView.sendMessage("Pick your character: ");
+        myAdventureView.sendMessage("\nPick your character: ");
         final String character = myAdventureView.promptUserChoice(new String[]{"Thief", "Warrior", "Priestess"}, false);
         return switch (character) {
             case "Thief" -> new Thief(name);
@@ -99,19 +101,15 @@ public class DungeonAdventure {
      * Creates the dungeon for the game.
      */
     private Dungeon createDungeon() {
-        final String[] options = {"Small", "Medium", "Large"};
-        final String choice = myAdventureView.promptUserChoice(options, false, "What size dungeon do you want to explore? ");
+        final String[] options = {"Small (10 rooms)", "Medium (25 rooms)", "Large (50 rooms)"};
+        myAdventureView.sendMessage("\nChoose your dungeon: ");
+        final String choice = myAdventureView.promptUserChoice(options, true, "What size dungeon do you want to explore? ");
 
         return switch (choice) {
-            case "Medium" -> DungeonBuilder.INSTANCE.buildDungeon(25);
-            case "Large" -> DungeonBuilder.INSTANCE.buildDungeon(50);
+            case "Medium (25 rooms)" -> DungeonBuilder.INSTANCE.buildDungeon(25);
+            case "Large (50 rooms)" -> DungeonBuilder.INSTANCE.buildDungeon(50);
             default -> DungeonBuilder.INSTANCE.buildDungeon(10);
         };
-    }
-
-
-    private RoomData getCurrentRoomData() {
-        return new RoomData(myDungeon.getCurrentRoom());
     }
 
     /**
@@ -119,7 +117,7 @@ public class DungeonAdventure {
      * This method shows the description of the current room, along with any available items in the room.
      */
     private void displayCurrentRoom() {
-        myAdventureView.printRoom(getCurrentRoomData(), null);
+        myAdventureView.printRoom(new RoomData(myDungeon.getCurrentRoom()), null);
         if (myDungeon.getCurrentRoom().hasPit()) {
             handlePit();
         }
@@ -132,107 +130,38 @@ public class DungeonAdventure {
      */
     private void displayOptions() {
         final List<String> options = new ArrayList<>();
+        final RoomData roomData = new RoomData(myDungeon.getCurrentRoom());
         myAdventureView.sendMessage("What do you want to do?");
         if (!myHero.isFainted()) {
-            if (getCurrentRoomData().getMonsters().length != 0) {
+            if (new RoomData(myDungeon.getCurrentRoom()).getMonsters().length != 0) {
                 options.add("Battle " + myDungeon.getCurrentRoom().getMonster().getName());
                 options.add("View Enemy Stats");
-//              handleCombat(myDungeon.getCurrentRoom().getMonster().getName());
             }
             else {
-                for (final String door : getCurrentRoomData().getDoors()) {
+                for (final String door : roomData.getDoors()) {
                     options.add("Go " + door);
                 }
-                options.add("Look Around");
+                if (myDungeon.getCurrentRoom().getItems().size() > 0) {
+                    options.add("Pick Up Items");
+                }
             }
             if (myHero.getMyInventory().size() > 0 && myHero.getMyInventory() != null) {
                 options.add("See Inventory");
             }
             options.add("View Player Stats");
-            options.add("Save Game");
+            options.add("Open Menu");
             final String choice = myAdventureView.promptUserChoice(options.toArray(new String[0]));
-            myAdventureView.sendMessage("You chose: " + choice);
-            handleAction(choice);
+            myAdventureView.sendMessage("You chose: " + choice + "\n");
+            myActionHandler.handleGameAction(choice, myDungeon, myHero);
         }
     }
 
-    /**
-     * Handles the user's chosen action.
-     * Takes the user's selection and executes the corresponding logic in the game.
-     *
-     * @param theChoice the user's chosen action.
-     */
-    private void handleAction(final String theChoice) {
-        final Map<String, Runnable> actions = new HashMap<>();
-        if (theChoice.startsWith("Go")) { // handle moving to other rooms
-            final String direction = theChoice.substring(3);
-            actions.put("Go " + direction, () -> handleMove(direction));
-        } else if (myDungeon.getCurrentRoom().getMonster() != null) {
-            final String monster = theChoice.substring(7);
-            actions.put("Battle " + monster, () -> handleCombat(monster));
-        } else if (theChoice.startsWith("View")) {
-            final String character = theChoice.substring(5);
-            actions.put("View Player Stats", () -> handleViewStats(character));
-            actions.put("View Enemy Stats", () -> handleViewStats(character));
-        }
-        actions.put("Look Around", this::handleLookAround);
-        actions.put("See Inventory", () -> myInventoryView.showInventory(myHero.getMyInventory()));
-        actions.put("Save Game", this::handleSaveGame);
-        final Runnable action = actions.get(theChoice);
-        action.run();
-    }
-
-    private void handleViewStats(final String theCharacter) {
-        if (theCharacter.equals("Player Stats")) {
-            myAdventureView.sendMessage(myHero.toString());
-        } else {
-            myAdventureView.sendMessage(myDungeon.getCurrentRoom().getMonster().toString());
-        }
-    }
-
-    private void handleCombat(final String theOpponent) {
-        final RoomData roomData = getCurrentRoomData();
-        if (roomData.getMonsters() != null && roomData.getMonsters().length > 0) {
-            final Combat combat = new Combat();
-            final MonsterFactory monsterFactory = new MonsterFactory();
-            final Monster opponent = monsterFactory.createMonsterByName(theOpponent);
-            combat.initiateCombat(myHero, opponent);
-            roomData.removeMonsterFromRoom(theOpponent);
-            if (opponent.isFainted()) {
-                myAdventureView.sendMessage(theOpponent + " was defeated!");
-                myDungeon.getCurrentRoom().killMonster();
-            } else {
-                myAdventureView.sendMessage("You were defeated by the " + theOpponent + "!");
-            }
-        }
-    }
-
-    private void handleMove(final String theDir) {
-        final Direction direction = Direction.valueOf(theDir.toUpperCase());
-        myDungeon.move(direction);
-    }
-
-    private void handlePit() {
+    public void handlePit() {
         myAdventureView.sendMessage("You fell into a pit!");
         final int damage = new Random().nextInt(MAX_PIT_DAMAGE) + 1;
         myAdventureView.sendMessage("You took " + damage + " damage! " + myHero.getHitPoints() + " hit points remaining.");
         myHero.setHitPoints(myHero.getHitPoints() - damage);
         myDungeon.getCurrentRoom().removePit();
-    }
-
-    private void handleLookAround() {
-        if (getCurrentRoomData().getItems().length > 0) {
-            final StringBuilder sb = new StringBuilder();
-            myAdventureView.buildList(sb,
-                    getCurrentRoomData().getItems(),
-                    "You acquired ",
-                    "You acquired ",
-                    "!",
-                    true);
-            myAdventureView.sendMessage(String.valueOf(sb));
-            myHero.addToInventory(myDungeon.getCurrentRoom().getItems());
-            myDungeon.getCurrentRoom().getItems().clear();
-        }
     }
 
     /**
@@ -261,40 +190,6 @@ public class DungeonAdventure {
     private boolean promptPlayAgain() {
         final String choice = myAdventureView.promptUserChoice(new String[] {"Play Again", "Exit"}, false);
         return choice.equals("Play Again");
-    }
-
-    private void handleSaveGame() {
-        final GameData gameData = new GameData(myDungeon, myHero);
-        String fileName;
-        File saveFile;
-        do {
-            fileName =  myAdventureView.promptUserInput("Enter a name for your game entry: ",
-                "Please enter a name for your game entry: ", (String s) -> s != null && s.length() > 0);
-            saveFile = new File("savedGames/", fileName + ".ser");
-            if (saveFile.exists()) {
-                myAdventureView.sendMessage("File with the same name already exists. Do you want to overwrite?");
-                if (myAdventureView.promptUserChoice(new String[]{"Yes", "No"}).equals("Yes")) {
-                    break;
-                }
-            }
-        } while (saveFile.exists());
-        saveGame(fileName, gameData);
-        myAdventureView.sendMessage(fileName + " was successfully saved!");
-    }
-
-    private void loadSavedGame() {
-        final String fileName = myAdventureView.promptUserChoice(getSavedGames()
-                .toArray(new String[0]), true);
-        myGameData = GameSerialization.loadGame(fileName);
-        if (myGameData != null) {
-            myHero = myGameData.getHero();
-            myDungeon = myGameData.getDungeon();
-            myAdventureView.sendMessage(fileName + " loaded successfully!");
-            myAdventureView.sendMessage("\nCurrent hit points: " + myHero.getHitPoints());
-            myAdventureView.sendMessage("Pillars collected (2/4): " + myHero.getMyInventory()); // TODO: Finish implementing this
-        } else {
-            myAdventureView.sendMessage("Failed to load " + fileName);
-        }
     }
 
     /**
