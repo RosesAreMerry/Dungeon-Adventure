@@ -65,18 +65,6 @@ public abstract class Hero extends DungeonCharacter {
     }
 
 
-    public String toString() {
-        return "Hero  " + this.getName() +
-                "\nHit Points: " + getHitPoints() +
-                "\nChance to Hit: " + getHitChance() +
-                "\nMinimum Damage: " + getDamageMin() +
-                "\nMaximum Damage: " + getDamageMax() +
-                "\nAttack Speed: " + getAttackSpeed() +
-                 "\nmyBlockChance: "+ getblockChance()+
-                "\nmyHealth " + getHitPoints();
-    }
-
-
     /**
      * Starts the effect of the vision potion.
      * */
@@ -107,6 +95,7 @@ public abstract class Hero extends DungeonCharacter {
                 "\nChance to Hit: " + getHitChance() +
                 "\nMinimum Damage: " + getDamageMin() +
                 "\nMaximum Damage: " + getDamageMax() +
-                "\nAttack Speed: " + getAttackSpeed() ;
+                "\nAttack Speed: " + getAttackSpeed() +
+                "\nmyBlockChance: "+ getblockChance();
     }
 }
