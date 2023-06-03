@@ -25,7 +25,7 @@ public class CombatView extends ConsoleView {
      * @param theCustomWriter A custom output method.
      * @param theCustomReader A custom input method.
      * */
-    public CombatView(final Consumer<String> theCustomWriter, final Supplier<String> theCustomReader) {
+    CombatView(final Consumer<String> theCustomWriter, final Supplier<String> theCustomReader) {
         super(theCustomWriter, theCustomReader);
     }
 

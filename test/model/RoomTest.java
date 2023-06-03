@@ -93,6 +93,16 @@ public class RoomTest {
     }
 
     @Test
+    void testCorrectToStringDoorDirection() {
+        final RandomMock rm = new RandomMock();
+        rm.setMockDoubleValue(OVER);
+        final Room room = new Room(rm);
+        room.addDoor(NORTH, room);
+        room.addDoor(EAST, room);
+        assertEquals("*-*\n* |\n***\n", room.toString());
+    }
+
+    @Test
     void testExitIsEmpty() {
         final RandomMock rm = new RandomMock();
         rm.setMockDoubleValue(UNDER);
