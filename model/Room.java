@@ -16,7 +16,7 @@ public class Room implements Serializable {
     private static final double PIT_PROBABILITY = 0.1;
     private static final double MONSTER_PROBABILITY = 0.1;
     private static final double HEALTH_POTION_PROBABILITY = 0.1;
-    private static final double VISION_POTION_PROBABILITY = 0.9;
+    private static final double VISION_POTION_PROBABILITY = 0.1;
     private static final String[] FLAVOR_TEXTS_EMPTY = new String[] {
             "This room is dark and damp.",
             "As you open the door, a musty scent hits your nose.",
