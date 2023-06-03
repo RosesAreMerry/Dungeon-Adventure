@@ -4,7 +4,6 @@ import java.util.Random;
 
 /**
  * Represents a Priestess in the game.
- *
  * @author Maliha Hossain
  * @author Chelsea Dacones
  */
