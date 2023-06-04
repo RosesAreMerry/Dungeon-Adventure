@@ -5,7 +5,6 @@ import view.AdventureView;
 import view.RoomData;
 
 import java.util.*;
-import java.util.function.Supplier;
 
 /**
  * Serves as the main entry point for the game and orchestrates the actions of the player, monsters,
@@ -120,7 +119,6 @@ public class DungeonAdventure {
         final String choice = myAdventureView.promptUserInput("What difficulty level do you want to play? ",
                 "Please enter the name of the level: ", (String s) -> s.equalsIgnoreCase("easy")
         || s.equalsIgnoreCase("medium") || s.equalsIgnoreCase("hard"));
-//        final String choice = myAdventureView.promptUserChoice(DIFFICULTY_DESCRIPTIONS);
         return switch (choice.toUpperCase()) {
             case "EASY" -> DifficultyLevel.EASY;
             case "MEDIUM" -> DifficultyLevel.MEDIUM;
@@ -156,23 +154,6 @@ public class DungeonAdventure {
             default -> null;
         };
     }
-
-//    /**
-//     * Creates the dungeon for the game.
-//     */
-//    private Dungeon createDungeon() throws InterruptedException {
-//        final String[] options = {"Small", "Medium", "Large"};
-//        myAdventureView.sendMessage("\nChoose your dungeon: ");
-//        final String choice = myAdventureView.promptUserChoice(options, true, "What size dungeon do you want to explore? ");
-//        return switch (choice) {
-//            case "Medium" -> { myAdventureView.sendMessage("Generating dungeon with 25 rooms..."); Thread.sleep(500);
-//                yield DungeonBuilder.INSTANCE.buildDungeon(25);}
-//            case "Large" -> { myAdventureView.sendMessage("Generating dungeon with 50 rooms..."); Thread.sleep(500);
-//                yield DungeonBuilder.INSTANCE.buildDungeon(50);}
-//            default -> { myAdventureView.sendMessage("Generating dungeon with 10 rooms..."); Thread.sleep(500);
-//                yield DungeonBuilder.INSTANCE.buildDungeon(10);}
-//        };
-//    }
 
     /**
      * Displays the current room to the user.

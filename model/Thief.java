@@ -11,15 +11,11 @@ public class Thief extends Hero implements Serializable {
     private boolean mySurpriseAttack;
     
     private boolean myCaught;
-    
     private Random myRandom;
     private static final double USE_SPECIALCASE_PROBABILITY = 0.4;
     private static final double CAUGHT_PROBABILITY= 0.5;
     @Serial
     private static final long serialVersionUID = 2136676198219810338L;
-
-
-
     private int myTotalDamage;
 
     public Thief(final String theName) {
