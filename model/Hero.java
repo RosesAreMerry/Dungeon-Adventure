@@ -1,6 +1,7 @@
 package model;
 
 import java.io.Serial;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -8,7 +9,7 @@ import java.util.ArrayList;
  *
  * @author Chelsea Dacones
  */
-public abstract class Hero extends DungeonCharacter {
+public abstract class Hero extends DungeonCharacter implements Serializable {
     public static final int VISION_POTION_TURNS = 3;
     @Serial
     private static final long serialVersionUID = 4434118078796032667L;
