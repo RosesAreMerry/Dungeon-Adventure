@@ -1,4 +1,7 @@
 package view;
+import model.Room;
+
+import java.io.IOException;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -50,8 +53,10 @@ public class AdventureView extends ConsoleView {
      *
      * @param theAdjacentRooms Provided if the player has used a vision potion. Provides data for adjacent rooms.
      * */
-    public void printRoom(final RoomData theRoom, final Map<String, RoomData> theAdjacentRooms) {
+    public void printRoom(final RoomData theRoom, final Map<String, Room> theAdjacentRooms) {
         final StringBuilder sb = new StringBuilder();
+
+        sb.append("----------------------------------------\n");
 
         sb.append(theRoom.getFlavor()).append("\n\n");
 
@@ -89,11 +94,12 @@ public class AdventureView extends ConsoleView {
 
         if (theAdjacentRooms != null && theAdjacentRooms.size() > 0) {
 
-            sb.append("Your vision potion gives you the ability to see through the walls.\n");
+            sb.append("Your vision potion gives you the ability to see through the walls.\n\n");
 
-            theAdjacentRooms.forEach((final String s, final RoomData rd) -> {
-                sb.append("To the ").append(s.toUpperCase(Locale.ROOT)).append(", you see a room that contains the following:\n");
-                conciseRoom(sb, rd);
+            theAdjacentRooms.forEach((final String s, final Room room) -> {
+                sb.append("To the ").append(s).append(", you see a room that contains the following:\n");
+                conciseRoom(sb, new RoomData(room));
+                sb.append(room).append("---------------------------------------------\n");
             });
         }
 
@@ -119,7 +125,7 @@ public class AdventureView extends ConsoleView {
 
         theSB.append("Pit: ");
         theSB.append(theRoom.isPit());
-        theSB.append('\n');
+        theSB.append("\n\n");
     }
 
     public void buildList(final StringBuilder theSB,

@@ -1,7 +1,9 @@
 package model;
 
+
 import view.CombatView;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 

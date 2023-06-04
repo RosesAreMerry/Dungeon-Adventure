@@ -1,12 +1,19 @@
 package model;
 
-import java.util.Collection;
+import java.io.Serial;
+import java.util.List;
+import java.io.Serializable;
 import java.util.Map;
+import java.util.Collection;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-public class Dungeon {
+public class Dungeon implements Serializable {
 
     private Map<Coordinate, Room> myRooms;
     private Room myHeroLocation;
+    @Serial
+    private static final long serialVersionUID = -263907444889960995L;
 
     Dungeon(final Room theEntrance, final Map<Coordinate, Room> theRooms) {
         myHeroLocation = theEntrance;
@@ -22,6 +29,12 @@ public class Dungeon {
         } else {
             throw new IllegalArgumentException("There is no door in that direction");
         }
+    }
+
+    public Map<String, Room> getNeighbors() {
+        final Coordinate current = myRooms.entrySet().stream()
+                .filter(entry -> entry.getValue().equals(myHeroLocation)).findFirst().get().getKey();
+        return myRooms.keySet().stream().filter(key -> key.isNeighbor(current)).collect(Collectors.toMap(current::getDirection, myRooms::get));
     }
 
     /**

@@ -1,18 +1,23 @@
 package model;
 
-import java.util.*;
+import java.io.Serial;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static model.Direction.*;
+import static model.Direction.SOUTH;
 
-public class Room {
-
-//    private static final double PIT_PROBABILITY = 0.1;
-//    private static final double MONSTER_PROBABILITY = 0.1;
-//    private static final double HEALTH_POTION_PROBABILITY = 0.1;
-//    private static final double VISION_POTION_PROBABILITY = 0.1;
-    private static final String[] FLAVOR_TEXTS_EMPTY = new String[] {
+public class Room implements Serializable {
+    private static final double PIT_PROBABILITY = 0.1;
+    private static final double MONSTER_PROBABILITY = 0.1;
+    private static final double HEALTH_POTION_PROBABILITY = 0.1;
+    private static final double VISION_POTION_PROBABILITY = 0.1;
+    private static final String[] FLAVOR_TEXTS_EMPTY = {
             "This room is dark and damp.",
             "As you open the door, a musty scent hits your nose.",
             "You hear a faint dripping sound.",
@@ -27,7 +32,7 @@ public class Room {
             "A faint breeze blows through the room.",
     };
 
-    private static final String[] FLAVOR_TEXTS_MONSTER = new String[] {
+    private static final String[] FLAVOR_TEXTS_MONSTER = {
             "A monster is in the room!",
             "As soon as you enter this room, you realize that you are not alone.",
             "A monster is lurking in the shadows.",
@@ -37,7 +42,7 @@ public class Room {
             "As you enter, a chill runs down your spine."
     };
 
-    private static final String[] FLAVOR_TEXTS_PIT = new String[] {
+    private static final String[] FLAVOR_TEXTS_PIT = {
             "As you enter, you hear a slight click.",
             "You hear a faint rumbling sound.",
             "As you enter, you trip over a loose stone.",
@@ -47,7 +52,7 @@ public class Room {
             "There is something strange about the floor here.",
     };
 
-    private static final String[] FLAVOR_TEXTS_ITEMS = new String[]{
+    private static final String[] FLAVOR_TEXTS_ITEMS = {
             "This room is piled high with random nick nacks.",
             "Dust covers almost every surface of this abandoned room.",
             "Piles of bones litter the floor.",
@@ -57,9 +62,12 @@ public class Room {
             "This room is filled with old paintings.",
             "This room is filled with old books.",
     };
-
-    private String myFlavorText;
+    @Serial
+    private static final long serialVersionUID = -8969980202667648723L;
     private final ArrayList<Item> myItems;
+    private final Map<Direction, Room> myDoors;
+    private final Random myRandom;
+    private String myFlavorText;
     private Monster myMonster;
     private boolean myIsExit;
     private boolean myIsEntrance;
@@ -74,6 +82,7 @@ public class Room {
     Room() {
         this(new Random());
     }
+
     Room(final Random theRandom) {
         myRandom = theRandom;
         myDoors = new HashMap<>();
@@ -151,45 +160,54 @@ public class Room {
     public Monster getMonster() {
         return myMonster;
     }
+
     public ArrayList<Item> getItems() {
         return myItems;
     }
+
     public boolean isEntrance() {
         return myIsEntrance;
     }
+
     public boolean isExit() {
         return myIsExit;
     }
+
     public boolean hasPit() {
         return myHasPit;
     }
+
     public Room getDoor(final Direction theDirection) {
         return myDoors.get(theDirection);
     }
+
     public Map<Direction, Room> getDoors() {
         return myDoors;
     }
+
     public String getFlavorText() {
         return myFlavorText;
     }
+
     public void killMonster() {
         myMonster = null;
         myFlavorText = generateFlavorText();
     }
+
     public void removePit() {
         myHasPit = false;
     }
+
     void addDoor(final Direction theDirection, final Room theRoom) {
         myDoors.put(theDirection, theRoom);
     }
-    public String getMyFlavorText() {
-        return myFlavorText;
-    }
+
     void setExit() {
         myItems.clear();
         myMonster = null;
         myHasPit = false;
         myIsExit = true;
+        myFlavorText = generateFlavorText();
     }
 
     /**
@@ -200,20 +218,17 @@ public class Room {
      * *-*<br>
      *
      * @return a string representation of the room
-     * */
+     */
     @Override
     public String toString() {
         final Map<Direction, Character> doors = Stream.of(NORTH, SOUTH, EAST, WEST).filter(myDoors::containsKey)
                 .collect(Collectors.toMap(dir -> dir, dir -> dir == NORTH || dir == SOUTH ? '-' : '|'));
-        final StringBuilder sb = new StringBuilder();
 
-        sb.append('*').append(doors.getOrDefault(NORTH, '*')).append('*').append('\n');
+        final String sb = "*" + doors.getOrDefault(NORTH, '*') + '*' + '\n' +
+                doors.getOrDefault(WEST, '*') + getRoomChar() + doors.getOrDefault(EAST, '*') + '\n' +
+                '*' + doors.getOrDefault(SOUTH, '*') + '*' + '\n';
 
-        sb.append(doors.getOrDefault(WEST, '*')).append(getRoomChar()).append(doors.getOrDefault(EAST, '*')).append('\n');
-
-        sb.append('*').append(doors.getOrDefault(SOUTH, '*')).append('*').append('\n');
-
-        return sb.toString();
+        return sb;
     }
 
     /**
@@ -228,7 +243,7 @@ public class Room {
      * A, E, I, P - Pillars
      *
      * @return the character to represent the room
-     * */
+     */
     private char getRoomChar() {
         if (myItems.size() > 1) {
             return 'M';
@@ -250,5 +265,4 @@ public class Room {
         }
         return ' ';
     }
-
 }
