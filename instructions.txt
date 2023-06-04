@@ -1,0 +1,21 @@
+Your mission is to navigate through a treacherous dungeon and collect the four Pillars of OO, which are randomly scattered throughout the dungeon.
+
+You will start at the entrance of the dungeon. Your current location will be displayed to help you keep track of where you are in the dungeon.
+
+To explore the dungeon, you can move in four directions: North, East, South, and West. Note that your options for which direction to move in will vary based on
+whether the current room you're in has a door to the room of the said direction.
+
+Along your journey, you will have to battle against monsters, and may encounter pits that will decrease your hit points.
+You may also come across items that acre beneficial to you such as Healing Potions and Vision Potions.
+
+Your journey will be complete when you've collected all four Pillars of OO.
+Once you have them all, make your way to the exit.
+
+If you reach the exit before collecting all the pillars, you will be prompted to go back and find the remaining pillars.
+
+Otherwise, you win the game!
+
+For more information about specific game features, when you're prompted to choose what to do next in the game, select 'Open Menu' -> 'Help'
+
+Good luck, brave adventurer! May your wit and courage guide you through the depths of the dungeon.
+

@@ -1,0 +1,29 @@
+---------------------------------------------------------------------- GAME MANUAL ----------------------------------------------------------------------
+How to win the game -
+Collect the four Pillars of OO and bring them to the exit:
+1. Pillar of Abstraction
+2. Pillar of Encapsulation
+3. Pillar of Inheritance
+4. Pillar of Polymorphism
+
+How to lose the game -
+If your hit points reaches 0, you lose the game. You will lose hit points throughout your adventure through battling monsters and encountering pits.
+
+How to manage the game flow -
+You will repeatedly be asked what you want to do next in the game. The options in the game include:
+1. Go North/East/South/West - Move to the room in the said direction
+2. View Player/Enemy Stats - View your player's stats, or your enemy's stats before going into battle
+3. Pick Up Items - Pick up the items in the current room
+4. See Inventory - View the item's in your player's inventory and use items.
+5. Battle [Monster] - Battle the monster in the room to pick-up items in the rooms and explore the dungeon further
+6. Open Menu - Open the game's menu to find a help manual, save your game, create a new game, exit game, and the option to close the menu.
+
+How to use items -
+Select "See Inventory" when prompted for what you want to do next.
+You will see a list of all of your collected items and will be prompted to enter the name of the item you want to use.
+
+How to save/load game -
+When prompted what you want to do, select "Open Menu" to find "Save game". You will be prompted to enter a name for your game entry.
+To load a game, at the start of every game, you will be prompted to create a new game, or load a previous game.
+By selecting "Load Game" you will be shown a list of previous saved games, and select the one you want to continue playing.
+
