@@ -58,5 +58,17 @@ public class Warrior extends Hero {
         myRandom = theRandom;
     }
 
+    @Override
+    public String toString() {
+        return this.getName() + " the " + this.getClass().getSimpleName() +
+                "\nHit Points: " + getHitPoints() +
+                "\nChance to Hit: " + getHitChance() +
+                "\nMinimum Damage: " + getDamageMin() +
+                "\nMaximum Damage: " + getDamageMax() +
+                "\nAttack Speed: " + getAttackSpeed() +
+                "\nBlock Chance: " + getBlockChance() +
+                "\nSpecial Skill: " + "Crushing Blow that does 75 to 175 points of damage " +
+                "but only has a 40% chance of succeeding";
+    }
 
 }

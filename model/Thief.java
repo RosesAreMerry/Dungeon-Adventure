@@ -88,5 +88,17 @@ public class Thief extends Hero{
     public void setMyRandom(final Random theRandom) {
         this.myRandom = theRandom;
     }
+
+    @Override
+    public String toString() {
+        return this.getName() + " the " + this.getClass().getSimpleName() +
+                "\nHit Points: " + getHitPoints() +
+                "\nChance to Hit: " + getHitChance() +
+                "\nMinimum Damage: " + getDamageMin() +
+                "\nMaximum Damage: " + getDamageMax() +
+                "\nAttack Speed: " + getAttackSpeed() +
+                "\nBlock Chance: " + getBlockChance() +
+                "\nSpecial Skill: " + "Surprise Attack - 40 percent chance it is successful";
+    }
 }
 

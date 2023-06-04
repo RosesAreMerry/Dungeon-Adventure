@@ -2,11 +2,10 @@ package controller;
 
 import model.*;
 import view.AdventureView;
-import view.InventoryView;
 import view.RoomData;
 
 import java.util.*;
-import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * Serves as the main entry point for the game and orchestrates the actions of the player, monsters,
@@ -17,27 +16,31 @@ import java.util.function.Consumer;
  * @author Rosemary Roach
  */
 public class DungeonAdventure {
-    public static final int MAX_PIT_DAMAGE = 10;
-    public static final String YOU_WIN_ASCII = """
+    private static final int MAX_PIT_DAMAGE = 10;
+    private static final String YOU_WIN_ASCII = """
             ██╗   ██╗ ██████╗ ██╗   ██╗    ██╗    ██╗██╗███╗   ██╗██╗
             ╚██╗ ██╔╝██╔═══██╗██║   ██║    ██║    ██║██║████╗  ██║██║
              ╚████╔╝ ██║   ██║██║   ██║    ██║ █╗ ██║██║██╔██╗ ██║██║
               ╚██╔╝  ██║   ██║██║   ██║    ██║███╗██║██║██║╚██╗██║╚═╝
                ██║   ╚██████╔╝╚██████╔╝    ╚███╔███╔╝██║██║ ╚████║██╗
                ╚═╝    ╚═════╝  ╚═════╝      ╚══╝╚══╝ ╚═╝╚═╝  ╚═══╝╚═╝""";
-    public static final String GAME_OVER_ASCII = """
+    private static final String GAME_OVER_ASCII = """
              ██████╗  █████╗ ███╗   ███╗███████╗     ██████╗ ██╗   ██╗███████╗██████╗
             ██╔════╝ ██╔══██╗████╗ ████║██╔════╝    ██╔═══██╗██║   ██║██╔════╝██╔══██╗
             ██║  ███╗███████║██╔████╔██║█████╗      ██║   ██║██║   ██║█████╗  ██████╔╝
             ██║   ██║██╔══██║██║╚██╔╝██║██╔══╝      ██║   ██║╚██╗ ██╔╝██╔══╝  ██╔══██╗
             ╚██████╔╝██║  ██║██║ ╚═╝ ██║███████╗    ╚██████╔╝ ╚████╔╝ ███████╗██║  ██║
              ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝     ╚═════╝   ╚═══╝  ╚══════╝╚═╝  ╚═╝""";
+    private static final String[] DIFFICULTY_DESCRIPTIONS = new String[]{"Easy - Stronger starting player, weaker monsters, more items, small dungeon",
+            "Medium - Default values, medium-sized dungeon",
+            "Hard - Weaker starting player, stronger monsters, less items, large dungeon"};
     private final AdventureView myAdventureView;
     private Dungeon myDungeon;
     private Hero myHero;
     private ActionHandler myActionHandler;
     private boolean myIsPlaying;
     private boolean myWonGame;
+    private DifficultyLevel myDifficultyLevel;
 
     public DungeonAdventure() {
         myAdventureView = new AdventureView();
@@ -67,13 +70,16 @@ public class DungeonAdventure {
      */
     void playGame() throws InterruptedException {
         final String choice = myAdventureView.promptUserChoice(new String[]{"Load Game", "New Game"}, true);
+
         if (choice.equals("Load Game")) {
             final GameData gameData = myActionHandler.loadSavedGame();
             myHero = gameData.getHero();
             myDungeon = gameData.getDungeon();
         } else {
+            myDifficultyLevel = selectDifficultyLevel();
             myHero = createAdventurer();
-            myDungeon = createDungeon();
+            myDungeon = myDifficultyLevel.createDungeon();
+            myDifficultyLevel.adjustGameLevel(myDungeon, myHero);
             myAdventureView.sendMessage("\nYou walk into a dungeon.");
         }
         myIsPlaying = true;
@@ -94,34 +100,6 @@ public class DungeonAdventure {
     }
 
     /**
-     * Handles the overall game play.
-     */
-    private void playGame() throws InterruptedException {
-        // Introduction and game setup
-        displayIntroduction();
-        final DifficultyLevel myDifficultyLevel = selectDifficultyLevel();
-        myHero = createAdventurer();
-        myDungeon = createDungeon();
-        myDifficultyLevel.adjustGameLevel(myDungeon, myHero);
-        myCurrentRoomData = getCurrentRoomData();
-        myAdventureView.sendMessage("\nYou walk into a dungeon.");
-
-        // Main game loop
-        while (!myHero.isFainted()) {
-            displayCurrentRoom();
-            if (myWonGame) {
-                break;
-            }
-            displayOptions();
-        }
-        if (myHero.isFainted()) {
-            myAdventureView.sendMessage(GAME_OVER_ASCII);
-        }
-        // Game conclusion
-        displayDungeon();
-    }
-
-    /**
      * Displays the introduction of the game to the user.
      */
     private void displayIntroduction() {
@@ -138,12 +116,16 @@ public class DungeonAdventure {
     }
 
     private DifficultyLevel selectDifficultyLevel() {
-        final String difficulty = myAdventureView.promptUserChoice(new String[]{"Easy", "Medium", "Hard"});
-        return switch (difficulty) {
-            case "Easy" -> DifficultyLevel.EASY;
-            case "Medium" -> DifficultyLevel.MEDIUM;
-            case "Hard" -> DifficultyLevel.HARD;
-            default -> throw new IllegalStateException("Unexpected value: " + difficulty);
+        myAdventureView.sendMessage("Select Game Difficulty:\033[0m\n" + String.join("\n", DIFFICULTY_DESCRIPTIONS));
+        final String choice = myAdventureView.promptUserInput("What difficulty level do you want to play? ",
+                "Please enter the name of the level: ", (String s) -> s.equalsIgnoreCase("easy")
+        || s.equalsIgnoreCase("medium") || s.equalsIgnoreCase("hard"));
+//        final String choice = myAdventureView.promptUserChoice(DIFFICULTY_DESCRIPTIONS);
+        return switch (choice.toUpperCase()) {
+            case "EASY" -> DifficultyLevel.EASY;
+            case "MEDIUM" -> DifficultyLevel.MEDIUM;
+            case "HARD" -> DifficultyLevel.HARD;
+            default -> throw new IllegalStateException("Unexpected value: " + choice);
         };
     }
     /**
@@ -154,17 +136,18 @@ public class DungeonAdventure {
      */
     private Hero createAdventurer() {
         final String name = myAdventureView.promptUserInput("\nWhat is your name? ", "Please enter a name: ", (String s) -> s != null && s.length() > 0);
-        final Map<String, String> playerCreators = Map.of(
-                "Thief", new Thief(name) + "\nSpecial Skill: Surprise Attack - 40 percent chance it is successful\n",
-                "Warrior", new Warrior(name) + "\nSpecial Skill: Crushing Blow that does 75 to 175 points of damage but only has a 40% chance of succeeding\n",
-                "Priestess", new Priestess(name) + "\nSpecial Skill: Healing\n"
+        final Map<String, Hero> playerCreators = Map.of(
+                "Thief", new Thief(name),
+                "Warrior", new Warrior(name),
+                "Priestess", new Priestess(name)
         );
         String character;
         do {
             myAdventureView.sendMessage("Pick your character: ");
             character = myAdventureView.promptUserChoice(new String[]{"Thief", "Warrior", "Priestess"}, false);
+            myDifficultyLevel.adjustHeroStatistics(playerCreators.get(character));
             myAdventureView.sendMessage("\033[0m\n" + playerCreators.get(character));
-        } while (myAdventureView.promptUserInput("Would you like to reselect your character? ", "Please enter 'Yes' or 'No': ",
+        } while (myAdventureView.promptUserInput("\nWould you like to reselect your character? ", "Please enter 'Yes' or 'No': ",
                 (String s) -> s != null && (s.equalsIgnoreCase("Yes") || s.equalsIgnoreCase("No"))).equalsIgnoreCase("Yes"));
         return switch (character) {
             case "Thief" -> new Thief(name);
@@ -174,22 +157,22 @@ public class DungeonAdventure {
         };
     }
 
-    /**
-     * Creates the dungeon for the game.
-     */
-    private Dungeon createDungeon() throws InterruptedException {
-        final String[] options = {"Small", "Medium", "Large"};
-        myAdventureView.sendMessage("\nChoose your dungeon: ");
-        final String choice = myAdventureView.promptUserChoice(options, true, "What size dungeon do you want to explore? ");
-        return switch (choice) {
-            case "Medium" -> { myAdventureView.sendMessage("Generating dungeon with 25 rooms..."); Thread.sleep(500);
-                yield DungeonBuilder.INSTANCE.buildDungeon(25);}
-            case "Large" -> { myAdventureView.sendMessage("Generating dungeon with 50 rooms..."); Thread.sleep(500);
-                yield DungeonBuilder.INSTANCE.buildDungeon(50);}
-            default -> { myAdventureView.sendMessage("Generating dungeon with 10 rooms..."); Thread.sleep(500);
-                yield DungeonBuilder.INSTANCE.buildDungeon(10);}
-        };
-    }
+//    /**
+//     * Creates the dungeon for the game.
+//     */
+//    private Dungeon createDungeon() throws InterruptedException {
+//        final String[] options = {"Small", "Medium", "Large"};
+//        myAdventureView.sendMessage("\nChoose your dungeon: ");
+//        final String choice = myAdventureView.promptUserChoice(options, true, "What size dungeon do you want to explore? ");
+//        return switch (choice) {
+//            case "Medium" -> { myAdventureView.sendMessage("Generating dungeon with 25 rooms..."); Thread.sleep(500);
+//                yield DungeonBuilder.INSTANCE.buildDungeon(25);}
+//            case "Large" -> { myAdventureView.sendMessage("Generating dungeon with 50 rooms..."); Thread.sleep(500);
+//                yield DungeonBuilder.INSTANCE.buildDungeon(50);}
+//            default -> { myAdventureView.sendMessage("Generating dungeon with 10 rooms..."); Thread.sleep(500);
+//                yield DungeonBuilder.INSTANCE.buildDungeon(10);}
+//        };
+//    }
 
     /**
      * Displays the current room to the user.
@@ -238,7 +221,7 @@ public class DungeonAdventure {
     public void handlePit() {
         myAdventureView.sendMessage("You fell into a pit!");
         final int damage = new Random().nextInt(MAX_PIT_DAMAGE) + 1;
-        myHero.setHitPoints(Math.max(myHero.getHitPoints() - damage), 0);
+        myHero.setHitPoints(Math.max(myHero.getHitPoints() - damage, 0));
         myAdventureView.sendMessage("You took " + damage + " damage! " + myHero.getHitPoints() + " hit points remaining.");
         myDungeon.getCurrentRoom().removePit();
     }

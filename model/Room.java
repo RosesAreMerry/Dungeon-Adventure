@@ -72,8 +72,6 @@ public class Room implements Serializable {
     private boolean myIsExit;
     private boolean myIsEntrance;
     private boolean myHasPit;
-    private final Map<Direction, Room> myDoors;
-    private final Random myRandom;
     private double myPitProbability;
     private double myHealthPotionProbability;
     private double myVisionPotionProbability;

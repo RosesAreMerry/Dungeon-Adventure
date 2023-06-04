@@ -12,10 +12,10 @@ import java.util.Random;
  * @version May 14th 2023
  */
 public abstract class DungeonCharacter implements Serializable {
-    private final int myDamageMin;
-    private final int myDamageMax;
-    private final int myAttackSpeed;
-    private final double myHitChance;
+    private int myDamageMin;
+    private int myDamageMax;
+    private int myAttackSpeed;
+    private double myHitChance;
     private final int myMaxHitPoints;
     private final String myName;
     private Random myRandom;

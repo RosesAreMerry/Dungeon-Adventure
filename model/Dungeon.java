@@ -43,7 +43,7 @@ public class Dungeon implements Serializable {
      *
      * @return a collection of all the rooms in the dungeon.
      * */
-    Map<Coordinate, Room> getAllRooms() {
+    public Map<Coordinate, Room> getAllRooms() {
         return myRooms;
     }
 

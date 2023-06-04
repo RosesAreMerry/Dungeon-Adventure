@@ -12,7 +12,8 @@ public abstract class Hero extends DungeonCharacter {
     public static final int VISION_POTION_TURNS = 3;
     @Serial
     private static final long serialVersionUID = 4434118078796032667L;
-    private final double myBlockChance;
+
+    private double myBlockChance;
     private final ArrayList<Item> myInventory;
     private int myHealth;
     private int myVisionPotionTurns;
@@ -59,8 +60,12 @@ public abstract class Hero extends DungeonCharacter {
         return randomValue <= myBlockChance;
     }
 
-    public Double getBlockChance() {
+    public double getBlockChance() {
         return myBlockChance;
+    }
+
+    public void setBlockChance(final double myBlockChance) {
+        this.myBlockChance = myBlockChance;
     }
 
 
