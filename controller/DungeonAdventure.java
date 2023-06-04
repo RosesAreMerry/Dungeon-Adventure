@@ -24,16 +24,17 @@ public class DungeonAdventure {
     private Hero myHero;
     private ActionHandler myActionHandler;
     private boolean myIsPlaying;
+    private boolean myWonGame;
 
     public DungeonAdventure() throws InterruptedException {
         myAdventureView = new AdventureView();
         myActionHandler = new ActionHandler(myHero, this);
         boolean playAgain = true;
         while (playAgain) {
+            myWonGame = false;
             myIsPlaying = false;
             displayIntroduction();
             displayMenu();
-            playGame();
             playAgain = promptPlayAgain();
         }
     }
@@ -55,15 +56,16 @@ public class DungeonAdventure {
         myIsPlaying = true;
         myActionHandler = new ActionHandler(myHero, this);
         // Main game loop
-        do {
-//            Thread.sleep(1000);
+        while (!myHero.isFainted()) {
             displayCurrentRoom();
-//            Thread.sleep(2000);
+            if (myWonGame) {
+                break;
+            }
             displayOptions();
-        } while (!myHero.isFainted());
+        }
 
         // Game conclusion
-        displayGameResult();
+//        displayGameResult();
         displayDungeon();
     }
 
@@ -133,6 +135,9 @@ public class DungeonAdventure {
             handlePit();
         }
         myAdventureView.sendMessage(myDungeon.getCurrentRoom().toString());
+        if (myDungeon.getCurrentRoom().isExit()) {
+            myWonGame = wonGame();
+        }
     }
 
     /**
@@ -175,22 +180,38 @@ public class DungeonAdventure {
         myDungeon.getCurrentRoom().removePit();
     }
 
-    /**
-     * Displays the final game result to the user.
-     * Based on whether the user's character has fainted or won the game.
-     */
-    private void displayGameResult() {
-        if (myHero.isFainted()) {
-            myAdventureView.sendMessage("Game over!");
-        } else {
-            myAdventureView.sendMessage("You Win!");
-        }
-    }
+//    /**
+//     * Displays the final game result to the user.
+//     * Based on whether the user's character has fainted or won the game.
+//     */
+//    private void displayGameResult() {
+//        if (myHero.isFainted()) {
+//            myAdventureView.sendMessage("Game over!");
+//        } else {
+//            myAdventureView.sendMessage("You Win!");
+//        }
+//    }
 
     /**
      * Displays the entire dungeon layout to the user.
      */
     private void displayDungeon() {
+        myAdventureView.sendMessage("[Dungeon placeholder]");
+    }
+
+    private boolean wonGame() {
+        final int numOfPillars = (int) myHero.getMyInventory().stream().filter(item -> item instanceof PillarOfOO).count();
+        final List<String> allPillars = new ArrayList<>(Arrays.asList("Pillar of Abstraction", "Pillar of Encapsulation", "Pillar of Inheritance", "Pillar of Polymorphism"));
+        final List<String> collectedPillars = myHero.getMyInventory().stream().filter(item -> item instanceof PillarOfOO).map(Item::getName).toList();
+        final List<String> remainingPillars = allPillars.stream().filter(pillarName -> !collectedPillars.contains(pillarName)).toList();
+        if (numOfPillars == 4) {
+            myAdventureView.sendMessage("Congratulations adventurer! You've collected all four Pillars of OO and have won the game!");
+            return true;
+        } else {
+            myAdventureView.sendMessage("You're still missing " + (4 - numOfPillars) + " Pillars of OO. Explore the dungeon further to find "
+                    + String.join(", ", remainingPillars) + "\n");
+            return false;
+        }
     }
 
     /**

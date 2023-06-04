@@ -218,9 +218,8 @@ public class ActionHandler {
         };
         if (theIsPlaying) { // if game is already in progress
             actions.put("Save Game", () -> handleSaveGame(theDungeon, theHero));
-        } else {
-            actions.put("Play", startGame);
         }
+        actions.put("Play", startGame);
         actions.put("Instructions", () -> {/* Implement instructions logic */});
         actions.put("Exit Game", () -> {myAdventureView.sendMessage("Exiting the game. Thanks for playing!");
             System.exit(0);});
