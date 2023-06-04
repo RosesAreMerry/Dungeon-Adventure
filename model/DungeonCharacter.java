@@ -139,7 +139,7 @@ public abstract class DungeonCharacter implements Serializable {
                     + getDamageMin();
             //used the setter
             setTotalDamage(getTotalDamage()+ damage);
-            theOpponent.setHitPoints(theOpponent.getHitPoints() - damage);
+            theOpponent.setHitPoints(Math.max(theOpponent.getHitPoints() - damage, 0));
 
         }
         return myTotalDamage;
