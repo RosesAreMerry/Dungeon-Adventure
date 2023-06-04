@@ -18,6 +18,17 @@ public abstract class Hero extends DungeonCharacter implements Serializable {
     private int myHealth;
     private int myVisionPotionTurns;
 
+    /**
+     * Constructs a new Hero.
+     *
+     * @param theName        the player's name
+     * @param theHitPoints   the hit points (health) of the player
+     * @param theHitChance   the player's chance to attack an opponent
+     * @param theDamageMin   the minimum damage the player can inflict on an opponent
+     * @param theDamageMax   the maximum damage the player can inflict on an opponent
+     * @param theAttackSpeed the attack speed of the player (determines number of attacks)
+     * @param theBlockChance the player's chance of blocking an attack
+     */
     protected Hero(final String theName, final int theHitPoints, final double theHitChance, final int theDamageMin,
                    final int theDamageMax, final int theAttackSpeed, final double theBlockChance) {
         super(theName, theHitPoints, theHitChance, theDamageMin, theDamageMax, theAttackSpeed);
@@ -54,16 +65,16 @@ public abstract class Hero extends DungeonCharacter implements Serializable {
         setHitPoints(myHealth);
     }
 
+    /**
+     * Decides if player can block an attack based on chance to block.
+     *
+     * @return true if player can block the attack; false otherwise
+     */
     @Override
     protected boolean canBlockAttack() {
         final double randomValue = Math.random();
         return randomValue <= myBlockChance;
     }
-
-    public Double getBlockChance() {
-        return myBlockChance;
-    }
-
 
     /**
      * Starts the effect of the vision potion.
@@ -95,6 +106,6 @@ public abstract class Hero extends DungeonCharacter implements Serializable {
                 "\nMinimum Damage: " + getDamageMin() +
                 "\nMaximum Damage: " + getDamageMax() +
                 "\nAttack Speed: " + getAttackSpeed() +
-                "\nBlock Chance: " + getBlockChance();
+                "\nBlock Chance: " + myBlockChance;
     }
 }
