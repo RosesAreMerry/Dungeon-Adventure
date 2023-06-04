@@ -110,7 +110,12 @@ public class DungeonAdventure {
      */
     private void displayIntroduction() {
         myAdventureView.sendMessage("\n\033[1m" + DUNGEON_ADVENTURE);
-        myAdventureView.sendMessage("[Introduction placeholder]\n");
+        myAdventureView.sendMessage("""
+                Welcome to Dungeon Adventure! Prepare to embark on a daring quest as a hero in a treacherous dungeon. Your mission is to locate and retrieve the four Pillars
+                of OO—Abstraction, Encapsulation, Inheritance, and Polymorphism—and secure your triumph at the exit. Beware of the monsters lurking in the dungeon's room, and
+                obstacles like treacherous pits that impede your progress. However, not everything is against you. Discover items that will aid your journey throughout the dungeon.
+                The dungeon awaits, and your destiny awaits within its depths. Good luck, adventurer!
+                """);
     }
 
     /**
