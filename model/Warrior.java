@@ -43,7 +43,6 @@ public class Warrior extends Hero implements Serializable {
         } else {
             theOpponent.setAttacked(false);
             setTotalDamage(0);
-            // report attack failure
         }
     }
 

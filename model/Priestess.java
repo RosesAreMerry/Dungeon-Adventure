@@ -11,11 +11,11 @@ import java.util.Random;
  * @author Chelsea Dacones
  */
 public class Priestess extends Hero implements Healable, Serializable {
-    int myHitPoints;
-    private Random myRandom;
     private static final double USE_SPECIALCASE_PROBABILITY = 0.5;
     @Serial
     private static final long serialVersionUID = -6055191108103186823L;
+    private final int myHitPoints;
+    private Random myRandom;
     private int myHealAmount;
 
     /**
@@ -32,18 +32,16 @@ public class Priestess extends Hero implements Healable, Serializable {
 
     @Override
     public void heal() {
-        if (!isFainted() && CanUseSpecialSkill()) {
+        if (!isFainted() && canUseSpecialSkill()) {
             final int minBound = 1; // Minimum bound for the healAmount
             final int maxBound = Math.max(1, myHitPoints - this.getHitPoints()); // Positive bound
             myHealAmount = myRandom.nextInt(maxBound) + minBound;
             setHealAmount(myHealAmount);
             final int healedHitPoints = this.getHitPoints() + myHealAmount;
             this.setHitPoints(healedHitPoints);
-        } else{
-            return;
         }
     }
-    private void setHealAmount(int theHealAmount) {
+    private void setHealAmount(final int theHealAmount) {
         myHealAmount = theHealAmount;
     }
     @Override
@@ -51,21 +49,7 @@ public class Priestess extends Hero implements Healable, Serializable {
         return myHealAmount;
     }
 
-    /**
-     * @param theOpponent the character to attack.
-     */
-    public void attack(final DungeonCharacter theOpponent) {
-        // check if character can attack based on chance to hit
-        if (canAttack()) {
-            calculateDamage(theOpponent);
-            theOpponent.setAttacked(true);
-        } else {
-            // report attack failure
-            theOpponent.setAttacked(false);
-            setTotalDamage(0);
-        }
-    }
-    private boolean CanUseSpecialSkill() {
+    private boolean canUseSpecialSkill() {
         return myRandom.nextDouble() <= USE_SPECIALCASE_PROBABILITY ;
     }
 

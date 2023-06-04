@@ -2,6 +2,7 @@ package controller;
 
 import model.*;
 import view.AdventureView;
+import view.CombatView;
 import view.InventoryView;
 import view.RoomData;
 
@@ -17,6 +18,7 @@ public class ActionHandler {
     private final DungeonAdventure myDungeonAdventure;
     private final AdventureView myAdventureView;
     private final InventoryView myInventoryView;
+    private final CombatView myCombatView;
 
     /**
      * Constructs an ActionHandler object.
@@ -24,9 +26,10 @@ public class ActionHandler {
      * @param theHero             the player's character
      * @param theDungeonAdventure represents the game's adventure
      */
-    public ActionHandler(final Hero theHero, final DungeonAdventure theDungeonAdventure) {
+     ActionHandler(final Hero theHero, final DungeonAdventure theDungeonAdventure) {
         myDungeonAdventure = theDungeonAdventure;
         myAdventureView = new AdventureView();
+        myCombatView = new CombatView();
         // handle usage of items by the player
         final Consumer<Item> myItemHandler = item -> {
             if (item instanceof final Potion thePotion) {
@@ -57,7 +60,6 @@ public class ActionHandler {
                 myAdventureView.sendMessage("Your inventory:");
                 myInventoryView.showInventory(theHero.getMyInventory());
             }
-            case "cheatcode: dd" -> myAdventureView.sendMessage("[Display entire dungeon]");
             case "Open Menu" -> myDungeonAdventure.displayMenu();
             default -> {
                 if (theChoice.startsWith("Go")) {
@@ -100,7 +102,11 @@ public class ActionHandler {
             final Combat combat = new Combat();
             final MonsterFactory monsterFactory = new MonsterFactory();
             final Monster opponent = monsterFactory.createMonsterByName(theOpponent);
+            myCombatView.showCombat(theHero.getName(), theOpponent, opponent.getHitPoints(),
+                    theHero.getHitPoints(), null);
             combat.initiateCombat(theHero, opponent);
+            myCombatView.showCombat(theHero.getName(), theOpponent, opponent.getHitPoints(),
+                    theHero.getHitPoints(), combat.getActionLog().toArray(new String[0]));
             roomData.removeMonsterFromRoom(theOpponent);
             final String message = opponent.isFainted() ? theOpponent + " was defeated!"
                     : "You were defeated by the " + theOpponent + "!\n";

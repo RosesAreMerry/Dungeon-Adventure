@@ -5,22 +5,16 @@ import java.io.Serializable;
 import java.util.Random;
 
 /**
- * Theif Class represents a character in the game
+ * Thief represents a player in the game
  */
 public class Thief extends Hero implements Serializable {
-    private boolean mySurpriseAttack;
-    
-    private boolean myCaught;
-    
-    private Random myRandom;
     private static final double USE_SPECIALCASE_PROBABILITY = 0.4;
-    private static final double CAUGHT_PROBABILITY= 0.5;
+    private static final double CAUGHT_PROBABILITY = 0.5;
     @Serial
     private static final long serialVersionUID = 2136676198219810338L;
-
-
-
-    private int myTotalDamage;
+    private boolean mySurpriseAttack;
+    private boolean myCaught;
+    private Random myRandom;
 
     public Thief(final String theName) {
         super(theName, 75, 0.8, 20, 40, 6, 0.4);
@@ -44,7 +38,7 @@ public class Thief extends Hero implements Serializable {
     /**
      * determines if the specialskill was used or not
      */
-    private boolean caught() {
+    private boolean wasCaught() {
         if (myRandom.nextDouble() <= CAUGHT_PROBABILITY) {
             myCaught = true;
         } else{
@@ -61,7 +55,7 @@ public class Thief extends Hero implements Serializable {
     @Override
     public void attack(final DungeonCharacter theOpponent) {
         final int numOfAttack = Math.max(1, this.getAttackSpeed() / theOpponent.getAttackSpeed());
-        if (caught() || !canAttack()) { // don't perform attack if caught, or cannot attack based on chance to hit
+        if (wasCaught() || !canAttack()) { // don't perform attack if caught, or cannot attack based on chance to hit
             theOpponent.setAttacked(false);
             setTotalDamage(0);
             return;
@@ -75,7 +69,6 @@ public class Thief extends Hero implements Serializable {
                     setTotalDamage(getTotalDamage() + damage);
                     theOpponent.setHitPoints(Math.max(theOpponent.getHitPoints() - damage, 1));
                     theOpponent.setAttacked(true);
-                    //System.out.println(theOpponent.getName() + "  current HitPoint is " + theOpponent.getHitPoints());
                 }
             } else { // normal attack
                 calculateDamage(theOpponent);
