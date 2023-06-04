@@ -5,8 +5,8 @@ You will start at the entrance of the dungeon. Your current location will be dis
 To explore the dungeon, you can move in four directions: North, East, South, and West. Note that your options for which direction to move in will vary based on
 whether the current room you're in has a door to the room of the said direction.
 
-Along your journey, you will have to battle against monsters, and may encounter pits that will decrease your hit points.
-You may also come across items that acre beneficial to you such as Healing Potions and Vision Potions.
+Along your journey, you will have to battle against monsters and encounter hindrances that threaten your health.
+You may also come across items that are beneficial to you such as Healing Potions and Vision Potions.
 
 Your journey will be complete when you've collected all four Pillars of OO.
 Once you have them all, make your way to the exit.

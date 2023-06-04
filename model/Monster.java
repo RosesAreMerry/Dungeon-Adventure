@@ -16,7 +16,7 @@ public class Monster extends DungeonCharacter implements Healable {
     private int myHealAmount;
 
     Monster(final String theName, final int theHitPoints, final double theHitChance, final int theDamageMin,
-                      final int theDamageMax, final int theAttackSpeed, final double theHealChance, final int theMinHeal, final int theMaxHeal) {
+            final int theDamageMax, final int theAttackSpeed, final double theHealChance, final int theMinHeal, final int theMaxHeal) {
         super(theName, theHitPoints, theHitChance, theDamageMin, theDamageMax, theAttackSpeed);
         this.myChanceToHeal = theHealChance;
         this.myMinHeal = theMinHeal;
@@ -70,6 +70,7 @@ public class Monster extends DungeonCharacter implements Healable {
     public double getMyChanceToHeal() {
         return myChanceToHeal;
     }
+
     public int getMyMinHeal() {
         return myMinHeal;
     }
@@ -79,7 +80,7 @@ public class Monster extends DungeonCharacter implements Healable {
     }
 
 
-    private void setHealAmount(int theHealAmount) {
+    private void setHealAmount(final int theHealAmount) {
         myHealAmount = theHealAmount;
     }
 
@@ -100,11 +101,12 @@ public class Monster extends DungeonCharacter implements Healable {
     /**
      * THe Monster's statistics.
      * Made for testing purposes.
+     *
      * @return the Monster's statistics.
      */
     @Override
     public String toString() {
-        return "Monster: " + getName() +
+        return getName() +
                 "\nHit Points: " + getHitPoints() +
                 "\nChance to Hit: " + getHitChance() +
                 "\nMinimum Damage: " + getDamageMin() +
@@ -113,6 +115,5 @@ public class Monster extends DungeonCharacter implements Healable {
                 "\nChance to Heal: " + getMyChanceToHeal() +
                 "\nMinimum Heal Points: " + getMyMinHeal() +
                 "\nMaximum Heal Points: " + getMyMaxHeal();
-
     }
 }

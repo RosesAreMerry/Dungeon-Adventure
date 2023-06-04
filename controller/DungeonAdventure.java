@@ -2,23 +2,34 @@ package controller;
 
 import model.*;
 import view.AdventureView;
-import view.CombatView;
-import view.InventoryView;
 import view.RoomData;
 
 import java.util.*;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Serves as the main entry point for the game and orchestrates the actions of the player, monsters,
  * and other entities within the game. Overall, it manages the game flow by handling user input, updating the game state,
  * and displays relevant information to users.
- * @author
+ *
+ * @author Chelsea Dacones
+ * @author Rosemary Roach
  */
 public class DungeonAdventure {
     public static final int MAX_PIT_DAMAGE = 10;
+    public static final String YOU_WIN_ASCII = """
+            ██╗   ██╗ ██████╗ ██╗   ██╗    ██╗    ██╗██╗███╗   ██╗██╗
+            ╚██╗ ██╔╝██╔═══██╗██║   ██║    ██║    ██║██║████╗  ██║██║
+             ╚████╔╝ ██║   ██║██║   ██║    ██║ █╗ ██║██║██╔██╗ ██║██║
+              ╚██╔╝  ██║   ██║██║   ██║    ██║███╗██║██║██║╚██╗██║╚═╝
+               ██║   ╚██████╔╝╚██████╔╝    ╚███╔███╔╝██║██║ ╚████║██╗
+               ╚═╝    ╚═════╝  ╚═════╝      ╚══╝╚══╝ ╚═╝╚═╝  ╚═══╝╚═╝""";
+    public static final String GAME_OVER_ASCII = """
+             ██████╗  █████╗ ███╗   ███╗███████╗     ██████╗ ██╗   ██╗███████╗██████╗
+            ██╔════╝ ██╔══██╗████╗ ████║██╔════╝    ██╔═══██╗██║   ██║██╔════╝██╔══██╗
+            ██║  ███╗███████║██╔████╔██║█████╗      ██║   ██║██║   ██║█████╗  ██████╔╝
+            ██║   ██║██╔══██║██║╚██╔╝██║██╔══╝      ██║   ██║╚██╗ ██╔╝██╔══╝  ██╔══██╗
+            ╚██████╔╝██║  ██║██║ ╚═╝ ██║███████╗    ╚██████╔╝ ╚████╔╝ ███████╗██║  ██║
+             ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝     ╚═════╝   ╚═══╝  ╚══════╝╚═╝  ╚═╝""";
     private final AdventureView myAdventureView;
     private Dungeon myDungeon;
     private Hero myHero;
@@ -26,7 +37,7 @@ public class DungeonAdventure {
     private boolean myIsPlaying;
     private boolean myWonGame;
 
-    public DungeonAdventure() throws InterruptedException {
+    public DungeonAdventure() {
         myAdventureView = new AdventureView();
         myActionHandler = new ActionHandler(myHero, this);
         boolean playAgain = true;
@@ -35,8 +46,18 @@ public class DungeonAdventure {
             myIsPlaying = false;
             displayIntroduction();
             displayMenu();
-            playAgain = promptPlayAgain();
+            playAgain = myAdventureView.promptUserChoice(new String[]{"Play Again", "Exit"},
+                    false).equals("Play Again");
         }
+    }
+
+    /**
+     * The main entry point of the game.
+     *
+     * @param theArgs command line arguments (not used)
+     */
+    public static void main(final String[] theArgs) {
+        new DungeonAdventure();
     }
 
     /**
@@ -63,9 +84,10 @@ public class DungeonAdventure {
             }
             displayOptions();
         }
-
+        if (myHero.isFainted()) {
+            myAdventureView.sendMessage(GAME_OVER_ASCII);
+        }
         // Game conclusion
-//        displayGameResult();
         displayDungeon();
     }
 
@@ -77,15 +99,12 @@ public class DungeonAdventure {
     }
 
     void displayMenu() {
-        myAdventureView.sendMessage("---------- MENU ----------");
+        myAdventureView.sendMessage("----------- MENU -----------");
         final String choice;
-        if (myIsPlaying) {
-            choice = myAdventureView.promptUserChoice(new String[]{"Instructions", "Save Game", "New Game", "Exit Game", "Close Menu"}, true);
-            myActionHandler.handleMenuAction(choice, this, myDungeon, myHero, true);
-        } else {
-            choice = myAdventureView.promptUserChoice(new String[]{"Play", "Instructions", "Exit Game"}, true);
-            myActionHandler.handleMenuAction(choice, this, null, null, false);
-        }
+        final String[] options = myIsPlaying ? new String[]{"Help", "Save Game", "New Game", "Exit Game", "Close Menu"}
+                : new String[]{"Play", "Instructions", "Exit Game"};
+        choice = myAdventureView.promptUserChoice(options, true);
+        myActionHandler.handleMenuAction(choice, this, myIsPlaying ? myDungeon : null, myIsPlaying ? myHero : null, myIsPlaying);
     }
 
     /**
@@ -96,8 +115,18 @@ public class DungeonAdventure {
      */
     private Hero createAdventurer() {
         final String name = myAdventureView.promptUserInput("\nWhat is your name? ", "Please enter a name: ", (String s) -> s != null && s.length() > 0);
-        myAdventureView.sendMessage("\nPick your character: ");
-        final String character = myAdventureView.promptUserChoice(new String[]{"Thief", "Warrior", "Priestess"}, false);
+        final Map<String, String> playerCreators = Map.of(
+                "Thief", new Thief(name) + "\nSpecial Skill: Surprise Attack - 40 percent chance it is successful\n",
+                "Warrior", new Warrior(name) + "\nSpecial Skill: Crushing Blow that does 75 to 175 points of damage but only has a 40% chance of succeeding\n",
+                "Priestess", new Priestess(name) + "\nSpecial Skill: Healing\n"
+        );
+        String character;
+        do {
+            myAdventureView.sendMessage("Pick your character: ");
+            character = myAdventureView.promptUserChoice(new String[]{"Thief", "Warrior", "Priestess"}, false);
+            myAdventureView.sendMessage("\033[0m\n" + playerCreators.get(character));
+        } while (myAdventureView.promptUserInput("Would you like to reselect your character? ", "Please enter 'Yes' or 'No': ",
+                (String s) -> s != null && (s.equalsIgnoreCase("Yes") || s.equalsIgnoreCase("No"))).equalsIgnoreCase("Yes"));
         return switch (character) {
             case "Thief" -> new Thief(name);
             case "Warrior" -> new Warrior(name);
@@ -109,15 +138,17 @@ public class DungeonAdventure {
     /**
      * Creates the dungeon for the game.
      */
-    private Dungeon createDungeon() {
-        final String[] options = {"Small (10 rooms)", "Medium (25 rooms)", "Large (50 rooms)"};
+    private Dungeon createDungeon() throws InterruptedException {
+        final String[] options = {"Small", "Medium", "Large"};
         myAdventureView.sendMessage("\nChoose your dungeon: ");
         final String choice = myAdventureView.promptUserChoice(options, true, "What size dungeon do you want to explore? ");
-
         return switch (choice) {
-            case "Medium (25 rooms)" -> DungeonBuilder.INSTANCE.buildDungeon(25);
-            case "Large (50 rooms)" -> DungeonBuilder.INSTANCE.buildDungeon(50);
-            default -> DungeonBuilder.INSTANCE.buildDungeon(10);
+            case "Medium" -> { myAdventureView.sendMessage("Generating dungeon with 25 rooms..."); Thread.sleep(500);
+                yield DungeonBuilder.INSTANCE.buildDungeon(25);}
+            case "Large" -> { myAdventureView.sendMessage("Generating dungeon with 50 rooms..."); Thread.sleep(500);
+                yield DungeonBuilder.INSTANCE.buildDungeon(50);}
+            default -> { myAdventureView.sendMessage("Generating dungeon with 10 rooms..."); Thread.sleep(500);
+                yield DungeonBuilder.INSTANCE.buildDungeon(10);}
         };
     }
 
@@ -126,11 +157,8 @@ public class DungeonAdventure {
      * This method shows the description of the current room, along with any available items in the room.
      */
     private void displayCurrentRoom() {
-        Map<String, Room> adjacentRooms = null;
-        if (myHero.isVisionPotionActive()) {
-            adjacentRooms = myDungeon.getNeighbors();
-        }
-        myAdventureView.printRoom(new RoomData(myDungeon.getCurrentRoom()), adjacentRooms);
+        // print adjacent rooms if vision potion is active; otherwise only display current room
+        myAdventureView.printRoom(new RoomData(myDungeon.getCurrentRoom()), myHero.isVisionPotionActive() ? myDungeon.getNeighbors() : null);
         if (myDungeon.getCurrentRoom().hasPit()) {
             handlePit();
         }
@@ -149,23 +177,19 @@ public class DungeonAdventure {
         final RoomData roomData = new RoomData(myDungeon.getCurrentRoom());
         myAdventureView.sendMessage("What do you want to do?");
         if (!myHero.isFainted()) {
-            if (new RoomData(myDungeon.getCurrentRoom()).getMonsters().length != 0) {
+            if (roomData.getMonsters().length != 0) {
                 options.add("Battle " + myDungeon.getCurrentRoom().getMonster().getName());
                 options.add("View Enemy Stats");
-            }
-            else {
-                for (final String door : roomData.getDoors()) {
-                    options.add("Go " + door);
-                }
-                if (myDungeon.getCurrentRoom().getItems().size() > 0) {
+            } else {
+                Arrays.stream(roomData.getDoors()).map(door -> "Go " + door).forEach(options::add);
+                if (!myDungeon.getCurrentRoom().getItems().isEmpty()) {
                     options.add("Pick Up Items");
                 }
             }
-            if (myHero.getMyInventory().size() > 0 && myHero.getMyInventory() != null) {
+            if (!myHero.getMyInventory().isEmpty()) {
                 options.add("See Inventory");
             }
-            options.add("View Player Stats");
-            options.add("Open Menu");
+            options.addAll(Arrays.asList("View Player Stats", "Open Menu"));
             final String choice = myAdventureView.promptUserChoice(options.toArray(new String[0]));
             myAdventureView.sendMessage("You chose: " + choice + "\n");
             myActionHandler.handleGameAction(choice, myDungeon, myHero);
@@ -180,18 +204,6 @@ public class DungeonAdventure {
         myDungeon.getCurrentRoom().removePit();
     }
 
-//    /**
-//     * Displays the final game result to the user.
-//     * Based on whether the user's character has fainted or won the game.
-//     */
-//    private void displayGameResult() {
-//        if (myHero.isFainted()) {
-//            myAdventureView.sendMessage("Game over!");
-//        } else {
-//            myAdventureView.sendMessage("You Win!");
-//        }
-//    }
-
     /**
      * Displays the entire dungeon layout to the user.
      */
@@ -200,36 +212,14 @@ public class DungeonAdventure {
     }
 
     private boolean wonGame() {
-        final int numOfPillars = (int) myHero.getMyInventory().stream().filter(item -> item instanceof PillarOfOO).count();
         final List<String> allPillars = new ArrayList<>(Arrays.asList("Pillar of Abstraction", "Pillar of Encapsulation", "Pillar of Inheritance", "Pillar of Polymorphism"));
         final List<String> collectedPillars = myHero.getMyInventory().stream().filter(item -> item instanceof PillarOfOO).map(Item::getName).toList();
-        final List<String> remainingPillars = allPillars.stream().filter(pillarName -> !collectedPillars.contains(pillarName)).toList();
-        if (numOfPillars == 4) {
-            myAdventureView.sendMessage("Congratulations adventurer! You've collected all four Pillars of OO and have won the game!");
-            return true;
-        } else {
-            myAdventureView.sendMessage("You're still missing " + (4 - numOfPillars) + " Pillars of OO. Explore the dungeon further to find "
-                    + String.join(", ", remainingPillars) + "\n");
-            return false;
-        }
-    }
-
-    /**
-     * Prompts the user to play the game again or exit.
-     *
-     * @return true if the user wants to play again; false otherwise.
-     */
-    private boolean promptPlayAgain() {
-        final String choice = myAdventureView.promptUserChoice(new String[] {"Play Again", "Exit"}, false);
-        return choice.equals("Play Again");
-    }
-
-    /**
-     * The main entry point of the game.
-     *
-     * @param theArgs command line arguments (not used)
-     */
-    public static void main(final String[] theArgs) throws InterruptedException {
-        new DungeonAdventure();
+        final List<String> remainingPillars = new ArrayList<>(allPillars);
+        remainingPillars.removeAll(collectedPillars);
+        final boolean hasAllPillars = collectedPillars.size() == allPillars.size();
+        myAdventureView.sendMessage(hasAllPillars
+                ? "Congratulations adventurer! You've collected all four Pillars of OO and have won the game!" + "\n" + YOU_WIN_ASCII + "\n"
+                : "You're missing " + (allPillars.size() - collectedPillars.size()) + " Pillars of OO: " + String.join(", ", remainingPillars) + "\n");
+        return hasAllPillars;
     }
 }

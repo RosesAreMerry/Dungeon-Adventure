@@ -6,10 +6,8 @@ import view.InventoryView;
 import view.RoomData;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.FileNotFoundException;
+import java.util.*;
 import java.util.function.Consumer;
 
 import static model.GameSerialization.getSavedGames;
@@ -23,7 +21,7 @@ public class ActionHandler {
     /**
      * Constructs an ActionHandler object.
      *
-     * @param theHero the player's character
+     * @param theHero             the player's character
      * @param theDungeonAdventure represents the game's adventure
      */
     public ActionHandler(final Hero theHero, final DungeonAdventure theDungeonAdventure) {
@@ -48,52 +46,53 @@ public class ActionHandler {
     /**
      * Handles a game action based on the player's choice.
      *
-     * @param theChoice the choice made by the player
+     * @param theChoice  the choice made by the player
      * @param theDungeon the game's dungeon
-     * @param theHero the player's character
+     * @param theHero    the player's character
      */
     public void handleGameAction(final String theChoice, final Dungeon theDungeon, final Hero theHero) {
-        final Map<String, Runnable> actions = new HashMap<>();
-        if (theChoice.startsWith("Go")) { // handle moving to other rooms
-            final String direction = theChoice.substring(3);
-            actions.put("Go " + direction, () -> handleMove(direction, theDungeon, theHero));
-        } else if (theDungeon.getCurrentRoom().getMonster() != null && !theChoice.startsWith("View")) { // handle combat
-            final String monster = theChoice.substring(7);
-            actions.put("Battle " + monster, () -> handleCombat(monster, theDungeon, theHero));
-        } else if (theChoice.startsWith("View")) { // handle viewing character's stats
-            final String character = theChoice.substring(5);
-            actions.put("View Player Stats", () -> handleViewStats(character, theDungeon, theHero));
-            actions.put("View Enemy Stats", () -> handleViewStats(character, theDungeon, theHero));
+        switch (theChoice) {
+            case "Pick Up Items" -> handlePickUp(theDungeon, theHero);
+            case "See Inventory" -> {
+                myAdventureView.sendMessage("Your inventory:");
+                myInventoryView.showInventory(theHero.getMyInventory());
+            }
+            case "cheatcode: dd" -> myAdventureView.sendMessage("[Display entire dungeon]");
+            case "Open Menu" -> myDungeonAdventure.displayMenu();
+            default -> {
+                if (theChoice.startsWith("Go")) {
+                    final String direction = theChoice.substring(3);
+                    handleMove(direction, theDungeon, theHero);
+                } else if (theChoice.startsWith("Battle")) {
+                    final String monster = theChoice.substring(7);
+                    handleCombat(monster, theDungeon, theHero);
+                } else if (theChoice.startsWith("View")) { // handle viewing character's stats
+                    final String character = theChoice.substring(5);
+                    handleViewStats(character, theDungeon, theHero);
+                }
+            }
         }
-        actions.put("Pick Up Items", () -> handlePickUp(theDungeon, theHero));
-        actions.put("See Inventory", () -> {myAdventureView.sendMessage("Your Inventory: ");
-        myInventoryView.showInventory(theHero.getMyInventory());});
-        actions.put("Open Menu", myDungeonAdventure::displayMenu);
-        final Runnable action = actions.get(theChoice);
-        action.run();
     }
 
     /**
      * Handles the action for "View Player Stats" and "View Enemy Stats."
      *
      * @param theCharacter the character to view the stats of
-     * @param theDungeon the game's dungeon
-     * @param theHero the player's character
+     * @param theDungeon   the game's dungeon
+     * @param theHero      the player's character
      */
     private void handleViewStats(final String theCharacter, final Dungeon theDungeon, final Hero theHero) {
-        if (theCharacter.equals("Player Stats")) {
-            myAdventureView.sendMessage(theHero.toString());
-        } else {
-            myAdventureView.sendMessage(theDungeon.getCurrentRoom().getMonster().toString());
-        }
+        final String message = theCharacter.equals("Player Stats") ? theHero.toString()
+                : theDungeon.getCurrentRoom().getMonster().toString();
+        myAdventureView.sendMessage("\033[0m" + message);
     }
 
     /**
      * Handles the combat between the player and monster.
      *
      * @param theOpponent the player's opponent
-     * @param theDungeon the game's dungeon
-     * @param theHero the player's character
+     * @param theDungeon  the game's dungeon
+     * @param theHero     the player's character
      */
     private void handleCombat(final String theOpponent, final Dungeon theDungeon, final Hero theHero) {
         final RoomData roomData = new RoomData(theDungeon.getCurrentRoom());
@@ -103,12 +102,12 @@ public class ActionHandler {
             final Monster opponent = monsterFactory.createMonsterByName(theOpponent);
             combat.initiateCombat(theHero, opponent);
             roomData.removeMonsterFromRoom(theOpponent);
+            final String message = opponent.isFainted() ? theOpponent + " was defeated!"
+                    : "You were defeated by the " + theOpponent + "!\n";
             if (opponent.isFainted()) {
-                myAdventureView.sendMessage(theOpponent + " was defeated!");
                 theDungeon.getCurrentRoom().killMonster();
-            } else {
-                myAdventureView.sendMessage("You were defeated by the " + theOpponent + "!");
             }
+            myAdventureView.sendMessage(message);
         }
     }
 
@@ -116,8 +115,8 @@ public class ActionHandler {
      * Handles moving to other rooms in the dungeon.
      *
      * @param theDirection the direction to move to
-     * @param theDungeon the game's dungeon
-     * @param theHero the player's character
+     * @param theDungeon   the game's dungeon
+     * @param theHero      the player's character
      */
     private void handleMove(final String theDirection, final Dungeon theDungeon, final Hero theHero) {
         final Direction direction = Direction.valueOf(theDirection.toUpperCase());
@@ -130,21 +129,28 @@ public class ActionHandler {
      * Handles the action to pick up items in a room.
      *
      * @param theDungeon the game's dungeon
-     * @param theHero the player's character
+     * @param theHero    the player's character
      */
     private void handlePickUp(final Dungeon theDungeon, final Hero theHero) {
         final RoomData roomData = new RoomData(theDungeon.getCurrentRoom());
         if (roomData.getItems().length > 0) {
             final StringBuilder sb = new StringBuilder();
-            myAdventureView.buildList(sb,
-                    roomData.getItems(),
-                    "You acquired ",
-                    "You acquired ",
-                    "!",
-                    true);
-            myAdventureView.sendMessage(String.valueOf(sb));
+            myAdventureView.buildList(sb, roomData.getItems(), "You acquired ", "You acquired ",
+                    "!", true);
+            myAdventureView.sendMessage(sb.toString());
             theHero.addToInventory(theDungeon.getCurrentRoom().getItems());
             theDungeon.getCurrentRoom().getItems().clear();
+        }
+    }
+
+    private void displayInstructions(final boolean theGameInProgress) {
+        final String fileName = theGameInProgress ? "help_manual.txt" : "instructions.txt";
+        try (final Scanner scanner = new Scanner(new File(fileName))) {
+            while (scanner.hasNextLine()) {
+                System.out.println(scanner.nextLine());
+            }
+        } catch (final FileNotFoundException theException) {
+            theException.printStackTrace();
         }
     }
 
@@ -152,14 +158,14 @@ public class ActionHandler {
      * Handles saving the game.
      *
      * @param theDungeon the game's dungeon
-     * @param theHero the player's character
+     * @param theHero    the player's character
      */
     private void handleSaveGame(final Dungeon theDungeon, final Hero theHero) {
         final GameData gameData = new GameData(theDungeon, theHero);
         String fileName;
         File saveFile;
         do {
-            fileName =  myAdventureView.promptUserInput("Enter a name for your game entry: ",
+            fileName = myAdventureView.promptUserInput("Enter a name for your game entry: ",
                     "Please enter a name for your game entry: ", (String s) -> s != null && s.length() > 0);
             saveFile = new File("savedGames/", fileName + ".ser");
             if (saveFile.exists()) {
@@ -179,17 +185,15 @@ public class ActionHandler {
      * @return myGameData the GameData of the loaded game
      */
     GameData loadSavedGame() {
-        final String fileName = myAdventureView.promptUserChoice(getSavedGames()
-                .toArray(new String[0]), true);
+        final String fileName = myAdventureView.promptUserChoice(getSavedGames().toArray(new String[0]), true);
         final GameData myGameData = GameSerialization.loadGame(fileName);
 
         if (myGameData != null) {
             final ArrayList<Item> inventory = myGameData.getHero().getMyInventory();
-            final int numOfPillars = (int) inventory.stream().filter(item -> item instanceof PillarOfOO).count();
-            final List<String> pillarsCollected = inventory.stream().filter(item -> item instanceof PillarOfOO).map(Item::getName).toList();
-            myAdventureView.sendMessage(fileName + " loaded successfully!");
-            myAdventureView.sendMessage("\nCurrent hit points: " + myGameData.getHero().getHitPoints());
-            myAdventureView.sendMessage("Pillars collected (" + numOfPillars + "/4): "
+            final int numOfPillars = (int) inventory.stream().filter(PillarOfOO.class::isInstance).count();
+            final List<String> pillarsCollected = inventory.stream().filter(PillarOfOO.class::isInstance).map(Item::getName).toList();
+            myAdventureView.sendMessage(fileName + " loaded successfully!\nCurrent hit points: "
+                    + myGameData.getHero().getHitPoints() + "\nPillars collected (" + numOfPillars + "/4): "
                     + String.join(", ", pillarsCollected));
         } else {
             myAdventureView.sendMessage("Failed to load " + fileName);
@@ -200,33 +204,38 @@ public class ActionHandler {
     /**
      * Handles a menu action based on the user's choice.
      *
-     * @param theChoice the choice made by the player in the menu
+     * @param theChoice           the choice made by the player in the menu
      * @param theDungeonAdventure represents the game's adventure
-     * @param theDungeon the game's dungeon
-     * @param theHero the player's character
-     * @param theIsPlaying indicates whether a game is currently in progress
+     * @param theDungeon          the game's dungeon
+     * @param theHero             the player's character
+     * @param theIsPlaying        indicates whether a game is currently in progress
      */
     public void handleMenuAction(final String theChoice, final DungeonAdventure theDungeonAdventure,
                                  final Dungeon theDungeon, final Hero theHero, final boolean theIsPlaying) {
-        final Map<String, Runnable> actions = new HashMap<>();
-        final Runnable startGame = () -> {
-            try {
-                theDungeonAdventure.playGame();
-            } catch (final InterruptedException theException) {
-                throw new RuntimeException(theException);
+        switch (theChoice) {
+            case "Play", "New Game" -> {
+                try {
+                    theDungeonAdventure.playGame();
+                } catch (final InterruptedException theException) {
+                    throw new RuntimeException(theException);
+                }
             }
-        };
-        if (theIsPlaying) { // if game is already in progress
-            actions.put("Save Game", () -> handleSaveGame(theDungeon, theHero));
+            case "Help", "Instructions" -> {
+                final boolean isHelp = theChoice.equals("Help");
+                displayInstructions(isHelp);
+                theDungeonAdventure.displayMenu();
+            }
+            case "Exit Game" -> {
+                myAdventureView.sendMessage("Exiting the game. Thanks for playing!");
+                System.exit(0);
+            }
+            case "Save Game" -> {
+                if (theIsPlaying) {
+                    handleSaveGame(theDungeon, theHero);
+                }
+            }
+            case "Close Menu" -> {
+            }
         }
-        actions.put("Play", startGame);
-        actions.put("Instructions", () -> {/* Implement instructions logic */});
-        actions.put("Exit Game", () -> {myAdventureView.sendMessage("Exiting the game. Thanks for playing!");
-            System.exit(0);});
-        actions.put("New Game", startGame);
-        actions.put("Close Menu", () -> {});
-
-        final Runnable action = actions.get(theChoice);
-        action.run();
     }
 }
