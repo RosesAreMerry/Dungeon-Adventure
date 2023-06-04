@@ -1,5 +1,7 @@
 package model;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Random;
 
 /**
@@ -8,10 +10,12 @@ import java.util.Random;
  * @author Maliha Hossain
  * @author Chelsea Dacones
  */
-public class Priestess extends Hero implements Healable {
+public class Priestess extends Hero implements Healable, Serializable {
     int myHitPoints;
     private Random myRandom;
     private static final double USE_SPECIALCASE_PROBABILITY = 0.5;
+    @Serial
+    private static final long serialVersionUID = -6055191108103186823L;
     private int myHealAmount;
 
     /**

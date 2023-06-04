@@ -12,10 +12,10 @@ import java.util.Random;
  */
 public class Monster extends DungeonCharacter implements Healable, Serializable {
     private final double myChanceToHeal;
-    private int myMinHeal;
-    private int myMaxHeal;
     @Serial
     private static final long serialVersionUID = 6426453188776325404L;
+    private int myMinHeal;
+    private int myMaxHeal;
     private Random myRandom;
     private int myHealAmount;
 

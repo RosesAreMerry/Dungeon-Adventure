@@ -1,5 +1,7 @@
 package model;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Random;
 
 /**
@@ -8,9 +10,11 @@ import java.util.Random;
  * @author Maliha Hossain
  * @author Chelsea Dacones
  */
-public class Warrior extends Hero {
+public class Warrior extends Hero implements Serializable {
     private boolean myUsedSpecialCase;
     private static final double USE_SPECIALCASE_PROBABILITY = 0.4;
+    @Serial
+    private static final long serialVersionUID = 3072042216691889380L;
 
     private Random myRandom;
 
