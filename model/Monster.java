@@ -1,5 +1,7 @@
 package model;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Random;
 
 /**
@@ -8,8 +10,10 @@ import java.util.Random;
  * @author Chelsea Dacones
  * @version May 14th 2023
  */
-public class Monster extends DungeonCharacter implements Healable {
+public class Monster extends DungeonCharacter implements Healable, Serializable {
     private final double myChanceToHeal;
+    @Serial
+    private static final long serialVersionUID = 6426453188776325404L;
     private final int myMinHeal;
     private final int myMaxHeal;
     private Random myRandom;
