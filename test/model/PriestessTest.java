@@ -5,38 +5,41 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Random;
-public class PriestessTest extends RandomMock {
-    private Priestess mypriestess;
-    private DungeonCharacter opponent;
-    RandomMock rm;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class PriestessTest extends RandomMock {
+    private Priestess myPriestess;
+    private DungeonCharacter myOpponent;
 
     @BeforeEach
     public void setUp() {
-        rm = new RandomMock();
-        rm.setMockIntValue(20);//
-        mypriestess = new Priestess("Priestess");
-        mypriestess.setMyRandom(rm);
-        opponent=new Monster("gremlin",200,.6,
-                30,60,2,.1,30,60);
+        final RandomMock randomMock = new RandomMock();
+        randomMock.setMockIntValue(20);//
+        myPriestess = new Priestess("Priestess") {
+            @Override
+            protected boolean canAttack() {
+                return true;
+            }
+        };
+        myPriestess.setMyRandom(randomMock);
+        myPriestess.setRandom(randomMock);
+        randomMock.setMockIntValue(10);
+        myOpponent = new Monster("Gremlin",200,0.6,
+                30,60,2,0.1,30,60);
 
     }
-    /**
-     * attack the opponent
-     */
+
     @Test
     public void testAttack() {
-        mypriestess.attack(opponent);
-        Assertions.assertTrue(opponent.getHitPoints()<200);
+        myPriestess.attack(myOpponent);
+        assertEquals(130, myOpponent.getHitPoints());
     }
+
     @Test
     public void testHeal() {
-        rm.setMockIntValue(20); // heal amount= 20+1=21
-        int initialHitPoints = mypriestess.getHitPoints();
-        mypriestess.setHitPoints(25);
-        mypriestess.heal();
-        int expectedHitPoints=46;
-        int actualHitPoints = mypriestess.getHitPoints();
-        Assertions.assertEquals(expectedHitPoints, actualHitPoints);
+        myPriestess.setHitPoints(30);
+        myPriestess.heal();
+        assertEquals(50, myPriestess.getHitPoints());
     }
 }

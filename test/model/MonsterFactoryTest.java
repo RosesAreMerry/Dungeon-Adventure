@@ -7,10 +7,10 @@ import static org.junit.jupiter.api.Assertions.*;
 class MonsterFactoryTest {
 
     /**
-     * Test method for {@link model.MonsterFactory#createMonster(String)}
+     * Test method for {@link model.MonsterFactory#createMonsterByName(String)} (String)}
      */
     @Test
-    void testCreateMonster() {
+    void testCreateMonsterByName() {
         final MonsterFactory mf = new MonsterFactory();
         final Monster ogre = mf.createMonsterByName("Ogre");
         assertEquals("Monster: Ogre" +
@@ -25,13 +25,13 @@ class MonsterFactoryTest {
     }
 
     /**
-     * Test method for {@link model.MonsterFactory#createMonster(String)}
+     * Test method for {@link model.MonsterFactory#createMonsterByName(String)} (String)}
      * Test scenario: Create Monster that does not exist
      */
     @Test
-    void testCreateMonsterNull() {
+    void testCreateMonsterByNameUnknown() {
         final MonsterFactory mf = new MonsterFactory();
-        final Monster yeti = mf.createMonsterByName("Yeti");
-        assertNull(yeti);
+        final Exception exception = assertThrows(RuntimeException.class, () -> mf.createMonsterByName("Yeti"));
+        assertEquals("No Monster with the provided name was found in the database.", exception.getMessage());
     }
 }

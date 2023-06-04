@@ -1,5 +1,7 @@
 package model;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Random;
 
 /**
@@ -9,18 +11,19 @@ import java.util.Random;
  * @author Chelsea Dacones
  * @version May 14th 2023
  */
-public abstract class DungeonCharacter {
-    private  String myName;
+public abstract class DungeonCharacter implements Serializable {
     private final int myDamageMin;
     private final int myDamageMax;
     private final int myAttackSpeed;
     private final double myHitChance;
     private final int myMaxHitPoints;
+    private final String myName;
+    private Random myRandom;
     private int myHitPoints;
-    protected Random myRandom;
     private boolean myIsAttacked;
     private int myTotalDamage;
-
+    @Serial
+    private static final long serialVersionUID = 4347694900186580770L;
     /**
      * Constructs a new DungeonCharacter and initializes instance fields.
      *
@@ -115,8 +118,8 @@ public abstract class DungeonCharacter {
             calculateDamage(theOpponent);
             theOpponent.setAttacked(true);
         } else {
-            theOpponent.setAttacked(false);
             // report attack failure
+            theOpponent.setAttacked(false);
         }
     }
 
@@ -129,13 +132,15 @@ public abstract class DungeonCharacter {
      */
     protected int calculateDamage(final DungeonCharacter theOpponent) {
         final int numOfAttacks = Math.max(1, this.getAttackSpeed() / theOpponent.getAttackSpeed());
-        myTotalDamage = 0;
+        //removed mytotaldamage=0 to the  use setter
+        setTotalDamage(0);
         for (int i = 0; i < numOfAttacks; i++) {
             final int damage = myRandom.nextInt(getDamageMax() - getDamageMin() + 1)
                     + getDamageMin();
-            myTotalDamage += damage;
+            //used the setter
+            setTotalDamage(getTotalDamage()+ damage);
             theOpponent.setHitPoints(theOpponent.getHitPoints() - damage);
-            setTotalDamage(myTotalDamage);
+
         }
         return myTotalDamage;
     }

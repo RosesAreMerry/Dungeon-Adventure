@@ -1,5 +1,7 @@
 package model;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -13,6 +15,8 @@ public abstract class Hero extends DungeonCharacter {
     private final ArrayList<Item> myInventory;
     private int myHealth;
     private int myVisionPotionTurns;
+    @Serial
+    private static final long serialVersionUID = 4434118078796032667L;
 
     protected Hero(final String theName, final int theHitPoints, final double theHitChance, final int theDamageMin,
                 final int theDamageMax, final int theAttackSpeed, final double theBlockChance) {
@@ -22,13 +26,8 @@ public abstract class Hero extends DungeonCharacter {
         myInventory = new ArrayList<>();
     }
 
-    /**
-     * Add item to inventory.
-     *
-     * @param theItem the item to add to the inventory
-     */
-    public void addToInventory(final Item theItem) {
-        myInventory.add(theItem);
+    public void addToInventory(final ArrayList<Item> theItem) {
+        myInventory.addAll(theItem);
     }
 
     /**
@@ -61,6 +60,11 @@ public abstract class Hero extends DungeonCharacter {
         return randomValue <= myBlockChance;
     }
 
+    public Double getblockChance(){
+        return myBlockChance;
+    }
+
+
     /**
      * Starts the effect of the vision potion.
      * */
@@ -81,5 +85,17 @@ public abstract class Hero extends DungeonCharacter {
      * */
     public boolean isVisionPotionActive() {
         return myVisionPotionTurns > 0;
+    }
+
+    @Override
+    public String toString() {
+        return  "Hero: " + this.getName() + " the "
+                + this.getClass().getSimpleName() +
+                "\nHit Points: " + getHitPoints() +
+                "\nChance to Hit: " + getHitChance() +
+                "\nMinimum Damage: " + getDamageMin() +
+                "\nMaximum Damage: " + getDamageMax() +
+                "\nAttack Speed: " + getAttackSpeed() +
+                "\nmyBlockChance: "+ getblockChance();
     }
 }

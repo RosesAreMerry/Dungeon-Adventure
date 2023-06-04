@@ -92,4 +92,26 @@ class InventoryViewTest extends ConsoleViewTestAbstract {
         assertEquals("A\nB\nC\nD\nE\nF\nG\nH\nI\nJ\nK\nL\nEnter the name of the item you want to use: \nInvalid choice. Please enter a number or the name of an option: ", myMockedOutput.toString());
         assertEquals("B", myItemsOutput.toString());
     }
+
+    @Test
+    void showInventoryTestDuplicateItems() {
+        final ArrayList<Item> testItems = new ArrayList<>(Arrays.asList(new MockItem("A"), new MockItem("A"), new MockItem("B"), new MockItem("C"),
+                new MockItem("A"), new MockItem("E"), new MockItem("F")));
+        myMockedInput.add("A");
+        iv.showInventory(testItems);
+
+        assertEquals("3 As\nB\nC\nE\nF\nEnter the name of the item you want to use: ", myMockedOutput.toString());
+        assertEquals("A", myItemsOutput.toString());
+    }
+
+    @Test
+    void showInventoryTestNumberDuplicateItems() {
+        final ArrayList<Item> testItems = new ArrayList<>(Arrays.asList(new MockItem("A"), new MockItem("A"), new MockItem("B"), new MockItem("C"),
+                new MockItem("A"), new MockItem("E"), new MockItem("C")));
+        myMockedInput.add("1");
+        iv.showInventory(testItems);
+
+        assertEquals("3 As\nB\n2 Cs\nE\nEnter the name of the item you want to use: ", myMockedOutput.toString());
+        assertEquals("A", myItemsOutput.toString());
+    }
 }

@@ -19,26 +19,20 @@ import java.util.stream.Stream;
  */
 public class DungeonAdventure {
     public static final int MAX_PIT_DAMAGE = 10;
+    private final AdventureView myAdventureView;
     private Dungeon myDungeon;
     private Hero myHero;
-    private final AdventureView myAdventureView;
-    private final InventoryView myInventoryView;
-    private final CombatView myCombatView;
+    private ActionHandler myActionHandler;
+    private boolean myIsPlaying;
 
-    public DungeonAdventure() {
+    public DungeonAdventure() throws InterruptedException {
         myAdventureView = new AdventureView();
-        final Consumer<Item> myItemHandler = item -> {
-            if (item instanceof final Potion thePotion) {
-                thePotion.use(myHero);
-            }
-            if (item instanceof final PillarOfOO thePillar) {
-                myAdventureView.sendMessage("This is the pillar of " + thePillar.getName() + ".");
-            }
-        };
-        myInventoryView = new InventoryView(myItemHandler);
-        myCombatView = new CombatView();
+        myActionHandler = new ActionHandler(myHero, this);
         boolean playAgain = true;
         while (playAgain) {
+            myIsPlaying = false;
+            displayIntroduction();
+            displayMenu();
             playGame();
             playAgain = promptPlayAgain();
         }
@@ -47,19 +41,25 @@ public class DungeonAdventure {
     /**
      * Handles the overall game play.
      */
-    private void playGame() {
-        // Introduction and game setup
-        displayIntroduction();
-        myHero = createAdventurer();
-        myDungeon = createDungeon();
-        myHero.addToInventory(new HealingPotion());
-        myAdventureView.sendMessage("\nYou walk into a dungeon.");
-
+    void playGame() throws InterruptedException {
+        final String choice = myAdventureView.promptUserChoice(new String[]{"Load Game", "New Game"}, true);
+        if (choice.equals("Load Game")) {
+            final GameData gameData = myActionHandler.loadSavedGame();
+            myHero = gameData.getHero();
+            myDungeon = gameData.getDungeon();
+        } else {
+            myHero = createAdventurer();
+            myDungeon = createDungeon();
+            myAdventureView.sendMessage("\nYou walk into a dungeon.");
+        }
+        myIsPlaying = true;
+        myActionHandler = new ActionHandler(myHero, this);
         // Main game loop
         do {
+//            Thread.sleep(1000);
             displayCurrentRoom();
+//            Thread.sleep(2000);
             displayOptions();
-
         } while (!myHero.isFainted());
 
         // Game conclusion
@@ -74,6 +74,18 @@ public class DungeonAdventure {
         myAdventureView.sendMessage("[Introduction placeholder]");
     }
 
+    void displayMenu() {
+        myAdventureView.sendMessage("---------- MENU ----------");
+        final String choice;
+        if (myIsPlaying) {
+            choice = myAdventureView.promptUserChoice(new String[]{"Instructions", "Save Game", "New Game", "Exit Game", "Close Menu"}, true);
+            myActionHandler.handleMenuAction(choice, this, myDungeon, myHero, true);
+        } else {
+            choice = myAdventureView.promptUserChoice(new String[]{"Play", "Instructions", "Exit Game"}, true);
+            myActionHandler.handleMenuAction(choice, this, null, null, false);
+        }
+    }
+
     /**
      * Creates an adventurer character based on user's input.
      * Prompts the user for their name and character selection and returns the corresponding Hero object.
@@ -82,44 +94,29 @@ public class DungeonAdventure {
      */
     private Hero createAdventurer() {
         final String name = myAdventureView.promptUserInput("\nWhat is your name? ", "Please enter a name: ", (String s) -> s != null && s.length() > 0);
-        myAdventureView.sendMessage("Pick your character: ");
+        myAdventureView.sendMessage("\nPick your character: ");
         final String character = myAdventureView.promptUserChoice(new String[]{"Thief", "Warrior", "Priestess"}, false);
-        switch (character) {
-            case "Thief" -> {
-                return new Thief(name);
-            }
-            case "Warrior" -> {
-                return new Warrior(name);
-            }
-            case "Priestess" -> {
-                return new Priestess(name);
-            }
-        }
-        return null;
+        return switch (character) {
+            case "Thief" -> new Thief(name);
+            case "Warrior" -> new Warrior(name);
+            case "Priestess" -> new Priestess(name);
+            default -> null;
+        };
     }
 
     /**
      * Creates the dungeon for the game.
      */
     private Dungeon createDungeon() {
-        final String[] options = {"Small", "Medium", "Large"};
-        final String choice = myAdventureView.promptUserChoice(options, false, "What size dungeon do you want to explore? ");
+        final String[] options = {"Small (10 rooms)", "Medium (25 rooms)", "Large (50 rooms)"};
+        myAdventureView.sendMessage("\nChoose your dungeon: ");
+        final String choice = myAdventureView.promptUserChoice(options, true, "What size dungeon do you want to explore? ");
 
-        switch (choice) {
-            case "Medium" -> {
-                return DungeonBuilder.INSTANCE.buildDungeon(25);
-            }
-            case "Large" -> {
-                return DungeonBuilder.INSTANCE.buildDungeon(50);
-            }
-            default -> {
-                return DungeonBuilder.INSTANCE.buildDungeon(10);
-            }
-        }
-    }
-
-    private RoomData getCurrentRoomData() {
-        return new RoomData(myDungeon.getCurrentRoom());
+        return switch (choice) {
+            case "Medium (25 rooms)" -> DungeonBuilder.INSTANCE.buildDungeon(25);
+            case "Large (50 rooms)" -> DungeonBuilder.INSTANCE.buildDungeon(50);
+            default -> DungeonBuilder.INSTANCE.buildDungeon(10);
+        };
     }
 
     /**
@@ -127,17 +124,15 @@ public class DungeonAdventure {
      * This method shows the description of the current room, along with any available items in the room.
      */
     private void displayCurrentRoom() {
-        Map<String, RoomData> adjacentRooms = null;
+        Map<String, Room> adjacentRooms = null;
         if (myHero.isVisionPotionActive()) {
-            adjacentRooms = myDungeon.getNeighbors().entrySet().stream()
-                    .map(e -> new AbstractMap.SimpleEntry<>(e.getKey(), new RoomData(e.getValue())))
-                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+            adjacentRooms = myDungeon.getNeighbors();
         }
-        myAdventureView.printRoom(getCurrentRoomData(), adjacentRooms);
+        myAdventureView.printRoom(new RoomData(myDungeon.getCurrentRoom()), adjacentRooms);
         if (myDungeon.getCurrentRoom().hasPit()) {
             handlePit();
         }
-        handleItems();
+        myAdventureView.sendMessage(myDungeon.getCurrentRoom().toString());
     }
 
     /**
@@ -145,79 +140,39 @@ public class DungeonAdventure {
      * Presents a list of available choices to the user and handles the action associated with the choice.
      */
     private void displayOptions() {
-        myAdventureView.sendMessage("What do you want to do?");
         final List<String> options = new ArrayList<>();
-        RoomData rd = getCurrentRoomData();
-        if (rd.getMonsters().length == 0) {
-            for (final String door : rd.getDoors()) {
-                options.add("Go " + door);
+        final RoomData roomData = new RoomData(myDungeon.getCurrentRoom());
+        myAdventureView.sendMessage("What do you want to do?");
+        if (!myHero.isFainted()) {
+            if (new RoomData(myDungeon.getCurrentRoom()).getMonsters().length != 0) {
+                options.add("Battle " + myDungeon.getCurrentRoom().getMonster().getName());
+                options.add("View Enemy Stats");
             }
-            options.add("Look Around");
-        }
-        options.add("See Inventory");
-        for (final String monster : rd.getMonsters()) {
-            options.add("Battle " + monster);
-        }
-        final String choice = myAdventureView.promptUserChoice(options.toArray(new String[0]));
-        myAdventureView.sendMessage("You chose: " + choice);
-        handleAction(choice);
-    }
-
-    /**
-     * Handles the user's chosen action.
-     * Takes the user's selection and executes the corresponding logic in the game.
-     *
-     * @param theChoice the user's chosen action.
-     */
-    private void handleAction(final String theChoice) {
-        final Map<String, Runnable> actions = new HashMap<>();
-        final String direction = theChoice.substring(3);
-        final String monster = theChoice.substring(7);
-        actions.put("Go " + direction, () -> { handleMove(direction); });
-        actions.put("Battle " + monster, () -> handleCombat(monster));
-        actions.put("See Inventory", () -> myInventoryView.showInventory(myHero.getMyInventory()));
-        actions.put("Look Around", () -> { /* handle Look Around action */ });
-        final Runnable action = actions.get(theChoice);
-        action.run();
-    }
-
-    private void handleCombat(final String theOpponent) {
-        final RoomData roomData = getCurrentRoomData();
-        if (roomData.getMonsters() != null && roomData.getMonsters().length > 0) {
-            final Combat combat = new Combat();
-            final MonsterFactory monsterFactory = new MonsterFactory();
-            final Monster opponent = monsterFactory.createMonsterByName(theOpponent);
-            combat.initiateCombat(myHero, opponent);
-            roomData.removeMonsterFromRoom(theOpponent);
-            if (opponent.isFainted()) {
-                myAdventureView.sendMessage(theOpponent + " was defeated!");
-                myDungeon.getCurrentRoom().killMonster();
+            else {
+                for (final String door : roomData.getDoors()) {
+                    options.add("Go " + door);
+                }
+                if (myDungeon.getCurrentRoom().getItems().size() > 0) {
+                    options.add("Pick Up Items");
+                }
             }
+            if (myHero.getMyInventory().size() > 0 && myHero.getMyInventory() != null) {
+                options.add("See Inventory");
+            }
+            options.add("View Player Stats");
+            options.add("Open Menu");
+            final String choice = myAdventureView.promptUserChoice(options.toArray(new String[0]));
+            myAdventureView.sendMessage("You chose: " + choice + "\n");
+            myActionHandler.handleGameAction(choice, myDungeon, myHero);
         }
     }
 
-    private void handleMove(final String theDir) {
-        final Direction direction = Direction.valueOf(theDir.toUpperCase());
-        myDungeon.move(direction);
-        myHero.reduceVisionPotionTurns();
-    }
-
-    private void handlePit() {
+    public void handlePit() {
         myAdventureView.sendMessage("You fell into a pit!");
         final int damage = new Random().nextInt(MAX_PIT_DAMAGE) + 1;
         myHero.setHitPoints(myHero.getHitPoints() - damage);
         myAdventureView.sendMessage("You took " + damage + " damage! " + myHero.getHitPoints() + " hit points remaining.");
         myDungeon.getCurrentRoom().removePit();
-    }
-
-    private void handleItems() {
-        final List<Item> items = myDungeon.getCurrentRoom().getItems();
-        for (final Item item : items) {
-            myHero.getMyInventory().add(item);
-            myAdventureView.sendMessage("You picked up " + item.getName());
-        }
-
-        myDungeon.getCurrentRoom().getItems().removeIf(item -> true);
     }
 
     /**
@@ -236,7 +191,6 @@ public class DungeonAdventure {
      * Displays the entire dungeon layout to the user.
      */
     private void displayDungeon() {
-
     }
 
     /**
@@ -254,8 +208,7 @@ public class DungeonAdventure {
      *
      * @param theArgs command line arguments (not used)
      */
-    public static void main(final String[] theArgs) {
-
+    public static void main(final String[] theArgs) throws InterruptedException {
         new DungeonAdventure();
     }
 }

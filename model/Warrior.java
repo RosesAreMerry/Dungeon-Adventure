@@ -9,32 +9,36 @@ import java.util.Random;
  * @author Chelsea Dacones
  */
 public class Warrior extends Hero {
+    private boolean myUsedSpecialCase;
+    private static final double USE_SPECIALCASE_PROBABILITY = 0.4;
+
+    private Random myRandom;
+
     /**
      * constructor to initialize the states
      *
      * @param theName
      */
-    private boolean myUsedSpecialCase;
-
     public Warrior(final String theName) {
         super(theName, 125, 0.8, 35, 60, 4, 0.2);
-        myUsedSpecialCase = useSpecialSkill();
+        myRandom = new Random();
     }
 
-
+    @Override
     public void attack(final DungeonCharacter theOpponent) {
         if (canAttack()) {
-            if (myUsedSpecialCase) {
+            if (useSpecialSkill()) {
                 final int damage = myRandom.nextInt(101) + 75; // 75 to 175 points of damage
-                theOpponent.setHitPoints(theOpponent.getHitPoints() - damage);
+                theOpponent.setHitPoints(Math.max(theOpponent.getHitPoints() - damage, 0));
+                this.setTotalDamage(getTotalDamage()+damage);
                 theOpponent.setAttacked(true);
-
-                return; // exit method after performing special skill
+            } else if(!useSpecialSkill()) {
+                calculateDamage(theOpponent); // if special skill is unsuccessful, perform normal attack
+                theOpponent.setAttacked(true);
             }
-            calculateDamage(theOpponent); // if special skill is unsuccessful, perform normal attack
-            theOpponent.setAttacked(true);
         } else {
             theOpponent.setAttacked(false);
+            setTotalDamage(0);
             // report attack failure
         }
     }
@@ -45,18 +49,13 @@ public class Warrior extends Hero {
      *
      * @return true if Warrior can use special skill; otherwise false
      */
-    private boolean useSpecialSkill() {
+    protected boolean useSpecialSkill() {
         final double randomValue = Math.random();
-        return randomValue < 0.4;
+        return randomValue <= USE_SPECIALCASE_PROBABILITY;
     }
 
-    /**
-     * this is for testing
-     *
-     * @param theValue
-     */
-    public void setSpecialCase(final boolean theValue) {
-        myUsedSpecialCase = theValue;
+    public void setMyRandom(final Random theRandom) {
+        myRandom = theRandom;
     }
 
 
