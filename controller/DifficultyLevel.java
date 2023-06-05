@@ -17,8 +17,8 @@ public enum DifficultyLevel {
             case HARD -> 1.2; // increase stats by 20%
         };
         adjustCharacterStatistics(theMonster, percentage);
-        theMonster.setMyMinHeal((int) (theMonster.getMyMinHeal() * percentage));
-        theMonster.setMyMaxHeal((int) (theMonster.getMyMaxHeal() * percentage));
+        theMonster.setMyMinHeal((int) (theMonster.getMinHeal() * percentage));
+        theMonster.setMyMaxHeal((int) (theMonster.getMaxHeal() * percentage));
     }
 
     public void adjustHeroStatistics(final Hero theHero) {

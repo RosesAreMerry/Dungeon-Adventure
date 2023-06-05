@@ -24,8 +24,6 @@ public abstract class DungeonCharacter implements Serializable {
     private int myHitPoints;
     private boolean myIsAttacked;
     private int myTotalDamage;
-    @Serial
-    private static final long serialVersionUID = 4347694900186580770L;
     /**
      * Constructs a new DungeonCharacter and initializes instance fields.
      *
