@@ -18,7 +18,7 @@ public abstract class DungeonCharacter implements Serializable {
     private int myDamageMax;
     private int myAttackSpeed;
     private double myHitChance;
-    private final int myMaxHitPoints;
+    private int myMaxHitPoints;
     private final String myName;
     private Random myRandom;
     private int myHitPoints;
@@ -81,7 +81,7 @@ public abstract class DungeonCharacter implements Serializable {
         return myHitChance;
     }
 
-    public void setHitChance(Double theHitChance) {
+    public void setHitChance(final Double theHitChance) {
         myHitChance = theHitChance;
     }
 
@@ -101,16 +101,19 @@ public abstract class DungeonCharacter implements Serializable {
         myTotalDamage = theTotalDamage;
     }
 
-    public void setMyDamageMin(final int myDamageMin) {
-        this.myDamageMin = myDamageMin;
+    public void setMyDamageMin(final int theDamageMin) {
+        this.myDamageMin = theDamageMin;
     }
 
-    public void setMyDamageMax(final int myDamageMax) {
-        this.myDamageMax = myDamageMax;
+    public void setMyDamageMax(final int theDamageMax) {
+        this.myDamageMax = theDamageMax;
     }
 
-    public void setMyAttackSpeed(final int myAttackSpeed) {
-        this.myAttackSpeed = myAttackSpeed;
+    public void setMyAttackSpeed(final int theAttackSpeed) {
+        this.myAttackSpeed = theAttackSpeed;
+    }
+    public void setMyMaxHitPoints(final int theMaxHitPoints) {
+        this.myMaxHitPoints = theMaxHitPoints;
     }
 
     /**

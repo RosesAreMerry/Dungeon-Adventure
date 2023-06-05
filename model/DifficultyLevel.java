@@ -68,6 +68,7 @@ public enum DifficultyLevel {
     public void adjustCharacterStatistics(final DungeonCharacter theCharacter, final double thePercentage) {
         final DecimalFormat decimalFormat = new DecimalFormat("#.##");
         theCharacter.setHitPoints((int) (theCharacter.getHitPoints() * thePercentage));
+        theCharacter.setMyMaxHitPoints((int) (theCharacter.getHitPoints() * thePercentage));
         theCharacter.setHitChance(Double.parseDouble(decimalFormat.format(theCharacter.getHitChance() * thePercentage)));
         theCharacter.setMyAttackSpeed((int) (theCharacter.getAttackSpeed() * thePercentage));
         theCharacter.setMyDamageMin((int) (theCharacter.getDamageMin() * thePercentage));

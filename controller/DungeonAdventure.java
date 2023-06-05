@@ -64,6 +64,7 @@ public class DungeonAdventure {
             playAgain = myAdventureView.promptUserChoice(new String[]{"Play Again", "Exit"},
                     false).equals("Play Again");
         }
+        myAdventureView.sendMessage("Exiting game. Thanks for playing!");
     }
 
     /**
@@ -98,12 +99,11 @@ public class DungeonAdventure {
         myActionHandler = new ActionHandler(myHero, this);
 
         // Main game loop
-        while (!myHero.isFainted()) {
+        while (!myHero.isFainted() && !myWonGame) {
             displayCurrentRoom();
-            if (myWonGame) {
-                break;
+            if (!myWonGame) {
+                displayOptions();
             }
-            displayOptions();
         }
         if (myHero.isFainted()) {
             myAdventureView.sendMessage(GAME_OVER_ASCII);
@@ -119,7 +119,7 @@ public class DungeonAdventure {
         myAdventureView.sendMessage("""
                 Welcome to Dungeon Adventure! Prepare to embark on a daring quest as a hero in a treacherous dungeon. Your mission is to locate and retrieve the four Pillars
                 of OO—Abstraction, Encapsulation, Inheritance, and Polymorphism—and secure your triumph at the exit. Beware of the monsters lurking in the dungeon's room, and
-                obstacles like treacherous pits that impede your progress. However, not everything is against you. Discover items that will aid your journey throughout the dungeon.
+                obstacles that impede your progress. However, not everything is against you. Discover items that will aid your journey throughout the dungeon.
                 The dungeon awaits, and your destiny awaits within its depths. Good luck, adventurer!
                 """);
     }
@@ -241,7 +241,7 @@ public class DungeonAdventure {
         remainingPillars.removeAll(collectedPillars);
         final boolean hasAllPillars = collectedPillars.size() == allPillars.size();
         myAdventureView.sendMessage(hasAllPillars
-                ? "Congratulations adventurer! You've collected all four Pillars of OO and have won the game!\n" + YOU_WIN_ASCII + "\n"
+                ? "Congratulations adventurer! You've collected all four Pillars of OO and have won the game!\n\n" + YOU_WIN_ASCII
                 : "You're missing " + (allPillars.size() - collectedPillars.size()) + " Pillars of OO: " + String.join(", ", remainingPillars) + "\n");
         return hasAllPillars;
     }

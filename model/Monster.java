@@ -124,7 +124,7 @@ public class Monster extends DungeonCharacter implements Healable, Serializable 
      *
      * @param theRandom the Random object to set.
      */
-    public void setMyRandom(final Random theRandom) {
+    void setMyRandom(final Random theRandom) {
         this.myRandom = theRandom;
     }
 

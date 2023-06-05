@@ -1,7 +1,7 @@
 package model;
 
 /**
- * The Healable interface represents an character that can be healed.
+ * The Healable interface represents a character that can be healed.
  *
  * @author Maliha Hossain
  * @version 15th May 2023
