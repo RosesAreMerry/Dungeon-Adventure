@@ -141,6 +141,8 @@ public class Room implements Serializable {
         return myFlavorText;
     }
 
+    //#endregion
+
     public void killMonster() {
         myMonster = null;
         myFlavorText = generateFlavorText();
@@ -150,10 +152,14 @@ public class Room implements Serializable {
         myHasPit = false;
     }
 
-    //#endregion
 
     void addDoor(final Direction theDirection, final Room theRoom) {
         myDoors.put(theDirection, theRoom);
+    }
+
+    void addPillar(final PillarOfOO thePillar) {
+        myItems.add(thePillar);
+        myMonster = generateMonster(1);
     }
 
     void setExit() {
@@ -232,7 +238,7 @@ public class Room implements Serializable {
             } else if (item instanceof HealingPotion) {
                 return 'H';
             } else if (item instanceof final PillarOfOO thePillar) {
-                return thePillar.getName().charAt(0);
+                return thePillar.getName().charAt(10);
             }
         }
         return ' ';

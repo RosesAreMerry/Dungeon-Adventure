@@ -60,6 +60,7 @@ public class DungeonAdventure {
         while (playAgain) {
             myWonGame = false;
             myIsPlaying = false;
+            myIsDevMode = false;
             displayIntroduction();
             displayMenu();
             playAgain = myAdventureView.promptUserChoice(new String[]{"Play Again", "Exit"},
@@ -167,6 +168,11 @@ public class DungeonAdventure {
      */
     private Hero createAdventurer() {
         final String name = myAdventureView.promptUserInput("\nWhat is your name? ", "Please enter a name: ", (String s) -> s != null && s.length() > 0);
+
+        if (Objects.equals(name, "dev")) {
+            myIsDevMode = true;
+        }
+
         final Map<String, Supplier<Hero>> playerCreators = Map.of(
                 "Thief", () -> new Thief(name),
                 "Warrior", () -> new Warrior(name),

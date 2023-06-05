@@ -214,7 +214,7 @@ public class DungeonBuilder {
 
         pillars.forEach((final PillarOfOO pillar) -> {
             final Room room = getValidRoom();
-            room.getItems().add(pillar);
+            room.addPillar(pillar);
         });
     }
 
