@@ -11,7 +11,6 @@ import java.util.Random;
  * @author Chelsea Dacones
  */
 public class Warrior extends Hero implements Serializable {
-    private boolean myUsedSpecialCase;
     private static final double USE_SPECIALCASE_PROBABILITY = 0.4;
     @Serial
     private static final long serialVersionUID = 3072042216691889380L;
@@ -21,7 +20,7 @@ public class Warrior extends Hero implements Serializable {
     /**
      * constructor to initialize the states
      *
-     * @param theName
+     * @param theName the name of the player
      */
     public Warrior(final String theName) {
         super(theName, 125, 0.8, 35, 60, 4, 0.2);
@@ -43,7 +42,6 @@ public class Warrior extends Hero implements Serializable {
         } else {
             theOpponent.setAttacked(false);
             setTotalDamage(0);
-            // report attack failure
         }
     }
 

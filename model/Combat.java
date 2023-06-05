@@ -1,35 +1,53 @@
 package model;
 
-
-import view.CombatView;
-
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents a combat encounter between the player and the opponent (monster).
+ * It manages the flow of the combat, including handling attacks,
+ * updating the action log, and retrieving the action log.
+ *
+ * @author Chelsea Dacones
+ */
 public class Combat {
-    CombatView myCombatView;
+    List<String> myActionLog;
 
+    /**
+     * Constructs a Combat object and initializes instance fields.
+     */
     public Combat() {
-        myCombatView = new CombatView();
+        myActionLog = new ArrayList<>();
     }
 
+    /**
+     * Initiates the combat between the player and opponent (monster).
+     * The fight continues until either character has fainted (loses all hit points).
+     * During each turn, the active character performs an attack on the other.
+     *
+     * @param thePlayer   the player participating in the combat
+     * @param theOpponent the monster participating in the combat
+     */
     public void initiateCombat(final DungeonCharacter thePlayer, final DungeonCharacter theOpponent) {
         boolean isPlayersTurn = true;
-        final List<String> actionLog = new ArrayList<>();
-        myCombatView.showCombat(thePlayer.getName(), theOpponent.getName(), theOpponent.getHitPoints(),
-                thePlayer.getHitPoints(), null);
         while (!thePlayer.isFainted() && !theOpponent.isFainted()) {
             if (isPlayersTurn) {
-                handleAttack(thePlayer, theOpponent, actionLog);
+                handleAttack(thePlayer, theOpponent, myActionLog);
             } else {
-                handleAttack(theOpponent, thePlayer, actionLog);
+                handleAttack(theOpponent, thePlayer, myActionLog);
             }
             isPlayersTurn = !isPlayersTurn;
         }
-        myCombatView.showCombat(thePlayer.getName(), theOpponent.getName(), theOpponent.getHitPoints(),
-                thePlayer.getHitPoints(), actionLog.toArray(new String[0]));
     }
+
+    /**
+     * Handles an attack action between two combatants.
+     * Action log is updated as one combatant attacks the other.
+     *
+     * @param theCombatant1 the character initiating the attack
+     * @param theCombatant2 the character being attacked
+     * @param theActionLog  the list to store the action log messages.
+     */
     private void handleAttack(final DungeonCharacter theCombatant1, final DungeonCharacter theCombatant2, final List<String> theActionLog) {
         theCombatant1.attack(theCombatant2);
         if (theCombatant2.isAttacked()) {
@@ -41,5 +59,14 @@ public class Combat {
         } else {
             theActionLog.add(theCombatant1.getName() + " failed to attack " + theCombatant2.getName());
         }
+    }
+
+    /**
+     * Retrieves the action log of the combat.
+     *
+     * @return the list of action log messages recorded during the combat.
+     */
+    public List<String> getActionLog() {
+        return myActionLog;
     }
 }

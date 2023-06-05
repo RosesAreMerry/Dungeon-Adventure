@@ -33,6 +33,16 @@ public class DungeonAdventure {
     private static final String[] DIFFICULTY_DESCRIPTIONS = new String[]{"Easy - Stronger starting player, weaker monsters, more items, small dungeon",
             "Medium - Default values, medium-sized dungeon",
             "Hard - Weaker starting player, stronger monsters, less items, large dungeon"};
+
+    private static final String DUNGEON_ADVENTURE = """
+               ██████╗ ██╗   ██╗███╗   ██╗ ██████╗ ███████╗ ██████╗ ███╗   ██╗     █████╗ ██████╗ ██╗   ██╗███████╗███╗   ██╗████████╗██╗   ██╗██████╗ ███████╗
+               ██╔══██╗██║   ██║████╗  ██║██╔════╝ ██╔════╝██╔═══██╗████╗  ██║    ██╔══██╗██╔══██╗██║   ██║██╔════╝████╗  ██║╚══██╔══╝██║   ██║██╔══██╗██╔════╝
+               ██║  ██║██║   ██║██╔██╗ ██║██║  ███╗█████╗  ██║   ██║██╔██╗ ██║    ███████║██║  ██║██║   ██║█████╗  ██╔██╗ ██║   ██║   ██║   ██║██████╔╝█████╗ \s
+               ██║  ██║██║   ██║██║╚██╗██║██║   ██║██╔══╝  ██║   ██║██║╚██╗██║    ██╔══██║██║  ██║╚██╗ ██╔╝██╔══╝  ██║╚██╗██║   ██║   ██║   ██║██╔══██╗██╔══╝ \s
+               ██████╔╝╚██████╔╝██║ ╚████║╚██████╔╝███████╗╚██████╔╝██║ ╚████║    ██║  ██║██████╔╝ ╚████╔╝ ███████╗██║ ╚████║   ██║   ╚██████╔╝██║  ██║███████╗
+               ╚═════╝  ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝ ╚══════╝ ╚═════╝ ╚═╝  ╚═══╝    ╚═╝  ╚═╝╚═════╝   ╚═══╝  ╚══════╝╚═╝  ╚═══╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝╚══════╝
+    ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    """;
     private final AdventureView myAdventureView;
     private Dungeon myDungeon;
     private Hero myHero;
@@ -41,7 +51,7 @@ public class DungeonAdventure {
     private boolean myWonGame;
     private DifficultyLevel myDifficultyLevel;
 
-    public DungeonAdventure() {
+    private DungeonAdventure() {
         myAdventureView = new AdventureView();
         myActionHandler = new ActionHandler(myHero, this);
         boolean playAgain = true;
@@ -69,12 +79,14 @@ public class DungeonAdventure {
      */
     void playGame() throws InterruptedException {
         final String choice = myAdventureView.promptUserChoice(new String[]{"Load Game", "New Game"}, true);
-
-        if (choice.equals("Load Game")) {
+        if (choice.equals("Load Game") && !GameSerialization.getSavedGames().isEmpty()) {
             final GameData gameData = myActionHandler.loadSavedGame();
             myHero = gameData.getHero();
             myDungeon = gameData.getDungeon();
         } else {
+            if (choice.equals("Load Game")) {
+                myAdventureView.sendMessage("No saved game entries. New game starting.");
+            }
             myDifficultyLevel = selectDifficultyLevel();
             myHero = createAdventurer();
             myDungeon = myDifficultyLevel.createDungeon();
@@ -102,9 +114,18 @@ public class DungeonAdventure {
      * Displays the introduction of the game to the user.
      */
     private void displayIntroduction() {
-        myAdventureView.sendMessage("[Introduction placeholder]");
+        myAdventureView.sendMessage("\n\033[1m" + DUNGEON_ADVENTURE);
+        myAdventureView.sendMessage("""
+                Welcome to Dungeon Adventure! Prepare to embark on a daring quest as a hero in a treacherous dungeon. Your mission is to locate and retrieve the four Pillars
+                of OO—Abstraction, Encapsulation, Inheritance, and Polymorphism—and secure your triumph at the exit. Beware of the monsters lurking in the dungeon's room, and
+                obstacles like treacherous pits that impede your progress. However, not everything is against you. Discover items that will aid your journey throughout the dungeon.
+                The dungeon awaits, and your destiny awaits within its depths. Good luck, adventurer!
+                """);
     }
 
+    /**
+     * Displays the menu.
+     */
     void displayMenu() {
         myAdventureView.sendMessage("----------- MENU -----------");
         final String choice;
@@ -199,7 +220,11 @@ public class DungeonAdventure {
         }
     }
 
-    public void handlePit() {
+    /**
+     * Handles the situation when the players falls into a pit.
+     * Player takes a random number of damage ranging from 0 to 10.
+     */
+    private void handlePit() {
         myAdventureView.sendMessage("You fell into a pit!");
         final int damage = new Random().nextInt(MAX_PIT_DAMAGE) + 1;
         myHero.setHitPoints(Math.max(myHero.getHitPoints() - damage, 0));
@@ -214,6 +239,11 @@ public class DungeonAdventure {
         myAdventureView.sendMessage("[Dungeon placeholder]");
     }
 
+    /**
+     * Checks if player has won the game.
+     *
+     * @return true if all four Pillars of OO have been collected and brought to the exit; false otherwise
+     */
     private boolean wonGame() {
         final List<String> allPillars = new ArrayList<>(Arrays.asList("Pillar of Abstraction", "Pillar of Encapsulation", "Pillar of Inheritance", "Pillar of Polymorphism"));
         final List<String> collectedPillars = myHero.getMyInventory().stream().filter(item -> item instanceof PillarOfOO).map(Item::getName).toList();
@@ -221,7 +251,7 @@ public class DungeonAdventure {
         remainingPillars.removeAll(collectedPillars);
         final boolean hasAllPillars = collectedPillars.size() == allPillars.size();
         myAdventureView.sendMessage(hasAllPillars
-                ? "Congratulations adventurer! You've collected all four Pillars of OO and have won the game!" + "\n" + YOU_WIN_ASCII + "\n"
+                ? "Congratulations adventurer! You've collected all four Pillars of OO and have won the game!\n" + YOU_WIN_ASCII + "\n"
                 : "You're missing " + (allPillars.size() - collectedPillars.size()) + " Pillars of OO: " + String.join(", ", remainingPillars) + "\n");
         return hasAllPillars;
     }

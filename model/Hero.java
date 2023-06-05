@@ -3,6 +3,7 @@ package model;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents a Hero/Adventurer in the game.
@@ -13,12 +14,22 @@ public abstract class Hero extends DungeonCharacter implements Serializable {
     public static final int VISION_POTION_TURNS = 3;
     @Serial
     private static final long serialVersionUID = 4434118078796032667L;
-
     private double myBlockChance;
     private final ArrayList<Item> myInventory;
     private int myHealth;
     private int myVisionPotionTurns;
 
+    /**
+     * Constructs a new Hero.
+     *
+     * @param theName        the player's name
+     * @param theHitPoints   the hit points (health) of the player
+     * @param theHitChance   the player's chance to attack an opponent
+     * @param theDamageMin   the minimum damage the player can inflict on an opponent
+     * @param theDamageMax   the maximum damage the player can inflict on an opponent
+     * @param theAttackSpeed the attack speed of the player (determines number of attacks)
+     * @param theBlockChance the player's chance of blocking an attack
+     */
     protected Hero(final String theName, final int theHitPoints, final double theHitChance, final int theDamageMin,
                    final int theDamageMax, final int theAttackSpeed, final double theBlockChance) {
         super(theName, theHitPoints, theHitChance, theDamageMin, theDamageMax, theAttackSpeed);
@@ -40,6 +51,10 @@ public abstract class Hero extends DungeonCharacter implements Serializable {
         myInventory.remove(theItem);
     }
 
+    public int numOfPillarsCollected() {
+        final ArrayList<Item> inventory = getMyInventory();
+        return (int) inventory.stream().filter(PillarOfOO.class::isInstance).count();
+    }
     /**
      * Retrieve the character's inventory.
      *
@@ -55,6 +70,11 @@ public abstract class Hero extends DungeonCharacter implements Serializable {
         setHitPoints(myHealth);
     }
 
+    /**
+     * Decides if player can block an attack based on chance to block.
+     *
+     * @return true if player can block the attack; false otherwise
+     */
     @Override
     protected boolean canBlockAttack() {
         final double randomValue = Math.random();
@@ -100,6 +120,6 @@ public abstract class Hero extends DungeonCharacter implements Serializable {
                 "\nMinimum Damage: " + getDamageMin() +
                 "\nMaximum Damage: " + getDamageMax() +
                 "\nAttack Speed: " + getAttackSpeed() +
-                "\nBlock Chance: " + getBlockChance();
+                "\nBlock Chance: " + myBlockChance;
     }
 }
