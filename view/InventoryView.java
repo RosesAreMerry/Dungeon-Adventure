@@ -32,7 +32,7 @@ public class InventoryView extends ConsoleView {
      * @param theCustomWriter A custom output method.
      * @param theCustomReader A custom input method.
      * */
-    public InventoryView(final Consumer<String> theCustomWriter, final Supplier<String> theCustomReader, final Consumer<Item> theUseItem) {
+    InventoryView(final Consumer<String> theCustomWriter, final Supplier<String> theCustomReader, final Consumer<Item> theUseItem) {
         super(theCustomWriter, theCustomReader);
 
         myUseItem = theUseItem;

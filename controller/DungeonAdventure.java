@@ -107,7 +107,7 @@ public class DungeonAdventure {
         if (myHero.isFainted()) {
             myAdventureView.sendMessage(GAME_OVER_ASCII);
         }
-        displayDungeon();
+        myDungeon.printDungeon();
     }
 
     /**
@@ -154,11 +154,11 @@ public class DungeonAdventure {
      * @return the Hero character selected by the user.
      */
     private Hero createAdventurer() {
-        final String name = myAdventureView.promptUserInput("\033[0m" + "\nWhat is your name? ", "Please enter a name: ", (String s) -> s != null && s.length() > 0);
-        final Map<String, Hero> playerCreators = Map.of(
-                "Thief", new Thief(name),
-                "Warrior", new Warrior(name),
-                "Priestess", new Priestess(name)
+        final String name = myAdventureView.promptUserInput("\nWhat is your name? ", "Please enter a name: ", (String s) -> s != null && s.length() > 0);
+        final Map<String, String> playerCreators = Map.of(
+                "Thief", new Thief(name) + "\nSpecial Skill: Surprise Attack - 40 percent chance it is successful\n",
+                "Warrior", new Warrior(name) + "\nSpecial Skill: Crushing Blow that does 75 to 175 points of damage but only has a 40% chance of succeeding\n",
+                "Priestess", new Priestess(name) + "\nSpecial Skill: Healing\n"
         );
         String character;
         do {
@@ -233,13 +233,6 @@ public class DungeonAdventure {
     }
 
     /**
-     * Displays the entire dungeon layout to the user.
-     */
-    private void displayDungeon() {
-        myAdventureView.sendMessage("[Dungeon placeholder]");
-    }
-
-    /**
      * Checks if player has won the game.
      *
      * @return true if all four Pillars of OO have been collected and brought to the exit; false otherwise
@@ -251,7 +244,7 @@ public class DungeonAdventure {
         remainingPillars.removeAll(collectedPillars);
         final boolean hasAllPillars = collectedPillars.size() == allPillars.size();
         myAdventureView.sendMessage(hasAllPillars
-                ? "Congratulations adventurer! You've collected all four Pillars of OO and have won the game!\n\n" + YOU_WIN_ASCII + "\n"
+                ? "Congratulations adventurer! You've collected all four Pillars of OO and have won the game!\n" + YOU_WIN_ASCII + "\n"
                 : "You're missing " + (allPillars.size() - collectedPillars.size()) + " Pillars of OO: " + String.join(", ", remainingPillars) + "\n");
         return hasAllPillars;
     }
