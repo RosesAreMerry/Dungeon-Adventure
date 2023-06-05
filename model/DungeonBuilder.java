@@ -6,6 +6,14 @@ import java.util.stream.Stream;
 
 import static model.Direction.*;
 
+/**
+ * Class dedicated to building Dungeon objects. This is a singleton class, so there can only be one instance of it,
+ * since it needs to maintain some state. It is also a builder class, so it has a build method that returns a Dungeon.
+ *
+ * @see Dungeon
+ *
+ * @author Rosemary Roach
+ * */
 public class DungeonBuilder {
     public static final DungeonBuilder INSTANCE = new DungeonBuilder();
 
@@ -186,8 +194,7 @@ public class DungeonBuilder {
             room.addDoor(unconnected.getKey(), unconnected.getValue());
         });
     }
-
-    public Map<Direction, Room> getAdjacent(final Room theLocation) {
+    private Map<Direction, Room> getAdjacent(final Room theLocation) {
         final Coordinate current = coordinateRoomMap.entrySet().stream()
                 .filter(entry -> entry.getValue().equals(theLocation)).findFirst().get().getKey();
         return coordinateRoomMap.keySet().stream().filter(key -> key.isAdjacent(current)).collect(Collectors.toMap(current::getDirection, coordinateRoomMap::get));

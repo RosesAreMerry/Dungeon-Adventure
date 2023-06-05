@@ -6,6 +6,18 @@ import java.io.Serializable;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Class representing the dungeon that the player traverses. It is made up of
+ * rooms, which are connected by doors. The player can move between rooms by
+ * going through doors. The dungeon is represented as a graph, with rooms as
+ * nodes and doors as edges. The player's location is represented by a room.
+ *
+ * @see Room
+ * @see Coordinate
+ * @see Direction
+ *
+ * @author Rosemary Roach
+ * */
 public class Dungeon implements Serializable {
 
     private final Map<Coordinate, Room> myRooms;
@@ -17,10 +29,19 @@ public class Dungeon implements Serializable {
         myHeroLocation = theEntrance;
         myRooms = theRooms;
     }
+
     public Room getCurrentRoom() {
         return myHeroLocation;
     }
 
+    /**
+     * Moves the hero in the given direction. If there is no door in that direction,
+     * an IllegalArgumentException is thrown.
+     *
+     * @param theDirection the direction to move in
+     *
+     * @throws IllegalArgumentException if there is no door in that direction
+     * */
     public void move(final Direction theDirection) {
         if (myHeroLocation.getDoor(theDirection) != null) {
             myHeroLocation = myHeroLocation.getDoor(theDirection);
@@ -29,6 +50,12 @@ public class Dungeon implements Serializable {
         }
     }
 
+    /**
+     * Returns a map of all the rooms adjacent to the current room, with the direction
+     * to get to them as the key.
+     *
+     * @return a map of all the rooms adjacent to the current room
+     * */
     public Map<String, Room> getNeighbors() {
         final Coordinate current = myRooms.entrySet().stream()
                 .filter(entry -> entry.getValue().equals(myHeroLocation)).findFirst().get().getKey();
@@ -45,6 +72,9 @@ public class Dungeon implements Serializable {
         return myRooms;
     }
 
+    /**
+     * Prints the dungeon to the console.
+     * */
     public void printDungeon() {
         System.out.println(this);
     }
