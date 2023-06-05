@@ -110,7 +110,8 @@ public class RoomTest {
         rm.setMockDoubleValue(UNDER);
         final Room room = new Room(rm, HINDRANCE_CHANCE, POTION_CHANCE);
         room.setExit();
-        roomIsEmpty(room);
+        assertEquals(0, room.getItems().size());
+        assertFalse(room.hasPit());
         assertFalse(room.isEntrance());
     }
 
