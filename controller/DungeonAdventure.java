@@ -30,9 +30,9 @@ public class DungeonAdventure {
             ██║   ██║██╔══██║██║╚██╔╝██║██╔══╝      ██║   ██║╚██╗ ██╔╝██╔══╝  ██╔══██╗
             ╚██████╔╝██║  ██║██║ ╚═╝ ██║███████╗    ╚██████╔╝ ╚████╔╝ ███████╗██║  ██║
              ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝     ╚═════╝   ╚═══╝  ╚══════╝╚═╝  ╚═╝""";
-    private static final String[] DIFFICULTY_DESCRIPTIONS = new String[]{"Easy - Stronger starting player, weaker monsters, more items, small dungeon",
-            "Medium - Default values, medium-sized dungeon",
-            "Hard - Weaker starting player, stronger monsters, less items, large dungeon"};
+    private static final String[] DIFFICULTY_DESCRIPTIONS = {"Easy - Enhanced player stats, weakened monsters, increased availability of items, and a small dungeon",
+            "Medium - Balanced stats (default values) for player and monsters, medium-sized dungeon",
+            "Hard - Reduced player stats, enhanced monsters, reduced availability of items, large dungeon"};
 
     private static final String DUNGEON_ADVENTURE = """
                ██████╗ ██╗   ██╗███╗   ██╗ ██████╗ ███████╗ ██████╗ ███╗   ██╗     █████╗ ██████╗ ██╗   ██╗███████╗███╗   ██╗████████╗██╗   ██╗██████╗ ███████╗
@@ -137,7 +137,7 @@ public class DungeonAdventure {
 
     private DifficultyLevel selectDifficultyLevel() {
         myAdventureView.sendMessage("Select Game Difficulty:\033[0m\n" + String.join("\n", DIFFICULTY_DESCRIPTIONS));
-        final String choice = myAdventureView.promptUserInput("What difficulty level do you want to play? ",
+        final String choice = myAdventureView.promptUserInput("\033[1m" + "What difficulty level do you want to play? ",
                 "Please enter the name of the level: ", (String s) -> s.equalsIgnoreCase("easy")
         || s.equalsIgnoreCase("medium") || s.equalsIgnoreCase("hard"));
         return switch (choice.toUpperCase()) {
@@ -154,7 +154,7 @@ public class DungeonAdventure {
      * @return the Hero character selected by the user.
      */
     private Hero createAdventurer() {
-        final String name = myAdventureView.promptUserInput("\nWhat is your name? ", "Please enter a name: ", (String s) -> s != null && s.length() > 0);
+        final String name = myAdventureView.promptUserInput("\033[0m" + "\nWhat is your name? ", "Please enter a name: ", (String s) -> s != null && s.length() > 0);
         final Map<String, Hero> playerCreators = Map.of(
                 "Thief", new Thief(name),
                 "Warrior", new Warrior(name),
@@ -221,7 +221,7 @@ public class DungeonAdventure {
     }
 
     /**
-     * Handles the situation when the players falls into a pit.
+     * Handles the situation when the players fall into a pit.
      * Player takes a random number of damage ranging from 0 to 10.
      */
     private void handlePit() {
@@ -251,7 +251,7 @@ public class DungeonAdventure {
         remainingPillars.removeAll(collectedPillars);
         final boolean hasAllPillars = collectedPillars.size() == allPillars.size();
         myAdventureView.sendMessage(hasAllPillars
-                ? "Congratulations adventurer! You've collected all four Pillars of OO and have won the game!\n" + YOU_WIN_ASCII + "\n"
+                ? "Congratulations adventurer! You've collected all four Pillars of OO and have won the game!\n\n" + YOU_WIN_ASCII + "\n"
                 : "You're missing " + (allPillars.size() - collectedPillars.size()) + " Pillars of OO: " + String.join(", ", remainingPillars) + "\n");
         return hasAllPillars;
     }

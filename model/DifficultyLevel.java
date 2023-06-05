@@ -1,4 +1,4 @@
-package controller;
+package model;
 
 import model.*;
 import view.AdventureView;
@@ -66,7 +66,7 @@ public enum DifficultyLevel {
             } // large dungeon
         };
     }
-    
+
     public void adjustCharacterStatistics(final DungeonCharacter theCharacter, final double thePercentage) {
         final DecimalFormat decimalFormat = new DecimalFormat("#.##");
         theCharacter.setHitPoints((int) (theCharacter.getHitPoints() * thePercentage));
