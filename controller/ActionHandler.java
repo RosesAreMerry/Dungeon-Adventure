@@ -199,6 +199,8 @@ public class ActionHandler {
         final String fileName = myAdventureView.promptUserChoice(getSavedGames().toArray(new String[0]), true);
         final GameData myGameData = GameSerialization.loadGame(fileName);
 
+
+
         if (myGameData != null) {
             final Hero hero = myGameData.getHero();
             final int numOfPillars = hero.numOfPillarsCollected();

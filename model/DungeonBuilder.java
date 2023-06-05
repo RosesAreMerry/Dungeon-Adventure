@@ -1,23 +1,29 @@
 package model;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static model.Direction.*;
 
+/**
+ * Class dedicated to building Dungeon objects. This is a singleton class, so there can only be one instance of it,
+ * since it needs to maintain some state. It is also a builder class, so it has a build method that returns a Dungeon.
+ *
+ * @see Dungeon
+ *
+ * @author Rosemary Roach
+ * */
 public class DungeonBuilder {
     public static final DungeonBuilder INSTANCE = new DungeonBuilder();
 
-    /**
-     * This is a constant that means that it will generate a hallway until there is this number
-     * rooms left in the current branch, when it will start normal gen. Decreasing this increases the length of hallways.
-     */
+    /** This is a constant that means that it will generate a hallway until there is this number
+     *  rooms left in the current branch, when it will start normal gen. Decreasing this increases the length of hallways.*/
 
     private final Map<Coordinate, Room> coordinateRoomMap = new HashMap<>();
-    private final Random myRandom = new Random();
+    private Random myRandom = new Random();
 
-    public DungeonBuilder() {
-    }
+    private DungeonBuilder() { }
 
     /**
      * Main builder function. This is the only function that should be called from outside this class.
@@ -45,6 +51,7 @@ public class DungeonBuilder {
 
             addExit();
             addPillarsOfOO();
+            addExtraConnections();
         }
         return new Dungeon(entrance, coordinateRoomMap);
     }
@@ -172,6 +179,34 @@ public class DungeonBuilder {
         return result;
     }
 
+    private Map<Direction, Room> getAdjacent(final Room theLocation) {
+        final Coordinate current = coordinateRoomMap.entrySet().stream()
+                .filter(entry -> entry.getValue().equals(theLocation)).findFirst().get().getKey();
+        return coordinateRoomMap.keySet().stream().filter(key -> key.isAdjacent(current)).collect(Collectors.toMap(current::getDirection, coordinateRoomMap::get));
+    }
+
+    private void addExtraConnections() {
+        final List<Room> unconnectedNeighbors = new ArrayList<>(coordinateRoomMap.values().stream()
+                .filter(room -> getAdjacent(room).values().stream()
+                        .filter(neighbor -> !room.getDoors().containsValue(neighbor)).count() > 1).toList());
+
+        Collections.shuffle(unconnectedNeighbors);
+
+        final Set<Room> alreadyConnected = new HashSet<>();
+
+        unconnectedNeighbors.stream().skip(unconnectedNeighbors.size() / 2).forEach(room -> {
+            if (alreadyConnected.contains(room)) {
+                return;
+            }
+            final Map<Direction, Room> neighbors = getAdjacent(room);
+            final Map.Entry<Direction, Room> unconnected = neighbors.entrySet().stream()
+                    .filter(entry -> !room.getDoors().containsValue(entry.getValue())).findAny().orElseThrow();
+            room.addDoor(unconnected.getKey(), unconnected.getValue());
+            unconnected.getValue().addDoor(unconnected.getKey().opposite(), room);
+            alreadyConnected.add(unconnected.getValue());
+        });
+    }
+
     private void addPillarsOfOO() {
         final List<PillarOfOO> pillars = Stream.of("Abstraction", "Encapsulation", "Inheritance", "Polymorphism")
                 .map(PillarOfOO::new)
@@ -194,6 +229,10 @@ public class DungeonBuilder {
                                 !room.isExit() &&
                                 room.getItems().stream().noneMatch((final Item item) -> item instanceof PillarOfOO))
                 .findAny().orElseThrow(() -> new RuntimeException("Dungeon generation failed. No valid rooms found for exit or pillars."));
+    }
+
+    void setRandom(final Random theRandom) {
+        myRandom = theRandom;
     }
 
 }

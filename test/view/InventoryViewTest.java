@@ -33,7 +33,7 @@ class InventoryViewTest extends ConsoleViewTestAbstract {
         myMockedInput.add("2");
         iv.showInventory(items);
 
-        assertEquals("A\nB\nC\nEnter the name of the item you want to use: ", myMockedOutput.toString());
+        assertEquals("A\nB\nC\nClose Inventory\nEnter the name of the item you want to use: ", myMockedOutput.toString());
         assertEquals("B", myItemsOutput.toString());
     }
 
@@ -43,7 +43,7 @@ class InventoryViewTest extends ConsoleViewTestAbstract {
         myMockedInput.add("B");
         iv.showInventory(items);
 
-        assertEquals("A\nB\nC\nEnter the name of the item you want to use: ", myMockedOutput.toString());
+        assertEquals("A\nB\nC\nClose Inventory\nEnter the name of the item you want to use: ", myMockedOutput.toString());
         assertEquals("B", myItemsOutput.toString());
     }
 
@@ -52,7 +52,7 @@ class InventoryViewTest extends ConsoleViewTestAbstract {
         myMockedInput.add("L");
         iv.showInventory(myTestItems);
 
-        assertEquals("A\nB\nC\nD\nE\nF\nG\nH\nI\nJ\nK\nL\nEnter the name of the item you want to use: ", myMockedOutput.toString());
+        assertEquals("A\nB\nC\nD\nE\nF\nG\nH\nI\nJ\nK\nL\nClose Inventory\nEnter the name of the item you want to use: ", myMockedOutput.toString());
         assertEquals("L", myItemsOutput.toString());
     }
 
@@ -61,7 +61,7 @@ class InventoryViewTest extends ConsoleViewTestAbstract {
         myMockedInput.add("12");
         iv.showInventory(myTestItems);
 
-        assertEquals("A\nB\nC\nD\nE\nF\nG\nH\nI\nJ\nK\nL\nEnter the name of the item you want to use: ", myMockedOutput.toString());
+        assertEquals("A\nB\nC\nD\nE\nF\nG\nH\nI\nJ\nK\nL\nClose Inventory\nEnter the name of the item you want to use: ", myMockedOutput.toString());
         assertEquals("L", myItemsOutput.toString());
     }
 
@@ -70,7 +70,7 @@ class InventoryViewTest extends ConsoleViewTestAbstract {
         myMockedInput.add("A");
         iv.showInventory(myTestItems);
 
-        assertEquals("A\nB\nC\nD\nE\nF\nG\nH\nI\nJ\nK\nL\nEnter the name of the item you want to use: ", myMockedOutput.toString());
+        assertEquals("A\nB\nC\nD\nE\nF\nG\nH\nI\nJ\nK\nL\nClose Inventory\nEnter the name of the item you want to use: ", myMockedOutput.toString());
         assertEquals("A", myItemsOutput.toString());
     }
 
@@ -79,7 +79,7 @@ class InventoryViewTest extends ConsoleViewTestAbstract {
         myMockedInput.add("1");
         iv.showInventory(myTestItems);
 
-        assertEquals("A\nB\nC\nD\nE\nF\nG\nH\nI\nJ\nK\nL\nEnter the name of the item you want to use: ", myMockedOutput.toString());
+        assertEquals("A\nB\nC\nD\nE\nF\nG\nH\nI\nJ\nK\nL\nClose Inventory\nEnter the name of the item you want to use: ", myMockedOutput.toString());
         assertEquals("A", myItemsOutput.toString());
     }
 
@@ -89,7 +89,7 @@ class InventoryViewTest extends ConsoleViewTestAbstract {
         myMockedInput.add("B");
         iv.showInventory(myTestItems);
 
-        assertEquals("A\nB\nC\nD\nE\nF\nG\nH\nI\nJ\nK\nL\nEnter the name of the item you want to use: \nInvalid choice. Please enter a number or the name of an option: ", myMockedOutput.toString());
+        assertEquals("A\nB\nC\nD\nE\nF\nG\nH\nI\nJ\nK\nL\nClose Inventory\nEnter the name of the item you want to use: \nInvalid choice. Please enter a number or the name of an option: ", myMockedOutput.toString());
         assertEquals("B", myItemsOutput.toString());
     }
 
@@ -100,7 +100,7 @@ class InventoryViewTest extends ConsoleViewTestAbstract {
         myMockedInput.add("A");
         iv.showInventory(testItems);
 
-        assertEquals("3 As\nB\nC\nE\nF\nEnter the name of the item you want to use: ", myMockedOutput.toString());
+        assertEquals("3 As\nB\nC\nE\nF\nClose Inventory\nEnter the name of the item you want to use: ", myMockedOutput.toString());
         assertEquals("A", myItemsOutput.toString());
     }
 
@@ -111,7 +111,7 @@ class InventoryViewTest extends ConsoleViewTestAbstract {
         myMockedInput.add("1");
         iv.showInventory(testItems);
 
-        assertEquals("3 As\nB\n2 Cs\nE\nEnter the name of the item you want to use: ", myMockedOutput.toString());
+        assertEquals("3 As\nB\n2 Cs\nE\nClose Inventory\nEnter the name of the item you want to use: ", myMockedOutput.toString());
         assertEquals("A", myItemsOutput.toString());
     }
 }

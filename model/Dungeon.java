@@ -2,13 +2,22 @@ package model;
 
 import java.io.Serial;
 import java.util.Arrays;
-import java.util.List;
 import java.io.Serializable;
 import java.util.Map;
-import java.util.Collection;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
+/**
+ * Class representing the dungeon that the player traverses. It is made up of
+ * rooms, which are connected by doors. The player can move between rooms by
+ * going through doors. The dungeon is represented as a graph, with rooms as
+ * nodes and doors as edges. The player's location is represented by a room.
+ *
+ * @see Room
+ * @see Coordinate
+ * @see Direction
+ *
+ * @author Rosemary Roach
+ * */
 public class Dungeon implements Serializable {
 
     private final Map<Coordinate, Room> myRooms;
@@ -20,10 +29,19 @@ public class Dungeon implements Serializable {
         myHeroLocation = theEntrance;
         myRooms = theRooms;
     }
+
     public Room getCurrentRoom() {
         return myHeroLocation;
     }
 
+    /**
+     * Moves the hero in the given direction. If there is no door in that direction,
+     * an IllegalArgumentException is thrown.
+     *
+     * @param theDirection the direction to move in
+     *
+     * @throws IllegalArgumentException if there is no door in that direction
+     * */
     public void move(final Direction theDirection) {
         if (myHeroLocation.getDoor(theDirection) != null) {
             myHeroLocation = myHeroLocation.getDoor(theDirection);
@@ -32,10 +50,16 @@ public class Dungeon implements Serializable {
         }
     }
 
+    /**
+     * Returns a map of all the rooms adjacent to the current room, with the direction
+     * to get to them as the key.
+     *
+     * @return a map of all the rooms adjacent to the current room
+     * */
     public Map<String, Room> getNeighbors() {
         final Coordinate current = myRooms.entrySet().stream()
                 .filter(entry -> entry.getValue().equals(myHeroLocation)).findFirst().get().getKey();
-        return myRooms.keySet().stream().filter(key -> key.isNeighbor(current)).collect(Collectors.toMap(current::getDirection, myRooms::get));
+        return myRooms.keySet().stream().filter(key -> key.isNeighbor(current)).collect(Collectors.toMap(current::getDirectionString, myRooms::get));
     }
 
     /**
@@ -48,7 +72,15 @@ public class Dungeon implements Serializable {
         return myRooms;
     }
 
+    /**
+     * Prints the dungeon to the console.
+     * */
     public void printDungeon() {
+        System.out.println(this);
+    }
+
+    @Override
+    public String toString() {
         final int minX = myRooms.keySet().stream().mapToInt(Coordinate::getX).min().getAsInt();
         final int maxX = myRooms.keySet().stream().mapToInt(Coordinate::getX).max().getAsInt();
         final int minY = myRooms.keySet().stream().mapToInt(Coordinate::getY).min().getAsInt();
@@ -75,7 +107,11 @@ public class Dungeon implements Serializable {
                     final int arrayX = x - minX * 2;
                     for (int i = 0; i < 3; i++) {
                         dungeon[arrayY + i][arrayX] = roomStringArray[i].charAt(0);
-                        dungeon[arrayY + i][arrayX + 1] = roomStringArray[i].charAt(1);
+                        if (myHeroLocation.equals(myRooms.get(current)) && i == 1) {
+                            dungeon[arrayY + i][arrayX + 1] = '■';
+                        } else {
+                            dungeon[arrayY + i][arrayX + 1] = roomStringArray[i].charAt(1);
+                        }
                         dungeon[arrayY + i][arrayX + 2] = roomStringArray[i].charAt(2);
                     }
                 }
@@ -88,7 +124,7 @@ public class Dungeon implements Serializable {
             sb.append(array);
             sb.append("\n");
         }
-        System.out.println(sb);
+        return sb.toString();
     }
 
 }

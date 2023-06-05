@@ -12,6 +12,18 @@ import java.util.stream.Stream;
 import static model.Direction.*;
 import static model.Direction.SOUTH;
 
+/**
+ * This class represents a room in the dungeon. It is made up of doors, which
+ * are the ways to get to other rooms. It also could contain a monster, a pit,
+ * a health potion, an entrance to the dungeon, an exit, and/or a vision potion.
+ * The room is a node in a graph, containing references to other rooms. There is
+ * also flavor text associated with the room, which is displayed when the player
+ * enters the room.
+ *
+ * @see Dungeon
+ *
+ * @author Rosemary Roach
+ * */
 public class Room implements Serializable {
     private static final String[] FLAVOR_TEXTS_EMPTY = {
             "This room is dark and damp.",
@@ -130,6 +142,7 @@ public class Room implements Serializable {
         }
         return FLAVOR_TEXTS_EMPTY[myRandom.nextInt(FLAVOR_TEXTS_EMPTY.length)];
     }
+    //#region Property Accessors
 
     public Monster getMonster() {
         return myMonster;
@@ -172,6 +185,8 @@ public class Room implements Serializable {
         myHasPit = false;
     }
 
+    //#endregion
+
     void addDoor(final Direction theDirection, final Room theRoom) {
         myDoors.put(theDirection, theRoom);
     }
@@ -184,25 +199,38 @@ public class Room implements Serializable {
         myFlavorText = generateFlavorText();
     }
 
-    /**
-     * Makes a string representation of the room.
-     * Example of a room containing the pillar of Polymorphism and doors on all sides:<br>
-     * *-*<br>
-     * |P|<br>
-     * *-*<br>
-     *
-     * @return a string representation of the room
-     */
-    @Override
-    public String toString() {
-        final Map<Direction, Character> doors = Stream.of(NORTH, SOUTH, EAST, WEST).filter(myDoors::containsKey)
-                .collect(Collectors.toMap(dir -> dir, dir -> dir == NORTH || dir == SOUTH ? '-' : '|'));
+    private ArrayList<Item> generateItems() {
+        final ArrayList<Item> items = new ArrayList<>();
+        if (myRandom.nextDouble() < HEALTH_POTION_PROBABILITY) {
+            items.add(new HealingPotion());
+        }
+        if (myRandom.nextDouble() < VISION_POTION_PROBABILITY) {
+            items.add(new VisionPotion());
+        }
+        return items;
+    }
 
         final String sb = "*" + doors.getOrDefault(NORTH, '*') + '*' + '\n' +
                 doors.getOrDefault(WEST, '*') + getRoomChar() + doors.getOrDefault(EAST, '*') + '\n' +
                 '*' + doors.getOrDefault(SOUTH, '*') + '*' + '\n';
 
-        return sb;
+    private String generateFlavorText() {
+        if (myIsEntrance) {
+            return "The door to the dungeon is closed. You are trapped in the dark.";
+        }
+        if (myIsExit) {
+            return "You see something strange and welcome to your dark adjusted eyes, natural light! You have found the exit!";
+        }
+        if (myHasPit) {
+            return FLAVOR_TEXTS_PIT[myRandom.nextInt(FLAVOR_TEXTS_PIT.length)];
+        }
+        if (myMonster != null) {
+            return FLAVOR_TEXTS_MONSTER[myRandom.nextInt(FLAVOR_TEXTS_MONSTER.length)];
+        }
+        if (myItems.size() > 0) {
+            return FLAVOR_TEXTS_ITEMS[myRandom.nextInt(FLAVOR_TEXTS_ITEMS.length)];
+        }
+        return FLAVOR_TEXTS_EMPTY[myRandom.nextInt(FLAVOR_TEXTS_EMPTY.length)];
     }
 
     /**
@@ -239,4 +267,26 @@ public class Room implements Serializable {
         }
         return ' ';
     }
+
+    /**
+     * Makes a string representation of the room.<br>
+     * Example of a room containing the pillar of Polymorphism and doors on all sides:<br>
+     * *-*<br>
+     * |P|<br>
+     * *-*<br>
+     *
+     * @return a string representation of the room
+     */
+    @Override
+    public String toString() {
+        final Map<Direction, Character> doors = Stream.of(NORTH, SOUTH, EAST, WEST).filter(myDoors::containsKey)
+                .collect(Collectors.toMap(dir -> dir, dir -> dir == NORTH || dir == SOUTH ? '-' : '|'));
+
+        final String sb = "*" + doors.getOrDefault(NORTH, '*') + '*' + '\n' +
+                doors.getOrDefault(WEST, '*') + getRoomChar() + doors.getOrDefault(EAST, '*') + '\n' +
+                '*' + doors.getOrDefault(SOUTH, '*') + '*' + '\n';
+
+        return sb;
+    }
+
 }

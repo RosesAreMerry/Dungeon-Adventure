@@ -51,6 +51,7 @@ public class DungeonAdventure {
     private boolean myIsPlaying;
     private boolean myWonGame;
     private DifficultyLevel myDifficultyLevel;
+    private boolean myIsDevMode = true;
 
     private DungeonAdventure() {
         myAdventureView = new AdventureView();
@@ -104,6 +105,10 @@ public class DungeonAdventure {
             if (!myWonGame) {
                 displayOptions();
             }
+            if (myIsDevMode) {
+                myDungeon.printDungeon();
+            }
+            displayOptions();
         }
         if (myHero.isFainted()) {
             myAdventureView.sendMessage(GAME_OVER_ASCII);

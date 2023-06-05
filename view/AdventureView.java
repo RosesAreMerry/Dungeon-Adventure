@@ -14,7 +14,7 @@ import static view.StringHelper.getList;
  *
  * @author Rosemary
  * @version May 7th 2023
- * @see view.ConsoleView
+ * @see ConsoleView
  * */
 public class AdventureView extends ConsoleView {
 
