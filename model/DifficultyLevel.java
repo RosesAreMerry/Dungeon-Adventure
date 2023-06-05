@@ -1,6 +1,5 @@
 package model;
 
-import model.*;
 import view.AdventureView;
 
 import java.text.DecimalFormat;
@@ -32,21 +31,20 @@ public enum DifficultyLevel {
         theHero.setBlockChance(Double.parseDouble(decimalFormat.format(theHero.getBlockChance() * percentage)));
     }
 
-    public void adjustRoomEntities(final Room theRoom) {
-        final double itemPercentage = switch (this) {
-            case EASY -> 3.0; // triple the chances
-            case MEDIUM -> 1.0; // remain unchanged
-            case HARD -> 0.8; // decrease by 20%
+    public double adjustHindrances() {
+        return switch (this) {
+            case EASY -> 0.1 * 1; // remain unchanged
+            case MEDIUM -> 0.1 * 2.0; // double the chances
+            case HARD -> 0.1 * 4.0; // quadruple the chances
         };
-        final double hindrancePercentage = switch (this) {
-            case EASY -> 1; // remain unchanged
-            case MEDIUM -> 1.2; // increase my 20%
-            case HARD -> 1.4; // increase by 40&
+    }
+
+    public double adjustPotions() {
+        return switch (this) {
+            case EASY -> 0.1 * 3.0; // triple the chances
+            case MEDIUM -> 0.1; // remain unchanged
+            case HARD -> 0.1 * 0.8; // decrease by 20%
         };
-        theRoom.setMyHealthPotionProbability(0.1 * itemPercentage);
-        theRoom.setMyVisionPotionProbability(0.1 * itemPercentage);
-        theRoom.setMyPitProbability(0.1 * hindrancePercentage);
-        theRoom.setMyMonsterProbability(0.1 * hindrancePercentage);
     }
 
     public Dungeon createDungeon() {
@@ -54,15 +52,15 @@ public enum DifficultyLevel {
         return switch (this) {
             case EASY -> {
                 av.sendMessage("Generating dungeon with 10 rooms...");
-                yield DungeonBuilder.INSTANCE.buildDungeon(10);
+                yield DungeonBuilder.INSTANCE.buildDungeon(10, adjustHindrances(), adjustPotions());
             } // small dungeon
             case MEDIUM -> {
                 av.sendMessage("Generating dungeon with 25 rooms...");
-                yield DungeonBuilder.INSTANCE.buildDungeon(25);
+                yield DungeonBuilder.INSTANCE.buildDungeon(25, adjustHindrances(), adjustPotions());
             } // medium dungeon
             case HARD -> {
                 av.sendMessage("Generating dungeon with 50 rooms...");
-                yield DungeonBuilder.INSTANCE.buildDungeon(50);
+                yield DungeonBuilder.INSTANCE.buildDungeon(50, adjustHindrances(), adjustPotions());
             } // large dungeon
         };
     }
@@ -82,7 +80,6 @@ public enum DifficultyLevel {
             if (room.getMonster() != null) {
                 adjustMonsterStatistics(room.getMonster());
             }
-            adjustRoomEntities(room);
         }
     }
 }

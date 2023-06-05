@@ -5,6 +5,8 @@ import view.AdventureView;
 import view.RoomData;
 
 import java.util.*;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * Serves as the main entry point for the game and orchestrates the actions of the player, monsters,
@@ -155,25 +157,25 @@ public class DungeonAdventure {
      */
     private Hero createAdventurer() {
         final String name = myAdventureView.promptUserInput("\nWhat is your name? ", "Please enter a name: ", (String s) -> s != null && s.length() > 0);
-        final Map<String, Hero> playerCreators = Map.of(
-                "Thief", new Thief(name),
-                "Warrior", new Warrior(name),
-                "Priestess", new Priestess(name)
+        final Map<String, Supplier<Hero>> playerCreators = Map.of(
+                "Thief", () -> new Thief(name),
+                "Warrior", () -> new Warrior(name),
+                "Priestess", () -> new Priestess(name)
         );
         String character;
+        Hero selectedHero = null;
         do {
             myAdventureView.sendMessage("Pick your character: ");
             character = myAdventureView.promptUserChoice(new String[]{"Thief", "Warrior", "Priestess"}, false);
-            myDifficultyLevel.adjustHeroStatistics(playerCreators.get(character));
-            myAdventureView.sendMessage("\033[0m\n" + playerCreators.get(character));
+            final Hero hero = playerCreators.get(character).get();
+            if (selectedHero == null || !selectedHero.getClass().equals(hero.getClass())) { // prevent repetitive stats adjustments
+                selectedHero = hero;
+                myDifficultyLevel.adjustHeroStatistics(selectedHero);
+            }
+            myAdventureView.sendMessage("\033[0m\n" + selectedHero);
         } while (myAdventureView.promptUserInput("\nWould you like to reselect your character? ", "Please enter 'Yes' or 'No': ",
                 (String s) -> s != null && (s.equalsIgnoreCase("Yes") || s.equalsIgnoreCase("No"))).equalsIgnoreCase("Yes"));
-        return switch (character) {
-            case "Thief" -> new Thief(name);
-            case "Warrior" -> new Warrior(name);
-            case "Priestess" -> new Priestess(name);
-            default -> null;
-        };
+        return playerCreators.get(character).get();
     }
 
     /**

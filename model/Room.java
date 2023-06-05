@@ -13,10 +13,6 @@ import static model.Direction.*;
 import static model.Direction.SOUTH;
 
 public class Room implements Serializable {
-    private static final double PIT_PROBABILITY = 0.1;
-    private static final double MONSTER_PROBABILITY = 0.1;
-    private static final double HEALTH_POTION_PROBABILITY = 0.1;
-    private static final double VISION_POTION_PROBABILITY = 0.1;
     private static final String[] FLAVOR_TEXTS_EMPTY = {
             "This room is dark and damp.",
             "As you open the door, a musty scent hits your nose.",
@@ -77,16 +73,16 @@ public class Room implements Serializable {
     private double myVisionPotionProbability;
     private double myMonsterProbability;
 
-    Room() {
-        this(new Random());
+    Room(final double theHindranceProbabilty, final double thePotionProbabilty) {
+        this(new Random(), theHindranceProbabilty, thePotionProbabilty);
     }
 
-    Room(final Random theRandom) {
+    Room(final Random theRandom, final double theHindranceProbabilty, final double thePotionProbabilty) {
         myRandom = theRandom;
         myDoors = new HashMap<>();
-        myItems = generateItems();
-        myMonster = generateMonster();
-        myHasPit = myRandom.nextDouble() < myPitProbability;
+        myItems = generateItems(thePotionProbabilty);
+        myMonster = generateMonster(theHindranceProbabilty);
+        myHasPit = myRandom.nextDouble() < theHindranceProbabilty;
         myIsExit = false;
         myFlavorText = generateFlavorText();
     }
@@ -102,19 +98,19 @@ public class Room implements Serializable {
         myIsExit = false;
     }
 
-    private ArrayList<Item> generateItems() {
+    private ArrayList<Item> generateItems(double thePotionProbabilty) {
         final ArrayList<Item> items = new ArrayList<>();
-        if (myRandom.nextDouble() < myHealthPotionProbability) {
+        if (myRandom.nextDouble() < thePotionProbabilty) {
             items.add(new HealingPotion());
         }
-        if (myRandom.nextDouble() < myVisionPotionProbability) {
+        if (myRandom.nextDouble() < thePotionProbabilty) {
             items.add(new VisionPotion());
         }
         return items;
     }
 
-    private Monster generateMonster() {
-        if (myRandom.nextDouble() < myMonsterProbability) {
+    private Monster generateMonster(double theMonsterProbability) {
+        if (myRandom.nextDouble() < theMonsterProbability) {
             return new MonsterFactory().createMonsterRandom();
         }
         return null;
@@ -139,19 +135,15 @@ public class Room implements Serializable {
         return FLAVOR_TEXTS_EMPTY[myRandom.nextInt(FLAVOR_TEXTS_EMPTY.length)];
     }
 
-    public void setMyPitProbability(final double theProbability) {
+    public void setPitProbability(final double theProbability) {
         this.myPitProbability = theProbability;
     }
 
-    public void setMyHealthPotionProbability(final double theProbability) {
+    public void setPotionProbability(final double theProbability) {
         this.myHealthPotionProbability = theProbability;
     }
 
-    public void setMyVisionPotionProbability(final double theProbability) {
-        this.myVisionPotionProbability = theProbability;
-    }
-
-    public void setMyMonsterProbability(final double theProbability) {
+    public void setMonsterProbability(final double theProbability) {
         this.myMonsterProbability = theProbability;
     }
 

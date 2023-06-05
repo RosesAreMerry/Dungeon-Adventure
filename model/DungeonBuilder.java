@@ -8,13 +8,16 @@ import static model.Direction.*;
 public class DungeonBuilder {
     public static final DungeonBuilder INSTANCE = new DungeonBuilder();
 
-    /** This is a constant that means that it will generate a hallway until there is this number
-     *  rooms left in the current branch, when it will start normal gen. Decreasing this increases the length of hallways.*/
+    /**
+     * This is a constant that means that it will generate a hallway until there is this number
+     * rooms left in the current branch, when it will start normal gen. Decreasing this increases the length of hallways.
+     */
 
     private final Map<Coordinate, Room> coordinateRoomMap = new HashMap<>();
-    private Random myRandom = new Random();
+    private final Random myRandom = new Random();
 
-    public DungeonBuilder() { }
+    public DungeonBuilder() {
+    }
 
     /**
      * Main builder function. This is the only function that should be called from outside this class.
@@ -22,10 +25,9 @@ public class DungeonBuilder {
      * It shouldn't take too long, but it could.
      *
      * @param theNumberOfRooms the number of rooms to generate.
-     *
      * @return a dungeon with the specified number of rooms.
-     * */
-    public Dungeon buildDungeon(final int theNumberOfRooms) {
+     */
+    public Dungeon buildDungeon(final int theNumberOfRooms, final double theThreatProbability, final double thePotionProbability) {
         if (theNumberOfRooms < 6) {
             throw new IllegalArgumentException("The number of rooms must be at least 6.");
         }
@@ -38,7 +40,8 @@ public class DungeonBuilder {
             coordinateRoomMap.clear();
             entrance = new Room(true);
             coordinateRoomMap.put(Coordinate.of(0, 0), entrance);
-            generatedRooms = addRoomsRecursively(entrance, null, null, theNumberOfRooms - 1, Coordinate.of(0, 0));
+            generatedRooms = addRoomsRecursively(entrance, null, null, theNumberOfRooms - 1, Coordinate.of(0, 0),
+                    theThreatProbability, thePotionProbability);
 
             addExit();
             addPillarsOfOO();
@@ -49,28 +52,25 @@ public class DungeonBuilder {
     /**
      * Main recursive method for generating the dungeon.
      *
-     * @param theRoom the room to add rooms to.
-     *                This is the room that the recursive call is currently adding rooms to.
-     *
-     * @param theEntryRoom the room that the recursive call came from.
-     *
-     * @param theEntryDirection the direction that the recursive call came from.
-     *                          This is the direction that the recursive call is currently adding rooms to.
-     *                          This is null if the recursive call is the first call.
-     *
+     * @param theRoom            the room to add rooms to.
+     *                           This is the room that the recursive call is currently adding rooms to.
+     * @param theEntryRoom       the room that the recursive call came from.
+     * @param theEntryDirection  the direction that the recursive call came from.
+     *                           This is the direction that the recursive call is currently adding rooms to.
+     *                           This is null if the recursive call is the first call.
      * @param theNumberRemaining the number of rooms left to generate.
      *                           This is the number of rooms left to generate in the current branch.
-     *
-     * @param thePosition the position of theRoom.
-     *
+     * @param thePosition        the position of theRoom.
      * @return the number of rooms generated (should be the number requested, but weird edge cases exist).
-     * */
+     */
     private int addRoomsRecursively(
             final Room theRoom,
             final Room theEntryRoom,
             final Direction theEntryDirection,
             final int theNumberRemaining,
-            final Coordinate thePosition) {
+            final Coordinate thePosition,
+            final double theThreatProbability,
+            final double thePotionProbabilty) {
         // Add door back to entry room.
         if (theEntryRoom != null) {
             theRoom.addDoor(theEntryDirection, theEntryRoom);
@@ -106,7 +106,7 @@ public class DungeonBuilder {
         for (int i = numberToGen; i > 0; i--) {
             final Direction nextDirection;
             nextDirection = availableDirections.get(myRandom.nextInt(availableDirections.size()));
-            final Room nextRoom = new Room();
+            final Room nextRoom = new Room(theThreatProbability, thePotionProbabilty);
             theRoom.addDoor(nextDirection, nextRoom);
             coordinateRoomMap.put(nextDirection.applyToCoordinate(thePosition), nextRoom);
             availableDirections.remove(nextDirection);
@@ -134,7 +134,9 @@ public class DungeonBuilder {
                         theRoom,
                         Direction.opposite(direction),
                         branchRooms,
-                        direction.applyToCoordinate(thePosition)
+                        direction.applyToCoordinate(thePosition),
+                        theThreatProbability,
+                        thePotionProbabilty
                 );
                 roomsToDistribute -= generatedRooms;
                 doorsLeft--;
@@ -150,7 +152,7 @@ public class DungeonBuilder {
      *
      * @param thePosition The position to search around.
      * @return A list of directions that have rooms adjacent to the position.
-     * */
+     */
     private List<Direction> searchAdjacent(final Coordinate thePosition) {
         final Map<Coordinate, Direction> adjacentSpaces = Map.of(
                 NORTH.applyToCoordinate(thePosition), NORTH,
@@ -189,8 +191,8 @@ public class DungeonBuilder {
         return coordinateRoomMap.values().stream()
                 .filter((final Room room) ->
                         !room.isEntrance() &&
-                        !room.isExit() &&
-                        room.getItems().stream().noneMatch((final Item item) -> item instanceof PillarOfOO))
+                                !room.isExit() &&
+                                room.getItems().stream().noneMatch((final Item item) -> item instanceof PillarOfOO))
                 .findAny().orElseThrow(() -> new RuntimeException("Dungeon generation failed. No valid rooms found for exit or pillars."));
     }
 
