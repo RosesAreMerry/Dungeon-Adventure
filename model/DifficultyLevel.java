@@ -11,7 +11,7 @@ public enum DifficultyLevel {
 
     public void adjustMonsterStatistics(final Monster theMonster) {
         final double percentage = switch (this) {
-            case EASY -> 0.8; // decrease stats by 20%
+            case EASY -> 0.3; // decrease stats by 20%, decrease stats by 70% for demo
             case MEDIUM -> 1; // keep stats the same
             case HARD -> 1.2; // increase stats by 20%
         };
