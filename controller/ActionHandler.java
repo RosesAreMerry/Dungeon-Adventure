@@ -145,6 +145,11 @@ public class ActionHandler {
                     "!", true);
             myAdventureView.sendMessage(sb.toString());
             theHero.addToInventory(theDungeon.getCurrentRoom().getItems());
+            final boolean foundPillar = Arrays.stream(roomData.getItems()).anyMatch(item -> item.startsWith("Pillar"));
+            if (foundPillar) {
+                myAdventureView.sendMessage("You've collected " + theHero.numOfPillarsCollected()
+                        + " out of 4 Pillars of OO.");
+            }
             theDungeon.getCurrentRoom().getItems().clear();
         }
     }
@@ -195,11 +200,11 @@ public class ActionHandler {
         final GameData myGameData = GameSerialization.loadGame(fileName);
 
         if (myGameData != null) {
-            final ArrayList<Item> inventory = myGameData.getHero().getMyInventory();
-            final int numOfPillars = (int) inventory.stream().filter(PillarOfOO.class::isInstance).count();
-            final List<String> pillarsCollected = inventory.stream().filter(PillarOfOO.class::isInstance).map(Item::getName).toList();
+            final Hero hero = myGameData.getHero();
+            final int numOfPillars = hero.numOfPillarsCollected();
+            final List<String> pillarsCollected = hero.getMyInventory().stream().filter(PillarOfOO.class::isInstance).map(Item::getName).toList();
             myAdventureView.sendMessage(fileName + " loaded successfully!\nCurrent hit points: "
-                    + myGameData.getHero().getHitPoints() + "\nPillars collected (" + numOfPillars + "/4): "
+                    + hero.getHitPoints() + "\nPillars collected (" + numOfPillars + "/4): "
                     + String.join(", ", pillarsCollected));
         } else {
             myAdventureView.sendMessage("Failed to load " + fileName);

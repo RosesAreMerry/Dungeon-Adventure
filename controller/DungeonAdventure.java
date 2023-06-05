@@ -250,7 +250,7 @@ public class DungeonAdventure {
         remainingPillars.removeAll(collectedPillars);
         final boolean hasAllPillars = collectedPillars.size() == allPillars.size();
         myAdventureView.sendMessage(hasAllPillars
-                ? "Congratulations adventurer! You've collected all four Pillars of OO and have won the game!" + "\n" + YOU_WIN_ASCII + "\n"
+                ? "Congratulations adventurer! You've collected all four Pillars of OO and have won the game!\n" + YOU_WIN_ASCII + "\n"
                 : "You're missing " + (allPillars.size() - collectedPillars.size()) + " Pillars of OO: " + String.join(", ", remainingPillars) + "\n");
         return hasAllPillars;
     }

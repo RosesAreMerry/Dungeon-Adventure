@@ -3,6 +3,7 @@ package model;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents a Hero/Adventurer in the game.
@@ -50,6 +51,10 @@ public abstract class Hero extends DungeonCharacter implements Serializable {
         myInventory.remove(theItem);
     }
 
+    public int numOfPillarsCollected() {
+        final ArrayList<Item> inventory = getMyInventory();
+        return (int) inventory.stream().filter(PillarOfOO.class::isInstance).count();
+    }
     /**
      * Retrieve the character's inventory.
      *

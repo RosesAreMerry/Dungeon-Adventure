@@ -14,7 +14,7 @@ import static model.Direction.SOUTH;
 
 public class Room implements Serializable {
     private static final double PIT_PROBABILITY = 0.1;
-    private static final double MONSTER_PROBABILITY = 0.6;
+    private static final double MONSTER_PROBABILITY = 0.1;
     private static final double HEALTH_POTION_PROBABILITY = 0.1;
     private static final double VISION_POTION_PROBABILITY = 0.1;
     private static final String[] FLAVOR_TEXTS_EMPTY = {
