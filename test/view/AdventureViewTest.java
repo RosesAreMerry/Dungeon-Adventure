@@ -38,6 +38,7 @@ class AdventureViewTest extends ConsoleViewTestAbstract {
         av.printRoom(MOCK_ROOM_MULTIPLE, null);
 
         assertTrue(Pattern.matches("""
+            ----------------------------------------
             This is a test Room, how did you get here\\?
 
             There are doors to the North, South, and East\\.
@@ -54,6 +55,7 @@ class AdventureViewTest extends ConsoleViewTestAbstract {
         av.printRoom(MOCK_ROOM_SINGLE, null);
 
         assertTrue(Pattern.matches("""
+            ----------------------------------------
             This is a test Room, how did you get here\\?
 
             There is a door to the East\\.
@@ -70,6 +72,7 @@ class AdventureViewTest extends ConsoleViewTestAbstract {
         av.printRoom(new RoomData(null, null, null, true, false), null);
 
         assertEquals("""
+                ----------------------------------------
                 You are in a room.
 
                 Something bothers you about the floor of this room...
@@ -82,6 +85,7 @@ class AdventureViewTest extends ConsoleViewTestAbstract {
         av.printRoom(new RoomData(null, null, null, false, true), null);
 
         assertEquals("""
+                ----------------------------------------
                 You are in a room.
 
                 Your eyes focus on something strange, natural light! It's an exit to the dungeon!
@@ -124,6 +128,7 @@ class AdventureViewTest extends ConsoleViewTestAbstract {
                 Monsters: Ogre and Goblin
                 Exit: true
                 Pit: true
+                
                 """, sb.toString());
     }
 
@@ -138,6 +143,7 @@ class AdventureViewTest extends ConsoleViewTestAbstract {
                 Monsters: Ogre
                 Exit: true
                 Pit: true
+                
                 """, sb.toString());
     }
 

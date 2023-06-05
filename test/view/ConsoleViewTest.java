@@ -27,7 +27,7 @@ class ConsoleViewTest extends ConsoleViewTestAbstract {
 
         try {
             assertEquals("D", myAdventureView.promptUserChoice(options));
-            assertEquals("1. A\n2. B\n3. C\n4. D\n5. E\n6. F\nEnter your choice: ", myMockedOutput.toString());
+            assertEquals("1. A\n2. B\n3. C\n4. D\n5. E\n6. F\nChoose an option: ", myMockedOutput.toString());
         } catch (final Exception theException) {
             fail("Exception thrown");
         }
@@ -41,7 +41,7 @@ class ConsoleViewTest extends ConsoleViewTestAbstract {
 
         try {
             assertEquals("A", myAdventureView.promptUserChoice(options));
-            assertEquals("1. A\nEnter your choice: ", myMockedOutput.toString());
+            assertEquals("1. A\nChoose an option: ", myMockedOutput.toString());
         } catch (final Exception theException) {
             fail("Exception thrown");
         }
