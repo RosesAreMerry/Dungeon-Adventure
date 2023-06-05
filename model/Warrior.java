@@ -1,5 +1,7 @@
 package model;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Random;
 
 /**
@@ -8,16 +10,17 @@ import java.util.Random;
  * @author Maliha Hossain
  * @author Chelsea Dacones
  */
-public class Warrior extends Hero {
-    private boolean myUsedSpecialCase;
+public class Warrior extends Hero implements Serializable {
     private static final double USE_SPECIALCASE_PROBABILITY = 0.4;
+    @Serial
+    private static final long serialVersionUID = 3072042216691889380L;
 
     private Random myRandom;
 
     /**
      * constructor to initialize the states
      *
-     * @param theName
+     * @param theName the name of the player
      */
     public Warrior(final String theName) {
         super(theName, 125, 0.8, 35, 60, 4, 0.2);
@@ -39,7 +42,6 @@ public class Warrior extends Hero {
         } else {
             theOpponent.setAttacked(false);
             setTotalDamage(0);
-            // report attack failure
         }
     }
 

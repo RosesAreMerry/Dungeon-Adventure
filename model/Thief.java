@@ -1,27 +1,21 @@
 package model;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Random;
 
 /**
- * Theif Class represents a character in the game
+ * Thief represents a player in the game
  */
-public class Thief extends Hero{
-    private boolean mySurpriseAttack;
-    
-    private boolean myCaught;
-    
+public class Thief extends Hero implements Serializable {
+    private static final double USE_SPECIAL_CASE_PROBABILITY = 0.4;
+    private static final double CAUGHT_PROBABILITY = 0.5;
+    @Serial
+    private static final long serialVersionUID = 2136676198219810338L;
     private Random myRandom;
-    private static final double USE_SPECIALCASE_PROBABILITY = 0.4;
-    private static final double CAUGHT_PROBABILITY= 0.5;
-
-
-
-    private int myTotalDamage;
 
     public Thief(final String theName) {
         super(theName, 75, 0.8, 20, 40, 6, 0.4);
-        mySurpriseAttack = false;
-        myCaught = false;
         myRandom = new Random();
         super.setTotalDamage(0);
 
@@ -30,34 +24,24 @@ public class Thief extends Hero{
      * determines if the specialskill was used or not
      */
     private boolean useSpecialSkill() {
-        if (myRandom.nextDouble() <= USE_SPECIALCASE_PROBABILITY) {
-            mySurpriseAttack = true;
-        } else {
-            mySurpriseAttack = false;
-        }
-       return mySurpriseAttack;
+       return myRandom.nextDouble() <= USE_SPECIAL_CASE_PROBABILITY;
     }
     /**
      * determines if the specialskill was used or not
      */
-    private boolean caught() {
-        if (myRandom.nextDouble() <= CAUGHT_PROBABILITY) {
-            myCaught = true;
-        } else{
-            myCaught= false;
-        }
-        return myCaught;
+    private boolean wasCaught() {
+        return myRandom.nextDouble() <= CAUGHT_PROBABILITY;
     }
 
     /**
      * attack method
      * if surpriseAttack is used then the character gets one extra turn
-     * @param theOpponent
+     * @param theOpponent the character to attack
      */
     @Override
     public void attack(final DungeonCharacter theOpponent) {
         final int numOfAttack = Math.max(1, this.getAttackSpeed() / theOpponent.getAttackSpeed());
-        if (caught() || !canAttack()) { // don't perform attack if caught, or cannot attack based on chance to hit
+        if (wasCaught() || !canAttack()) { // don't perform attack if caught, or cannot attack based on chance to hit
             theOpponent.setAttacked(false);
             setTotalDamage(0);
             return;
@@ -71,7 +55,6 @@ public class Thief extends Hero{
                     setTotalDamage(getTotalDamage() + damage);
                     theOpponent.setHitPoints(Math.max(theOpponent.getHitPoints() - damage, 1));
                     theOpponent.setAttacked(true);
-                    //System.out.println(theOpponent.getName() + "  current HitPoint is " + theOpponent.getHitPoints());
                 }
             } else { // normal attack
                 calculateDamage(theOpponent);

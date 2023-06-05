@@ -12,6 +12,8 @@ import java.util.Random;
  * @version May 14th 2023
  */
 public abstract class DungeonCharacter implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 4347694900186580770L;
     private final int myDamageMin;
     private final int myDamageMax;
     private final int myAttackSpeed;
@@ -22,8 +24,7 @@ public abstract class DungeonCharacter implements Serializable {
     private int myHitPoints;
     private boolean myIsAttacked;
     private int myTotalDamage;
-    @Serial
-    private static final long serialVersionUID = 4347694900186580770L;
+
     /**
      * Constructs a new DungeonCharacter and initializes instance fields.
      *
@@ -35,7 +36,7 @@ public abstract class DungeonCharacter implements Serializable {
      * @param theAttackSpeed the attack speed of the character
      */
     protected DungeonCharacter(final String theName, final int theHitPoints, final double theHitChance,
-                            final int theDamageMin, final int theDamageMax, final int theAttackSpeed) {
+                               final int theDamageMin, final int theDamageMax, final int theAttackSpeed) {
         myName = theName;
         myHitPoints = theHitPoints;
         myHitChance = theHitChance;
@@ -118,8 +119,8 @@ public abstract class DungeonCharacter implements Serializable {
             calculateDamage(theOpponent);
             theOpponent.setAttacked(true);
         } else {
-            // report attack failure
             theOpponent.setAttacked(false);
+            setTotalDamage(0);
         }
     }
 
@@ -132,15 +133,13 @@ public abstract class DungeonCharacter implements Serializable {
      */
     protected int calculateDamage(final DungeonCharacter theOpponent) {
         final int numOfAttacks = Math.max(1, this.getAttackSpeed() / theOpponent.getAttackSpeed());
-        //removed mytotaldamage=0 to the  use setter
         setTotalDamage(0);
         for (int i = 0; i < numOfAttacks; i++) {
             final int damage = myRandom.nextInt(getDamageMax() - getDamageMin() + 1)
                     + getDamageMin();
             //used the setter
-            setTotalDamage(getTotalDamage()+ damage);
-            theOpponent.setHitPoints(theOpponent.getHitPoints() - damage);
-
+            setTotalDamage(getTotalDamage() + damage);
+            theOpponent.setHitPoints(Math.max(theOpponent.getHitPoints() - damage, 0));
         }
         return myTotalDamage;
     }
@@ -155,10 +154,6 @@ public abstract class DungeonCharacter implements Serializable {
         return myIsAttacked;
     }
 
-    protected boolean canBlockAttack() {
-        return false;
-    }
-
     /**
      * Sets the flag indicating whether the character has been attacked or not.
      *
@@ -166,6 +161,15 @@ public abstract class DungeonCharacter implements Serializable {
      */
     protected void setAttacked(final boolean theAttacked) {
         myIsAttacked = theAttacked;
+    }
+
+    /**
+     * Decides if character can block attack.
+     *
+     * @return false, only Hero's have the ability to block an attack.
+     */
+    protected boolean canBlockAttack() {
+        return false;
     }
 
     /**
@@ -183,7 +187,7 @@ public abstract class DungeonCharacter implements Serializable {
                 "\nChance to Hit: " + getHitChance() +
                 "\nMinimum Damage: " + getDamageMin() +
                 "\nMaximum Damage: " + getDamageMax() +
-                "\nAttack Speed: " + getAttackSpeed() ;
+                "\nAttack Speed: " + getAttackSpeed();
     }
 
 }

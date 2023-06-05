@@ -6,6 +6,7 @@ import java.sql.*;
  * Creates instances of different Monster's based on statistics stored in a SQLite database.
  *
  * @author Chelsea Dacones
+ * @author Rosemary Roach
  */
 public class MonsterFactory {
     private final Connection myConnection;
