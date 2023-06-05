@@ -23,13 +23,13 @@ public class Thief extends Hero implements Serializable {
     /**
      * determines if the specialskill was used or not
      */
-    private boolean useSpecialSkill() {
+    boolean useSpecialSkill() {
        return myRandom.nextDouble() <= USE_SPECIAL_CASE_PROBABILITY;
     }
     /**
      * determines if the specialskill was used or not
      */
-    private boolean wasCaught() {
+    boolean wasCaught() {
         return myRandom.nextDouble() <= CAUGHT_PROBABILITY;
     }
 
@@ -53,7 +53,7 @@ public class Thief extends Hero implements Serializable {
                     final int damage = myRandom.nextInt(getDamageMax() - getDamageMin() + 1)
                             + getDamageMin();
                     setTotalDamage(getTotalDamage() + damage);
-                    theOpponent.setHitPoints(Math.max(theOpponent.getHitPoints() - damage, 1));
+                    theOpponent.setHitPoints(Math.max(theOpponent.getHitPoints() - damage, 0));
                     theOpponent.setAttacked(true);
                 }
             } else { // normal attack

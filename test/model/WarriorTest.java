@@ -15,8 +15,13 @@ public class WarriorTest extends RandomMock {
     @BeforeEach
     public void setUp() {
         myRandomMock = new RandomMock();
-        myRandomMock.setMockIntValue(105);//
-        myWarrior = new Warrior("Test Warrior");
+        myRandomMock.setMockIntValue(30);
+        myWarrior = new Warrior("Test Warrior") {
+            @Override
+            protected boolean canAttack() {
+                return true;
+            }
+        };
         myWarrior.setMyRandom(myRandomMock);
         myOpponent = new Monster("Gremlin", 200, .6,
                 30, 60, 2, .1, 30, 60);
@@ -28,6 +33,7 @@ public class WarriorTest extends RandomMock {
      */
     @Test
     public void testAttackSpecialSkillFalse() {
+        myWarrior.setRandom(myRandomMock);
         myWarrior.attack(myOpponent);
         Assertions.assertTrue(myOpponent.getHitPoints() < 200);
     }
@@ -44,7 +50,6 @@ public class WarriorTest extends RandomMock {
                 return true;
             }
         };
-        myRandomMock.setMockIntValue(30);
         warrior.setMyRandom(myRandomMock);
         warrior.attack(myOpponent);
         Assertions.assertEquals(95, myOpponent.getHitPoints());

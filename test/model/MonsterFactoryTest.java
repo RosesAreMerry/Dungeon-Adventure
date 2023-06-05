@@ -13,7 +13,7 @@ class MonsterFactoryTest {
     void testCreateMonsterByName() {
         final MonsterFactory mf = new MonsterFactory();
         final Monster ogre = mf.createMonsterByName("Ogre");
-        assertEquals("Monster: Ogre" +
+        assertEquals("Ogre" +
                 "\nHit Points: 200" +
                 "\nChance to Hit: 0.6" +
                 "\nMinimum Damage: 30" +

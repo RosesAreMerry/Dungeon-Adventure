@@ -155,10 +155,10 @@ public class DungeonAdventure {
      */
     private Hero createAdventurer() {
         final String name = myAdventureView.promptUserInput("\nWhat is your name? ", "Please enter a name: ", (String s) -> s != null && s.length() > 0);
-        final Map<String, String> playerCreators = Map.of(
-                "Thief", new Thief(name) + "\nSpecial Skill: Surprise Attack - 40 percent chance it is successful\n",
-                "Warrior", new Warrior(name) + "\nSpecial Skill: Crushing Blow that does 75 to 175 points of damage but only has a 40% chance of succeeding\n",
-                "Priestess", new Priestess(name) + "\nSpecial Skill: Healing\n"
+        final Map<String, Hero> playerCreators = Map.of(
+                "Thief", new Thief(name),
+                "Warrior", new Warrior(name),
+                "Priestess", new Priestess(name)
         );
         String character;
         do {

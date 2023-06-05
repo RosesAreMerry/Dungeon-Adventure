@@ -10,6 +10,7 @@ class ThiefTest {
     Monster myOpponent;
     Thief myThief;
     RandomMock myRandom;
+
     @BeforeEach
     void setUp() {
         myMonsterFactory = new MonsterFactory();
@@ -42,9 +43,22 @@ class ThiefTest {
      */
     @Test
     void testSpecialAttack() {
-        myRandom.setMockDoubleValue(0.3);
+        myThief = new Thief("Special") {
+            @Override
+            boolean wasCaught() {
+                return false;
+            }
+
+            @Override
+            boolean useSpecialSkill() {
+                return true;
+            }
+        };
+        myRandom.setMockDoubleValue(0.0);
+        myThief.setRandom(myRandom);
+        myThief.setMyRandom(myRandom);
         myThief.attack(myOpponent);
-        assertEquals(0 ,myOpponent.getHitPoints());
+        assertEquals(0, myOpponent.getHitPoints());
     }
 
     /**

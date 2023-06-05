@@ -21,6 +21,11 @@ public class PriestessTest extends RandomMock {
             protected boolean canAttack() {
                 return true;
             }
+
+            @Override
+            boolean canUseSpecialSkill() {
+                return true;
+            }
         };
         myPriestess.setMyRandom(randomMock);
         myPriestess.setRandom(randomMock);
@@ -39,7 +44,7 @@ public class PriestessTest extends RandomMock {
     @Test
     public void testHeal() {
         myPriestess.setHitPoints(30);
-        myPriestess.heal();
-        assertEquals(50, myPriestess.getHitPoints());
+        myPriestess.heal(); // heels by 11 hit points
+        assertEquals(41, myPriestess.getHitPoints());
     }
 }

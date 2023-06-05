@@ -33,9 +33,9 @@ public class Warrior extends Hero implements Serializable {
             if (useSpecialSkill()) {
                 final int damage = myRandom.nextInt(101) + 75; // 75 to 175 points of damage
                 theOpponent.setHitPoints(Math.max(theOpponent.getHitPoints() - damage, 0));
-                this.setTotalDamage(getTotalDamage()+damage);
+                this.setTotalDamage(getTotalDamage() + damage);
                 theOpponent.setAttacked(true);
-            } else if(!useSpecialSkill()) {
+            } else {
                 calculateDamage(theOpponent); // if special skill is unsuccessful, perform normal attack
                 theOpponent.setAttacked(true);
             }

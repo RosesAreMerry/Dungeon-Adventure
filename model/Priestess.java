@@ -49,7 +49,7 @@ public class Priestess extends Hero implements Healable, Serializable {
         return myHealAmount;
     }
 
-    private boolean canUseSpecialSkill() {
+    boolean canUseSpecialSkill() {
         return myRandom.nextDouble() <= USE_SPECIALCASE_PROBABILITY ;
     }
 
