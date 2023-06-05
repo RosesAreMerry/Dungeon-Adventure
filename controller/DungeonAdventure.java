@@ -5,7 +5,6 @@ import view.AdventureView;
 import view.RoomData;
 
 import java.util.*;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -163,16 +162,12 @@ public class DungeonAdventure {
                 "Priestess", () -> new Priestess(name)
         );
         String character;
-        Hero selectedHero = null;
         do {
             myAdventureView.sendMessage("Pick your character: ");
             character = myAdventureView.promptUserChoice(new String[]{"Thief", "Warrior", "Priestess"}, false);
             final Hero hero = playerCreators.get(character).get();
-            if (selectedHero == null || !selectedHero.getClass().equals(hero.getClass())) { // prevent repetitive stats adjustments
-                selectedHero = hero;
-                myDifficultyLevel.adjustHeroStatistics(selectedHero);
-            }
-            myAdventureView.sendMessage("\033[0m\n" + selectedHero);
+            myDifficultyLevel.adjustHeroStatistics(hero);
+            myAdventureView.sendMessage("\033[0m\n" + hero);
         } while (myAdventureView.promptUserInput("\nWould you like to reselect your character? ", "Please enter 'Yes' or 'No': ",
                 (String s) -> s != null && (s.equalsIgnoreCase("Yes") || s.equalsIgnoreCase("No"))).equalsIgnoreCase("Yes"));
         return playerCreators.get(character).get();
