@@ -1,8 +1,10 @@
 package model;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.function.Function;
 import java.util.stream.IntStream;
 
@@ -114,10 +116,10 @@ public class DungeonBuilderTest {
                     .count() == 1;
 
 
-            assertTrue(containsPillar.apply("Abstraction"));
-            assertTrue(containsPillar.apply("Encapsulation"));
-            assertTrue(containsPillar.apply("Inheritance"));
-            assertTrue(containsPillar.apply("Polymorphism"));
+            assertTrue(containsPillar.apply("Pillar of Abstraction"));
+            assertTrue(containsPillar.apply("Pillar of Encapsulation"));
+            assertTrue(containsPillar.apply("Pillar of Inheritance"));
+            assertTrue(containsPillar.apply("Pillar of Polymorphism"));
         } catch (final Exception e) {
             e.printStackTrace();
             fail();

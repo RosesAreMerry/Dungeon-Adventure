@@ -23,7 +23,7 @@ public class DungeonBuilder {
     private final Map<Coordinate, Room> coordinateRoomMap = new HashMap<>();
     private Random myRandom = new Random();
 
-    public DungeonBuilder() { }
+    private DungeonBuilder() { }
 
     /**
      * Main builder function. This is the only function that should be called from outside this class.
@@ -180,6 +180,12 @@ public class DungeonBuilder {
         return result;
     }
 
+    private Map<Direction, Room> getAdjacent(final Room theLocation) {
+        final Coordinate current = coordinateRoomMap.entrySet().stream()
+                .filter(entry -> entry.getValue().equals(theLocation)).findFirst().get().getKey();
+        return coordinateRoomMap.keySet().stream().filter(key -> key.isAdjacent(current)).collect(Collectors.toMap(current::getDirection, coordinateRoomMap::get));
+    }
+
     private void addExtraConnections() {
         final List<Room> unconnectedNeighbors = new ArrayList<>(coordinateRoomMap.values().stream()
                 .filter(room -> getAdjacent(room).values().stream()
@@ -187,17 +193,19 @@ public class DungeonBuilder {
 
         Collections.shuffle(unconnectedNeighbors);
 
+        final Set<Room> alreadyConnected = new HashSet<>();
+
         unconnectedNeighbors.stream().skip(unconnectedNeighbors.size() / 2).forEach(room -> {
+            if (alreadyConnected.contains(room)) {
+                return;
+            }
             final Map<Direction, Room> neighbors = getAdjacent(room);
             final Map.Entry<Direction, Room> unconnected = neighbors.entrySet().stream()
                     .filter(entry -> !room.getDoors().containsValue(entry.getValue())).findAny().orElseThrow();
             room.addDoor(unconnected.getKey(), unconnected.getValue());
+            unconnected.getValue().addDoor(unconnected.getKey().opposite(), room);
+            alreadyConnected.add(unconnected.getValue());
         });
-    }
-    private Map<Direction, Room> getAdjacent(final Room theLocation) {
-        final Coordinate current = coordinateRoomMap.entrySet().stream()
-                .filter(entry -> entry.getValue().equals(theLocation)).findFirst().get().getKey();
-        return coordinateRoomMap.keySet().stream().filter(key -> key.isAdjacent(current)).collect(Collectors.toMap(current::getDirection, coordinateRoomMap::get));
     }
 
     private void addPillarsOfOO() {
@@ -222,6 +230,10 @@ public class DungeonBuilder {
                         !room.isExit() &&
                         room.getItems().stream().noneMatch((final Item item) -> item instanceof PillarOfOO))
                 .findAny().orElseThrow(() -> new RuntimeException("Dungeon generation failed. No valid rooms found for exit or pillars."));
+    }
+
+    void setRandom(final Random theRandom) {
+        myRandom = theRandom;
     }
 
 }
