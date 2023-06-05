@@ -106,42 +106,7 @@ public class Room implements Serializable {
         myIsExit = false;
     }
 
-    private ArrayList<Item> generateItems(final double thePotionChance) {
-        final ArrayList<Item> items = new ArrayList<>();
-        if (myRandom.nextDouble() < thePotionChance) {
-            items.add(new HealingPotion());
-        }
-        if (myRandom.nextDouble() < thePotionChance) {
-            items.add(new VisionPotion());
-        }
-        return items;
-    }
 
-    private Monster generateMonster(final double theMonsterProbability) {
-        if (myRandom.nextDouble() < theMonsterProbability) {
-            return new MonsterFactory().createMonsterRandom();
-        }
-        return null;
-    }
-
-    private String generateFlavorText() {
-        if (myIsEntrance) {
-            return "The door to the dungeon is closed. You are trapped in the dark.";
-        }
-        if (myIsExit) {
-            return "You see something strange and welcome to your dark adjusted eyes, natural light! You have found the exit!";
-        }
-        if (myHasPit) {
-            return FLAVOR_TEXTS_PIT[myRandom.nextInt(FLAVOR_TEXTS_PIT.length)];
-        }
-        if (myMonster != null) {
-            return FLAVOR_TEXTS_MONSTER[myRandom.nextInt(FLAVOR_TEXTS_MONSTER.length)];
-        }
-        if (myItems.size() > 0) {
-            return FLAVOR_TEXTS_ITEMS[myRandom.nextInt(FLAVOR_TEXTS_ITEMS.length)];
-        }
-        return FLAVOR_TEXTS_EMPTY[myRandom.nextInt(FLAVOR_TEXTS_EMPTY.length)];
-    }
     //#region Property Accessors
 
     public Monster getMonster() {
@@ -192,27 +157,13 @@ public class Room implements Serializable {
     }
 
     void setExit() {
+        final MonsterFactory mf = new MonsterFactory();
         myItems.clear();
-        myMonster = null;
+        myMonster = mf.createMonsterByName("Dragon");
         myHasPit = false;
         myIsExit = true;
         myFlavorText = generateFlavorText();
     }
-
-    private ArrayList<Item> generateItems() {
-        final ArrayList<Item> items = new ArrayList<>();
-        if (myRandom.nextDouble() < HEALTH_POTION_PROBABILITY) {
-            items.add(new HealingPotion());
-        }
-        if (myRandom.nextDouble() < VISION_POTION_PROBABILITY) {
-            items.add(new VisionPotion());
-        }
-        return items;
-    }
-
-        final String sb = "*" + doors.getOrDefault(NORTH, '*') + '*' + '\n' +
-                doors.getOrDefault(WEST, '*') + getRoomChar() + doors.getOrDefault(EAST, '*') + '\n' +
-                '*' + doors.getOrDefault(SOUTH, '*') + '*' + '\n';
 
     private String generateFlavorText() {
         if (myIsEntrance) {
@@ -231,6 +182,25 @@ public class Room implements Serializable {
             return FLAVOR_TEXTS_ITEMS[myRandom.nextInt(FLAVOR_TEXTS_ITEMS.length)];
         }
         return FLAVOR_TEXTS_EMPTY[myRandom.nextInt(FLAVOR_TEXTS_EMPTY.length)];
+    }
+
+
+    private ArrayList<Item> generateItems(final double thePotionChance) {
+        final ArrayList<Item> items = new ArrayList<>();
+        if (myRandom.nextDouble() < thePotionChance) {
+            items.add(new HealingPotion());
+        }
+        if (myRandom.nextDouble() < thePotionChance) {
+            items.add(new VisionPotion());
+        }
+        return items;
+    }
+
+    private Monster generateMonster(final double theMonsterProbability) {
+        if (myRandom.nextDouble() < theMonsterProbability) {
+            return new MonsterFactory().createMonsterRandom();
+        }
+        return null;
     }
 
     /**

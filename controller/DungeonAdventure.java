@@ -51,7 +51,7 @@ public class DungeonAdventure {
     private boolean myIsPlaying;
     private boolean myWonGame;
     private DifficultyLevel myDifficultyLevel;
-    private boolean myIsDevMode = true;
+    private boolean myIsDevMode = false;
 
     private DungeonAdventure() {
         myAdventureView = new AdventureView();
@@ -101,14 +101,20 @@ public class DungeonAdventure {
 
         // Main game loop
         while (!myHero.isFainted() && !myWonGame) {
+            RoomData rd = new RoomData(myDungeon.getCurrentRoom());
             displayCurrentRoom();
-            if (!myWonGame) {
-                displayOptions();
-            }
             if (myIsDevMode) {
                 myDungeon.printDungeon();
             }
-            displayOptions();
+            if (rd.isExit() && rd.getMonsters().length > 0) {
+                displayOptions();
+                if (!myHero.isFainted()) {
+                    displayCurrentRoom();
+                }
+            }
+            if (!myWonGame) {
+                displayOptions();
+            }
         }
         if (myHero.isFainted()) {
             myAdventureView.sendMessage(GAME_OVER_ASCII);
@@ -183,6 +189,7 @@ public class DungeonAdventure {
      * This method shows the description of the current room, along with any available items in the room.
      */
     private void displayCurrentRoom() {
+        RoomData rd = new RoomData(myDungeon.getCurrentRoom());
         // print adjacent rooms if vision potion is active; otherwise only display current room
         myAdventureView.printRoom(new RoomData(myDungeon.getCurrentRoom()), myHero.isVisionPotionActive() ? myDungeon.getNeighbors() : null);
         if (myDungeon.getCurrentRoom().hasPit()) {
@@ -190,6 +197,9 @@ public class DungeonAdventure {
         }
         myAdventureView.sendMessage(myDungeon.getCurrentRoom().toString());
         if (myDungeon.getCurrentRoom().isExit()) {
+            if (rd.getMonsters().length > 0 ) {
+                return;
+            }
             myWonGame = wonGame();
         }
     }
