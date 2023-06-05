@@ -2,12 +2,9 @@ package model;
 
 import java.io.Serial;
 import java.util.Arrays;
-import java.util.List;
 import java.io.Serializable;
 import java.util.Map;
-import java.util.Collection;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Dungeon implements Serializable {
 
@@ -35,7 +32,7 @@ public class Dungeon implements Serializable {
     public Map<String, Room> getNeighbors() {
         final Coordinate current = myRooms.entrySet().stream()
                 .filter(entry -> entry.getValue().equals(myHeroLocation)).findFirst().get().getKey();
-        return myRooms.keySet().stream().filter(key -> key.isNeighbor(current)).collect(Collectors.toMap(current::getDirection, myRooms::get));
+        return myRooms.keySet().stream().filter(key -> key.isNeighbor(current)).collect(Collectors.toMap(current::getDirectionString, myRooms::get));
     }
 
     /**
@@ -49,6 +46,11 @@ public class Dungeon implements Serializable {
     }
 
     public void printDungeon() {
+        System.out.println(this);
+    }
+
+    @Override
+    public String toString() {
         final int minX = myRooms.keySet().stream().mapToInt(Coordinate::getX).min().getAsInt();
         final int maxX = myRooms.keySet().stream().mapToInt(Coordinate::getX).max().getAsInt();
         final int minY = myRooms.keySet().stream().mapToInt(Coordinate::getY).min().getAsInt();
@@ -75,7 +77,11 @@ public class Dungeon implements Serializable {
                     final int arrayX = x - minX * 2;
                     for (int i = 0; i < 3; i++) {
                         dungeon[arrayY + i][arrayX] = roomStringArray[i].charAt(0);
-                        dungeon[arrayY + i][arrayX + 1] = roomStringArray[i].charAt(1);
+                        if (myHeroLocation.equals(myRooms.get(current)) && i == 1) {
+                            dungeon[arrayY + i][arrayX + 1] = '■';
+                        } else {
+                            dungeon[arrayY + i][arrayX + 1] = roomStringArray[i].charAt(1);
+                        }
                         dungeon[arrayY + i][arrayX + 2] = roomStringArray[i].charAt(2);
                     }
                 }
@@ -88,7 +94,7 @@ public class Dungeon implements Serializable {
             sb.append(array);
             sb.append("\n");
         }
-        System.out.println(sb);
+        return sb.toString();
     }
 
 }

@@ -1,6 +1,7 @@
 package model;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static model.Direction.*;
@@ -42,6 +43,7 @@ public class DungeonBuilder {
 
             addExit();
             addPillarsOfOO();
+            addExtraConnections();
         }
         return new Dungeon(entrance, coordinateRoomMap);
     }
@@ -168,6 +170,27 @@ public class DungeonBuilder {
         });
 
         return result;
+    }
+
+    private void addExtraConnections() {
+        final List<Room> unconnectedNeighbors = new ArrayList<>(coordinateRoomMap.values().stream()
+                .filter(room -> getAdjacent(room).values().stream()
+                        .filter(neighbor -> !room.getDoors().containsValue(neighbor)).count() > 1).toList());
+
+        Collections.shuffle(unconnectedNeighbors);
+
+        unconnectedNeighbors.stream().skip(unconnectedNeighbors.size() / 2).forEach(room -> {
+            final Map<Direction, Room> neighbors = getAdjacent(room);
+            final Map.Entry<Direction, Room> unconnected = neighbors.entrySet().stream()
+                    .filter(entry -> !room.getDoors().containsValue(entry.getValue())).findAny().orElseThrow();
+            room.addDoor(unconnected.getKey(), unconnected.getValue());
+        });
+    }
+
+    public Map<Direction, Room> getAdjacent(final Room theLocation) {
+        final Coordinate current = coordinateRoomMap.entrySet().stream()
+                .filter(entry -> entry.getValue().equals(theLocation)).findFirst().get().getKey();
+        return coordinateRoomMap.keySet().stream().filter(key -> key.isAdjacent(current)).collect(Collectors.toMap(current::getDirection, coordinateRoomMap::get));
     }
 
     private void addPillarsOfOO() {

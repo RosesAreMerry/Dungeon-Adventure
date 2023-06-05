@@ -2,6 +2,7 @@ package model;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.function.Function;
 import java.util.stream.IntStream;
 
@@ -131,7 +132,7 @@ public class DungeonBuilderTest {
                     .mapToObj(dungeonBuilder::buildDungeon)
                     .map(this::getBranchingFactor)
                     .reduce(0.0, Double::sum) / 90.0;
-            assertTrue(overallBranching > 0.3);
+            assertTrue(overallBranching > 0.5);
             System.out.printf("Overall Branching: %2.2f%%", overallBranching * 100);
         } catch (final Exception e) {
             e.printStackTrace();
@@ -159,11 +160,15 @@ public class DungeonBuilderTest {
             return 0;
         }
 
-        return getBranchNumber(theDungeon.getCurrentRoom(), null);
+        return getBranchNumber(theDungeon.getCurrentRoom(), null, new ArrayList<>());
     }
 
-    private int getBranchNumber(final Room theRoom, final Direction theEntryDirection) {
+    private int getBranchNumber(final Room theRoom, final Direction theEntryDirection, final ArrayList<Room> theVisitedRooms) {
         int count = 0;
+        if (theVisitedRooms.contains(theRoom)) {
+            return 0;
+        }
+        theVisitedRooms.add(theRoom);
         for (final Direction direction : Direction.values()) {
             if (direction == theEntryDirection) {
                 continue;
@@ -172,31 +177,14 @@ public class DungeonBuilderTest {
                 if (theEntryDirection != null && direction != theEntryDirection.opposite()) {
                     count++;
                 }
-                count += getBranchNumber(theRoom.getDoor(direction), direction.opposite());
+                count += getBranchNumber(theRoom.getDoor(direction), direction.opposite(), theVisitedRooms);
             }
         }
         return count;
     }
 
     private int countNumberOfRooms(final Dungeon theDungeon) {
-        if (theDungeon.getCurrentRoom() == null) {
-            return 0;
-        }
-
-        return countNumberOfRooms(theDungeon.getCurrentRoom(), null);
-    }
-
-    private int countNumberOfRooms(final Room theRoom, final Direction theEntryDirection) {
-        int count = 1;
-        for (final Direction direction : Direction.values()) {
-            if (direction == theEntryDirection) {
-                continue;
-            }
-            if (theRoom.getDoor(direction) != null) {
-                count += countNumberOfRooms(theRoom.getDoor(direction), direction.opposite());
-            }
-        }
-        return count;
+        return theDungeon.getAllRooms().size();
     }
 
 }

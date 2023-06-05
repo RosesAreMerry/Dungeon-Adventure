@@ -42,7 +42,11 @@ public class GameSerialization {
     public static GameData loadGame(final String theFileName) {
         try (final ObjectInputStream inputStream = new ObjectInputStream(
                 new FileInputStream("savedGames/" + theFileName + ".ser"))) {
-            return (GameData) inputStream.readObject();
+
+            final GameData gameData = (GameData) inputStream.readObject();
+            // Coordinates are a singleton (kind of), so we need to load them with the rooms so that printDungeon() works.
+            Coordinate.loadWith(gameData.getDungeon().getAllRooms().keySet());
+            return gameData;
         } catch (final IOException | ClassNotFoundException theException) {
             System.err.println("Error loading the game: " + theException.getMessage());
         }

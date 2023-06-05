@@ -1,8 +1,8 @@
 package model;
 
-import java.io.Serial;
-import java.io.Serializable;
+import java.io.*;
 import java.util.HashSet;
+import java.util.Set;
 
 class Coordinate implements Serializable {
     private final int myX;
@@ -52,7 +52,23 @@ class Coordinate implements Serializable {
         return xDiff <= 1 && yDiff <= 1 && xDiff + yDiff != 0;
     }
 
-    public String getDirection(final Coordinate theOther) {
+    public Direction getDirection(final Coordinate theOther) {
+        if (isAdjacent(theOther)) {
+            if (theOther.getY() > getY()) {
+                return Direction.NORTH;
+            } else if (theOther.getY() < getY()) {
+                return Direction.SOUTH;
+            } else if (theOther.getX() > getX()) {
+                return Direction.EAST;
+            } else {
+                return Direction.WEST;
+            }
+        } else {
+            throw new IllegalArgumentException("The coordinates are not adjacent");
+        }
+    }
+
+    public String getDirectionString(final Coordinate theOther) {
         final StringBuilder sb = new StringBuilder();
 
         if (theOther.getY() > getY()) {
@@ -82,4 +98,10 @@ class Coordinate implements Serializable {
         }
         return getX() == theCoordinate.getX() && getY() == theCoordinate.getY();
     }
+
+    public static void loadWith(final Set<Coordinate> theCoordinates) {
+    	COORDINATES.clear();
+        COORDINATES.addAll(theCoordinates);
+    }
+
 }

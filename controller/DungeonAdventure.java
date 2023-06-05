@@ -46,6 +46,7 @@ public class DungeonAdventure {
     private ActionHandler myActionHandler;
     private boolean myIsPlaying;
     private boolean myWonGame;
+    private boolean myIsDevMode = true;
 
     private DungeonAdventure() {
         myAdventureView = new AdventureView();
@@ -93,9 +94,16 @@ public class DungeonAdventure {
         // Main game loop
         while (!myHero.isFainted()) {
             displayCurrentRoom();
+
+            if (myIsDevMode) {
+                myDungeon.printDungeon();
+            }
+
             if (myWonGame) {
                 break;
             }
+
+//            Thread.sleep(2000);
             displayOptions();
         }
         if (myHero.isFainted()) {
