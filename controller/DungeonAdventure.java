@@ -102,7 +102,7 @@ public class DungeonAdventure {
             myAdventureView.sendMessage(GAME_OVER_ASCII);
         }
         // Game conclusion
-        displayDungeon();
+        myDungeon.printDungeon();
     }
 
     /**
@@ -232,13 +232,6 @@ public class DungeonAdventure {
     }
 
     /**
-     * Displays the entire dungeon layout to the user.
-     */
-    private void displayDungeon() {
-        myAdventureView.sendMessage("[Dungeon placeholder]");
-    }
-
-    /**
      * Checks if player has won the game.
      *
      * @return true if all four Pillars of OO have been collected and brought to the exit; false otherwise
@@ -250,7 +243,7 @@ public class DungeonAdventure {
         remainingPillars.removeAll(collectedPillars);
         final boolean hasAllPillars = collectedPillars.size() == allPillars.size();
         myAdventureView.sendMessage(hasAllPillars
-                ? "Congratulations adventurer! You've collected all four Pillars of OO and have won the game!\n" + YOU_WIN_ASCII + "\n"
+                ? "Congratulations adventurer! You've collected all four Pillars of OO and have won the game!\n\n" + YOU_WIN_ASCII + "\n"
                 : "You're missing " + (allPillars.size() - collectedPillars.size()) + " Pillars of OO: " + String.join(", ", remainingPillars) + "\n");
         return hasAllPillars;
     }

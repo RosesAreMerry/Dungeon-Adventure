@@ -203,7 +203,7 @@ public class ActionHandler {
             final Hero hero = myGameData.getHero();
             final int numOfPillars = hero.numOfPillarsCollected();
             final List<String> pillarsCollected = hero.getMyInventory().stream().filter(PillarOfOO.class::isInstance).map(Item::getName).toList();
-            myAdventureView.sendMessage(fileName + " loaded successfully!\nCurrent hit points: "
+            myAdventureView.sendMessage(fileName + " loaded successfully!\n\nCurrent hit points: "
                     + hero.getHitPoints() + "\nPillars collected (" + numOfPillars + "/4): "
                     + String.join(", ", pillarsCollected));
         } else {
