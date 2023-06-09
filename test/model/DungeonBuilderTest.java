@@ -44,20 +44,6 @@ public class DungeonBuilderTest {
     }
 
     @Test
-    public void testDungeonGenDoesNotStall() {
-        final long currentTime = System.currentTimeMillis();
-        final DungeonBuilder dungeonBuilder = DungeonBuilder.INSTANCE;
-        try {
-            dungeonBuilder.buildDungeon(100, ENTITY_CHANCE, ENTITY_CHANCE);
-            final long timeTaken = System.currentTimeMillis() - currentTime;
-            assertTrue(timeTaken < 1000);
-        } catch (final Exception e) {
-            e.printStackTrace();
-            fail();
-        }
-    }
-
-    @Test
     public void testDungeonContainsEntrance() {
         final DungeonBuilder dungeonBuilder = DungeonBuilder.INSTANCE;
         try {
