@@ -120,7 +120,9 @@ class Coordinate implements Serializable {
             sb.append("North");
         } else if (theOther.getY() < getY()) {
             sb.append("South");
-        } else if (theOther.getX() != getX()) {
+        }
+
+        if (theOther.getY() != getY() && theOther.getX() != getX()) {
             sb.append(" ");
         }
 
@@ -130,18 +132,6 @@ class Coordinate implements Serializable {
             sb.append("West");
         }
         return sb.toString();
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == this) {
-            return true;
-        }
-
-        if (!(obj instanceof final Coordinate theCoordinate)) {
-            return false;
-        }
-        return getX() == theCoordinate.getX() && getY() == theCoordinate.getY();
     }
 
     /**

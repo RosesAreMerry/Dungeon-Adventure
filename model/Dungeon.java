@@ -86,7 +86,7 @@ public class Dungeon implements Serializable {
         final int minY = myRooms.keySet().stream().mapToInt(Coordinate::getY).min().getAsInt();
         final int maxY = myRooms.keySet().stream().mapToInt(Coordinate::getY).max().getAsInt();
 
-        final char[][] dungeon = new char[(maxY - minY + 1) * 2 + 2][(maxX - minX + 1) * 2 + 2];
+        final char[][] dungeon = new char[(maxY - minY + 1) * 2 + 1][(maxX - minX + 1) * 2 + 1];
 
         for (final char[] array : dungeon) {
             Arrays.fill(array, ' ');
