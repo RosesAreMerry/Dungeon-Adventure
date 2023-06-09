@@ -62,7 +62,7 @@ public class Warrior extends Hero implements Serializable {
 
     @Override
     public String toString() {
-        return this.getName() + " the " + this.getClass().getSimpleName() +
+        return this.getName() + " the Warrior" +
                 "\nHit Points: " + getHitPoints() +
                 "\nChance to Hit: " + getHitChance() +
                 "\nMinimum Damage: " + getDamageMin() +

@@ -5,6 +5,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * Test class for {@link model.Monster}
+ */
 class MonsterTest extends RandomMock {
 
     private Monster myGremlin;
@@ -123,6 +126,11 @@ class MonsterTest extends RandomMock {
         gremlin.attack(ogre);
         assertEquals(200, ogre.getHitPoints());
     }
+
+    /**
+     * Test method for {@link model.Monster#attack(DungeonCharacter)}
+     * Test scenario: Test attack when player blocks the attack.
+     */
     @Test
     void testBlockedAttack() {
         final Hero hero = new Hero("Test Hero", 150, 0.5,

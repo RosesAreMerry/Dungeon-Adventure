@@ -96,14 +96,13 @@ public class Monster extends DungeonCharacter implements Healable, Serializable 
         return myMaxHeal;
     }
 
-    public void setMyMinHeal(final int myMinHeal) {
-        this.myMinHeal = myMinHeal;
+    public void setMyMinHeal(final int theMinHeal) {
+        this.myMinHeal = theMinHeal;
     }
 
-    public void setMyMaxHeal(final int myMaxHeal) {
-        this.myMaxHeal = myMaxHeal;
+    public void setMyMaxHeal(final int theMaxHeal) {
+        this.myMaxHeal = theMaxHeal;
     }
-
 
     private void setHealAmount(final int theHealAmount) {
         myHealAmount = theHealAmount;

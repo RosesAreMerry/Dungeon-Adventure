@@ -1,17 +1,25 @@
 package model;
 
-import view.AdventureView;
-
 import java.text.DecimalFormat;
 
+/**
+ * Represents the difficulty levels of the game.
+ *
+ * @author Chelsea Dacones
+ */
 public enum DifficultyLevel {
     EASY,
     MEDIUM,
     HARD;
 
+    /**
+     * Adjust the statistics of a monster based on the difficulty level.
+     *
+     * @param theMonster the monster to adjust the statistics for
+     */
     public void adjustMonsterStatistics(final Monster theMonster) {
         final double percentage = switch (this) {
-            case EASY -> 0.3; // decrease stats by 20%, decrease stats by 70% for demo
+            case EASY -> 0.8; // decrease stats by 20%
             case MEDIUM -> 1; // keep stats the same
             case HARD -> 1.2; // increase stats by 20%
         };
@@ -20,6 +28,11 @@ public enum DifficultyLevel {
         theMonster.setMyMaxHeal((int) (theMonster.getMaxHeal() * percentage));
     }
 
+    /**
+     * Adjust the statistics of a Hero (player) based on the difficulty level.
+     *
+     * @param theHero the Hero to adjust the statistics for
+     */
     public void adjustHeroStatistics(final Hero theHero) {
         final DecimalFormat decimalFormat = new DecimalFormat("#.##");
         final double percentage = switch (this) {
@@ -31,6 +44,9 @@ public enum DifficultyLevel {
         theHero.setBlockChance(Double.parseDouble(decimalFormat.format(theHero.getBlockChance() * percentage)));
     }
 
+    /**
+     * Adjust the probability of hindrances (monsters and pits) being in a room based on difficulty level.
+     */
     public double adjustHindrances() {
         return switch (this) {
             case EASY -> 0.1 * 1; // remain unchanged
@@ -39,6 +55,9 @@ public enum DifficultyLevel {
         };
     }
 
+    /**
+     * Adjust the probability of potions being in a room based on difficulty level.
+     */
     public double adjustPotions() {
         return switch (this) {
             case EASY -> 0.1 * 3.0; // triple the chances
@@ -47,34 +66,44 @@ public enum DifficultyLevel {
         };
     }
 
+    /**
+     * Creates a dungeon based on difficulty level.
+     *
+     * @return the dungeon
+     */
     public Dungeon createDungeon() {
-        AdventureView av = new AdventureView();
         return switch (this) {
-            case EASY -> {
-                av.sendMessage("Generating dungeon with 10 rooms...");
-                yield DungeonBuilder.INSTANCE.buildDungeon(10, adjustHindrances(), adjustPotions());
-            } // small dungeon
-            case MEDIUM -> {
-                av.sendMessage("Generating dungeon with 25 rooms...");
-                yield DungeonBuilder.INSTANCE.buildDungeon(25, adjustHindrances(), adjustPotions());
-            } // medium dungeon
-            case HARD -> {
-                av.sendMessage("Generating dungeon with 50 rooms...");
-                yield DungeonBuilder.INSTANCE.buildDungeon(50, adjustHindrances(), adjustPotions());
-            } // large dungeon
+            case EASY -> // small dungeon
+                    DungeonBuilder.INSTANCE.buildDungeon(10, adjustHindrances(), adjustPotions());
+            case MEDIUM -> // medium dungeon
+                    DungeonBuilder.INSTANCE.buildDungeon(25, adjustHindrances(), adjustPotions());
+            case HARD -> // large dungeon
+                    DungeonBuilder.INSTANCE.buildDungeon(50, adjustHindrances(), adjustPotions());
         };
     }
 
-    public void adjustCharacterStatistics(final DungeonCharacter theCharacter, final double thePercentage) {
+    /**
+     * Adjusts the characters (monsters or hero) statistics based on difficulty level.
+     *
+     * @param theCharacter  the character to adjust the statistics for
+     * @param thePercentage the amount to adjust the statistics by
+     */
+    private void adjustCharacterStatistics(final DungeonCharacter theCharacter, final double thePercentage) {
         final DecimalFormat decimalFormat = new DecimalFormat("#.##");
         theCharacter.setHitPoints((int) (theCharacter.getHitPoints() * thePercentage));
-        theCharacter.setMyMaxHitPoints((int) (theCharacter.getHitPoints() * thePercentage));
+        theCharacter.setMaxHitPoints((int) (theCharacter.getHitPoints() * thePercentage));
         theCharacter.setHitChance(Double.parseDouble(decimalFormat.format(theCharacter.getHitChance() * thePercentage)));
-        theCharacter.setMyAttackSpeed((int) (theCharacter.getAttackSpeed() * thePercentage));
-        theCharacter.setMyDamageMin((int) (theCharacter.getDamageMin() * thePercentage));
-        theCharacter.setMyDamageMax((int) (theCharacter.getDamageMax() * thePercentage));
+        theCharacter.setAttackSpeed((int) (theCharacter.getAttackSpeed() * thePercentage));
+        theCharacter.setDamageMin((int) (theCharacter.getDamageMin() * thePercentage));
+        theCharacter.setDamageMax((int) (theCharacter.getDamageMax() * thePercentage));
     }
 
+    /**
+     * Adjusts the game level by adjusting hero statistics and monster statistics.
+     *
+     * @param theDungeon the dungeon that contains the monsters to adjust the stats for
+     * @param theHero    the hero to adjust the stats for
+     */
     public void adjustGameLevel(final Dungeon theDungeon, final Hero theHero) {
         adjustHeroStatistics(theHero);
         for (final Room room : theDungeon.getAllRooms().values()) {

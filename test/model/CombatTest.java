@@ -2,18 +2,14 @@ package model;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import view.AdventureView;
-import view.CombatView;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Random;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Test class for {@link model.Combat}
+ */
 class CombatTest extends RandomMock {
     private DungeonCharacter myPlayer;
     private DungeonCharacter myOpponent;
@@ -59,18 +55,28 @@ class CombatTest extends RandomMock {
         assertEquals(109, myPlayer.getHitPoints());
     }
 
+    /**
+     * Test method for {@link model.Combat#initiateCombat(DungeonCharacter, DungeonCharacter)}
+     * Test scenario: A battle where both characters can heal.
+     */
     @Test
     void testInitiateCombatWithHealing() {
         final MockDungeonCharacter adventurer = new MockDungeonCharacter("Test Hero", 150, 1.0,
-                10, 20, 4) {};
+                10, 20, 4) {
+        };
         final MockDungeonCharacter monster = new MockDungeonCharacter("Test Monster", 100, 1.0,
-                5, 15, 2) {};
+                5, 15, 2) {
+        };
         myRandom.setMockIntValue(10);
         myCombat.initiateCombat(adventurer, monster);
         assertEquals(0, monster.getHitPoints());
         assertEquals(150, adventurer.getHitPoints());
     }
 
+    /**
+     * Test method for {@link model.Combat#initiateCombat(DungeonCharacter, DungeonCharacter)}
+     * Test scenario: When a hero cannot attack a monster.
+     */
     @Test
     void testInitiateCombatUnsuccessful() {
         final DungeonCharacter hero = new DungeonCharacter("Hero", 125, 0.0,
@@ -80,12 +86,15 @@ class CombatTest extends RandomMock {
         assertEquals(70, myOpponent.getHitPoints());
     }
 
+    /**
+     * Mock implementation of the DungeonCharacter class that is used for testing purposes.
+     */
     private static class MockDungeonCharacter extends DungeonCharacter implements Healable {
         private int myHealAmount;
         private int myTotalDamage;
         private Random myRandom;
 
-        public MockDungeonCharacter(String theName, int theHitPoints, double theHitChance, int theDamageMin, int theDamageMax, int theAttackSpeed) {
+        public MockDungeonCharacter(final String theName, final int theHitPoints, final double theHitChance, final int theDamageMin, final int theDamageMax, final int theAttackSpeed) {
             super(theName, theHitPoints, theHitChance, theDamageMin, theDamageMax, theAttackSpeed);
             myHealAmount = 0;
             myTotalDamage = 0;
@@ -130,13 +139,16 @@ class CombatTest extends RandomMock {
                 setHitPoints(myCurrentHitPoints);
             }
         }
+
         private void setMyHealAmount(final int theHealAmount) {
             myHealAmount = theHealAmount;
         }
+
         @Override
         public int healAmount() {
             return myHealAmount;
         }
+
         public void setRandom(final Random theRandom) {
             this.myRandom = theRandom;
         }

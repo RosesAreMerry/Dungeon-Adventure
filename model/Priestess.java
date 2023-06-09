@@ -24,12 +24,15 @@ public class Priestess extends Hero implements Healable, Serializable {
      * @param theName the name of the player
      */
     public Priestess(final String theName) {
-        super(theName, 75, .7, 25, 45, 5, .3);
+        super(theName, 75, 0.7, 25, 45, 5, 0.3);
         myRandom = new Random();
         myHealAmount = 0;
         myHitPoints = this.getHitPoints();
     }
 
+    /**
+     * Performs Priestess' special skill: healing.
+     */
     @Override
     public void heal() {
         if (!isFainted() && canUseSpecialSkill()) {
@@ -41,6 +44,7 @@ public class Priestess extends Hero implements Healable, Serializable {
             this.setHitPoints(healedHitPoints);
         }
     }
+
     private void setHealAmount(final int theHealAmount) {
         myHealAmount = theHealAmount;
     }
@@ -64,7 +68,7 @@ public class Priestess extends Hero implements Healable, Serializable {
 
     @Override
     public String toString() {
-        return this.getName() + " the " + this.getClass().getSimpleName() +
+        return getName() + " the Priestess" +
                 "\nHit Points: " + getHitPoints() +
                 "\nChance to Hit: " + getHitChance() +
                 "\nMinimum Damage: " + getDamageMin() +

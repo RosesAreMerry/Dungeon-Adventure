@@ -14,6 +14,11 @@ import java.util.function.Consumer;
 import static model.GameSerialization.getSavedGames;
 import static model.GameSerialization.saveGame;
 
+/**
+ * Handles the actions of the player and monsters in the game.
+ *
+ * @author Chelsea Dacones
+ */
 public class ActionHandler {
     private final DungeonAdventure myDungeonAdventure;
     private final AdventureView myAdventureView;
@@ -26,7 +31,7 @@ public class ActionHandler {
      * @param theHero             the player's character
      * @param theDungeonAdventure represents the game's adventure
      */
-     ActionHandler(final Hero theHero, final DungeonAdventure theDungeonAdventure) {
+    public ActionHandler(final Hero theHero, final DungeonAdventure theDungeonAdventure) {
         myDungeonAdventure = theDungeonAdventure;
         myAdventureView = new AdventureView();
         myCombatView = new CombatView();
@@ -62,13 +67,13 @@ public class ActionHandler {
             }
             case "Open Menu" -> myDungeonAdventure.displayMenu();
             default -> {
-                if (theChoice.startsWith("Go")) {
+                if (theChoice.startsWith("Go")) { // move to other direction
                     final String direction = theChoice.substring(3);
                     handleMove(direction, theDungeon, theHero);
-                } else if (theChoice.startsWith("Battle")) {
+                } else if (theChoice.startsWith("Battle")) { // battle [monster]
                     final String monster = theChoice.substring(7);
                     handleCombat(monster, theDungeon, theHero);
-                } else if (theChoice.startsWith("View")) { // handle viewing character's stats
+                } else if (theChoice.startsWith("View")) { // view character's stats
                     final String character = theChoice.substring(5);
                     handleViewStats(character, theDungeon, theHero);
                 }
@@ -98,13 +103,14 @@ public class ActionHandler {
      */
     private void handleCombat(final String theOpponent, final Dungeon theDungeon, final Hero theHero) {
         final RoomData roomData = new RoomData(theDungeon.getCurrentRoom());
+        final Monster opponent = theDungeon.getCurrentRoom().getMonster();
         if (roomData.getMonsters() != null && roomData.getMonsters().length > 0) {
             final Combat combat = new Combat();
-            final MonsterFactory monsterFactory = new MonsterFactory();
-            final Monster opponent = monsterFactory.createMonsterByName(theOpponent);
+            myAdventureView.sendMessage("Before Battle");
             myCombatView.showCombat(theHero.getName(), theOpponent, opponent.getHitPoints(),
                     theHero.getHitPoints(), null);
             combat.initiateCombat(theHero, opponent);
+            myAdventureView.sendMessage("After Battle");
             myCombatView.showCombat(theHero.getName(), theOpponent, opponent.getHitPoints(),
                     theHero.getHitPoints(), combat.getActionLog().toArray(new String[0]));
             roomData.removeMonsterFromRoom(theOpponent);
@@ -154,6 +160,12 @@ public class ActionHandler {
         }
     }
 
+    /**
+     * Handles displaying instructions/help manual.
+     * If game is in progress then the Help Manual is displayed; otherwise, the Instructions are displayed.
+     *
+     * @param theGameInProgress a boolean value to represent if the game is in progress.
+     */
     private void displayInstructions(final boolean theGameInProgress) {
         final String fileName = theGameInProgress ? "help_manual.txt" : "instructions.txt";
         try (final Scanner scanner = new Scanner(new File(fileName))) {
@@ -193,14 +205,11 @@ public class ActionHandler {
     /**
      * Loads a saved game.
      *
-     * @return myGameData the GameData of the loaded game
+     * @return the GameData of the loaded game
      */
     GameData loadSavedGame() {
         final String fileName = myAdventureView.promptUserChoice(getSavedGames().toArray(new String[0]), true);
         final GameData myGameData = GameSerialization.loadGame(fileName);
-
-
-
         if (myGameData != null) {
             final Hero hero = myGameData.getHero();
             final int numOfPillars = hero.numOfPillarsCollected();

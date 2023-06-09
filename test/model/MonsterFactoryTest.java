@@ -4,6 +4,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Test class for {@link model.MonsterFactory}
+ */
 class MonsterFactoryTest {
 
     /**
@@ -13,15 +16,16 @@ class MonsterFactoryTest {
     void testCreateMonsterByName() {
         final MonsterFactory mf = new MonsterFactory();
         final Monster ogre = mf.createMonsterByName("Ogre");
-        assertEquals("Ogre" +
-                "\nHit Points: 200" +
-                "\nChance to Hit: 0.6" +
-                "\nMinimum Damage: 30" +
-                "\nMaximum Damage: 60" +
-                "\nAttack Speed: 2" +
-                "\nChance to Heal: 0.1" +
-                "\nMinimum Heal Points: 30" +
-                "\nMaximum Heal Points: 60", ogre.toString());
+        assertEquals("""
+                Ogre
+                Hit Points: 200
+                Chance to Hit: 0.6
+                Minimum Damage: 30
+                Maximum Damage: 60
+                Attack Speed: 2
+                Chance to Heal: 0.1
+                Minimum Heal Points: 30
+                Maximum Heal Points: 60""", ogre.toString());
     }
 
     /**

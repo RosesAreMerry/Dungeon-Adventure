@@ -8,9 +8,8 @@ import java.util.*;
 import java.util.function.Supplier;
 
 /**
- * Serves as the main entry point for the game and orchestrates the actions of the player, monsters,
- * and other entities within the game. Overall, it manages the game flow by handling user input, updating the game state,
- * and displays relevant information to users.
+ * Serves as the main entry point for the game and manages the game flow by handling user input,
+ * updating the game state displaying information to users.
  *
  * @author Chelsea Dacones
  * @author Rosemary Roach
@@ -102,7 +101,7 @@ public class DungeonAdventure {
 
         // Main game loop
         while (!myHero.isFainted() && !myWonGame) {
-            RoomData rd = new RoomData(myDungeon.getCurrentRoom());
+            final RoomData rd = new RoomData(myDungeon.getCurrentRoom());
             displayCurrentRoom();
             if (myIsDevMode) {
                 myDungeon.printDungeon();
@@ -168,11 +167,7 @@ public class DungeonAdventure {
      */
     private Hero createAdventurer() {
         final String name = myAdventureView.promptUserInput("\nWhat is your name? ", "Please enter a name: ", (String s) -> s != null && s.length() > 0);
-
-        if (Objects.equals(name, "dev")) {
-            myIsDevMode = true;
-        }
-
+        myIsDevMode = Objects.equals(name, "dev");
         final Map<String, Supplier<Hero>> playerCreators = Map.of(
                 "Thief", () -> new Thief(name),
                 "Warrior", () -> new Warrior(name),
@@ -195,7 +190,7 @@ public class DungeonAdventure {
      * This method shows the description of the current room, along with any available items in the room.
      */
     private void displayCurrentRoom() {
-        RoomData rd = new RoomData(myDungeon.getCurrentRoom());
+        final RoomData rd = new RoomData(myDungeon.getCurrentRoom());
         // print adjacent rooms if vision potion is active; otherwise only display current room
         myAdventureView.printRoom(new RoomData(myDungeon.getCurrentRoom()), myHero.isVisionPotionActive() ? myDungeon.getNeighbors() : null);
         if (myDungeon.getCurrentRoom().hasPit()) {

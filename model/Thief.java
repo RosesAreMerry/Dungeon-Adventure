@@ -5,7 +5,9 @@ import java.io.Serializable;
 import java.util.Random;
 
 /**
- * Thief represents a player in the game
+ * Thief represents a player in the game.
+ *
+ * @author Maliha Hossain
  */
 public class Thief extends Hero implements Serializable {
     private static final double USE_SPECIAL_CASE_PROBABILITY = 0.4;
@@ -21,21 +23,22 @@ public class Thief extends Hero implements Serializable {
 
     }
     /**
-     * determines if the specialskill was used or not
+     * Determines if the special skill was used or not
      */
     boolean useSpecialSkill() {
        return myRandom.nextDouble() <= USE_SPECIAL_CASE_PROBABILITY;
     }
     /**
-     * determines if the specialskill was used or not
+     * Determines if the special skill was used or not
      */
     boolean wasCaught() {
         return myRandom.nextDouble() <= CAUGHT_PROBABILITY;
     }
 
     /**
-     * attack method
-     * if surpriseAttack is used then the character gets one extra turn
+     * Performs an attack on the monster.
+     * If the special skill is used then the character gets one extra turn.
+     *
      * @param theOpponent the character to attack
      */
     @Override
@@ -74,7 +77,7 @@ public class Thief extends Hero implements Serializable {
 
     @Override
     public String toString() {
-        return this.getName() + " the " + this.getClass().getSimpleName() +
+        return this.getName() + " the Thief" +
                 "\nHit Points: " + getHitPoints() +
                 "\nChance to Hit: " + getHitChance() +
                 "\nMinimum Damage: " + getDamageMin() +

@@ -5,6 +5,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * Test class for {@link model.Thief}
+ */
 class ThiefTest {
     MonsterFactory myMonsterFactory;
     Monster myOpponent;
@@ -68,7 +71,7 @@ class ThiefTest {
     @Test
     void testNormalAttack() {
         myThief.setRandom(myRandom);
-        myRandom.setMockDoubleValue(0.5);
+        myRandom.setMockDoubleValue(0.8);
         myThief.attack(myOpponent);
         assertEquals(50, myOpponent.getHitPoints());
     }

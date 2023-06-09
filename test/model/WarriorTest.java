@@ -1,11 +1,13 @@
 package model;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
- * Test class for Warrior
+ * Test class for {@link model.Warrior}
  */
 public class WarriorTest extends RandomMock {
     private Warrior myWarrior;
@@ -35,7 +37,7 @@ public class WarriorTest extends RandomMock {
     public void testAttackSpecialSkillFalse() {
         myWarrior.setRandom(myRandomMock);
         myWarrior.attack(myOpponent);
-        Assertions.assertTrue(myOpponent.getHitPoints() < 200);
+        assertTrue(myOpponent.getHitPoints() < 200);
     }
 
     /**
@@ -52,7 +54,7 @@ public class WarriorTest extends RandomMock {
         };
         warrior.setMyRandom(myRandomMock);
         warrior.attack(myOpponent);
-        Assertions.assertEquals(95, myOpponent.getHitPoints());
+        assertEquals(95, myOpponent.getHitPoints());
     }
 }
 

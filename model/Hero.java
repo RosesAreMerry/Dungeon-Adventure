@@ -14,8 +14,8 @@ public abstract class Hero extends DungeonCharacter implements Serializable {
     public static final int VISION_POTION_TURNS = 3;
     @Serial
     private static final long serialVersionUID = 4434118078796032667L;
-    private double myBlockChance;
     private final ArrayList<Item> myInventory;
+    private double myBlockChance;
     private int myHealth;
     private int myVisionPotionTurns;
 
@@ -38,6 +38,11 @@ public abstract class Hero extends DungeonCharacter implements Serializable {
         myInventory = new ArrayList<>();
     }
 
+    /**
+     * Adds items to hero's inventory.
+     *
+     * @param theItem the item(s) to add to the inventory.
+     */
     public void addToInventory(final ArrayList<Item> theItem) {
         myInventory.addAll(theItem);
     }
@@ -55,6 +60,7 @@ public abstract class Hero extends DungeonCharacter implements Serializable {
         final ArrayList<Item> inventory = getMyInventory();
         return (int) inventory.stream().filter(PillarOfOO.class::isInstance).count();
     }
+
     /**
      * Retrieve the character's inventory.
      *
@@ -64,6 +70,11 @@ public abstract class Hero extends DungeonCharacter implements Serializable {
         return myInventory;
     }
 
+    /**
+     * Use a healing potion (restore hit points).
+     *
+     * @param theHealthRestore the amount of hit points to restore
+     */
     protected void useHealingPotion(final int theHealthRestore) {
         // ensure hit points do not exceed maximum hit points
         myHealth = Math.min(getHitPoints() + theHealthRestore, getMaxHitPoints());
@@ -85,10 +96,9 @@ public abstract class Hero extends DungeonCharacter implements Serializable {
         return myBlockChance;
     }
 
-    public void setBlockChance(final double myBlockChance) {
-        this.myBlockChance = myBlockChance;
+    void setBlockChance(final double theBlockChance) {
+        myBlockChance = theBlockChance;
     }
-
 
     /**
      * Starts the effect of the vision potion.
@@ -114,12 +124,15 @@ public abstract class Hero extends DungeonCharacter implements Serializable {
 
     @Override
     public String toString() {
-        return this.getName() + " the " + this.getClass().getSimpleName() +
+        final int visionPointCount = (int) getMyInventory().stream().filter(item -> item.getName().equals("Vision Potion")).count();
+        final int healingPotionCount = (int) getMyInventory().stream().filter(item -> item.getName().equals("Healing Potion")).count();
+        final List<String> pillars = getMyInventory().stream().filter(item -> item instanceof PillarOfOO)
+                .map(Item::getName).toList();
+        final String pillarNames = String.join(", ", pillars);
+        return getName() +
                 "\nHit Points: " + getHitPoints() +
-                "\nChance to Hit: " + getHitChance() +
-                "\nMinimum Damage: " + getDamageMin() +
-                "\nMaximum Damage: " + getDamageMax() +
-                "\nAttack Speed: " + getAttackSpeed() +
-                "\nBlock Chance: " + myBlockChance;
+                "\nTotal Healing Potions: " + healingPotionCount +
+                "\nTotal Vision Potions: " + visionPointCount +
+                "\nPillar Piece(s) Found: " + pillarNames;
     }
 }

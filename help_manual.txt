@@ -27,3 +27,13 @@ When prompted what you want to do, select "Open Menu" to find "Save game". You w
 To load a game, at the start of every game, you will be prompted to create a new game, or load a previous game.
 By selecting "Load Game" you will be shown a list of previous saved games, and select the one you want to continue playing.
 
+What do the letters mean in the 2D representation of the rooms?
+M - Multiple Items
+X - Pit
+i - Entrance (In)
+O - Exit (Out)
+V - Vision Potion
+H - Healing Potion
+<space> - Empty Room
+A, E, I, P - Pillars
+

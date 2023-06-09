@@ -5,6 +5,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * Test class for {@link model.DungeonCharacter}
+ */
 class DungeonCharacterTest extends RandomMock {
 
     private DungeonCharacter myPlayer;
@@ -22,6 +25,10 @@ class DungeonCharacterTest extends RandomMock {
         myRandomMock.setMockIntValue(15); // damage = 15 + 10 = 25
     }
 
+    /**
+     * Test method for {@link model.DungeonCharacter#attack(DungeonCharacter)}
+     * Test scenario: Perform a successful attack (based on chance to hit)
+     */
     @Test
     void testSuccessfulAttack() {
         myPlayer = new DungeonCharacter("Test Player", 100, 0.5,
@@ -36,6 +43,10 @@ class DungeonCharacterTest extends RandomMock {
         assertEquals(25 ,myOpponent.getHitPoints());
     }
 
+    /**
+     * Test method for {@link model.DungeonCharacter#attack(DungeonCharacter)}
+     * Test scenario: Perform an unsuccessful attack (based on chance to hit)
+     */
     @Test
     void testUnsuccessfulAttack() {
         myPlayer = new DungeonCharacter("Test Player", 100, 0.5,
@@ -48,6 +59,9 @@ class DungeonCharacterTest extends RandomMock {
         assertEquals(75, myOpponent.getHitPoints());
     }
 
+    /**
+     * Test method for {@link model.DungeonCharacter#calculateDamage(DungeonCharacter)}
+     */
     @Test
     void testCalculateDamage() {
         myPlayer = new DungeonCharacter("Test Player", 100, 0.5,

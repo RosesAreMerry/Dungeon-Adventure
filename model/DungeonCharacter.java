@@ -9,7 +9,6 @@ import java.util.Random;
  *
  * @author Maliha Hossain
  * @author Chelsea Dacones
- * @version May 14th 2023
  */
 public abstract class DungeonCharacter implements Serializable {
     @Serial
@@ -101,18 +100,18 @@ public abstract class DungeonCharacter implements Serializable {
         myTotalDamage = theTotalDamage;
     }
 
-    public void setMyDamageMin(final int theDamageMin) {
+    public void setDamageMin(final int theDamageMin) {
         this.myDamageMin = theDamageMin;
     }
 
-    public void setMyDamageMax(final int theDamageMax) {
+    public void setDamageMax(final int theDamageMax) {
         this.myDamageMax = theDamageMax;
     }
 
-    public void setMyAttackSpeed(final int theAttackSpeed) {
+    public void setAttackSpeed(final int theAttackSpeed) {
         this.myAttackSpeed = theAttackSpeed;
     }
-    public void setMyMaxHitPoints(final int theMaxHitPoints) {
+    public void setMaxHitPoints(final int theMaxHitPoints) {
         this.myMaxHitPoints = theMaxHitPoints;
     }
 
