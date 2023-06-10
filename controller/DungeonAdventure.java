@@ -30,9 +30,9 @@ public class DungeonAdventure {
             ██║   ██║██╔══██║██║╚██╔╝██║██╔══╝      ██║   ██║╚██╗ ██╔╝██╔══╝  ██╔══██╗
             ╚██████╔╝██║  ██║██║ ╚═╝ ██║███████╗    ╚██████╔╝ ╚████╔╝ ███████╗██║  ██║
              ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝     ╚═════╝   ╚═══╝  ╚══════╝╚═╝  ╚═╝""";
-    private static final String[] DIFFICULTY_DESCRIPTIONS = {"Easy - Enhanced player stats, weakened monsters, increased availability of items, and a small dungeon",
-            "Medium - Balanced stats (default values) for player and monsters, medium-sized dungeon",
-            "Hard - Reduced player stats, enhanced monsters, reduced availability of items, large dungeon"};
+    private static final String[] DIFFICULTY_DESCRIPTIONS = {"Easy - Enhanced player stats, weakened monsters, increased availability of items, and a dungeon with 10 rooms",
+            "Medium - Balanced stats (default values) for player and monsters, and a dungeon with 25 rooms",
+            "Hard - Reduced player stats, enhanced monsters, reduced availability of items, and a dungeon with 50 rooms"};
 
     private static final String DUNGEON_ADVENTURE = """
                ██████╗ ██╗   ██╗███╗   ██╗ ██████╗ ███████╗ ██████╗ ███╗   ██╗     █████╗ ██████╗ ██╗   ██╗███████╗███╗   ██╗████████╗██╗   ██╗██████╗ ███████╗
@@ -106,14 +106,11 @@ public class DungeonAdventure {
             if (myIsDevMode) {
                 myDungeon.printDungeon();
             }
-            if (rd.isExit() && rd.getMonsters().length > 0) {
+            if ((rd.isExit() && rd.getMonsters().length > 0) || !myWonGame) {
                 displayOptions();
                 if (!myHero.isFainted()) {
                     displayCurrentRoom();
                 }
-            }
-            if (!myWonGame) {
-                displayOptions();
             }
         }
         if (myHero.isFainted()) {
